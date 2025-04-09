@@ -1,0 +1,991 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: #535bf2;
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.vanilla:hover {
+  filter: drop-shadow(0 0 2em #3178c6aa);
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  color: white;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+button:hover {
+  border-color: #646cff;
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* Game UI */
+.game-button {
+  position: absolute;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  background-color: #3498db;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.game-button:hover {
+  background-color: #2980b9;
+}
+
+/* Tooltip styles */
+.mapboxgl-popup {
+  max-width: 200px;
+}
+
+.mapboxgl-popup-content {
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+}
+
+/* Game instructions
+.game-instructions {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 14px;
+  text-align: center;
+  z-index: 1000;
+} */
+
+/* Score display */
+#score-display {
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* Game over screen */
+.game-over {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  z-index: 1001;
+}
+
+.game-over h2 {
+  color: #e74c3c;
+  margin-top: 0;
+}
+
+.game-over button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.game-over button:hover {
+  background-color: #27ae60;
+}
+
+/* Update the minimap styles to be rectangular and support toggling */
+
+/* Minimap container - base styles */
+#minimap {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  overflow: hidden;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Small minimap size */
+.minimap-small {
+  width: 200px;
+  height: 150px;
+  border-radius: 5px;
+}
+
+/* Large minimap size */
+.minimap-large {
+  width: 400px;
+  height: 300px;
+  border-radius: 8px;
+}
+
+/* Toggle button for minimap size */
+.minimap-toggle {
+  position: absolute;
+  bottom: 175px;
+  right: 25px;
+  width: 30px;
+  height: 30px;
+  background-color: white;
+  border: 2px solid #0080ff;
+  border-radius: 4px;
+  color: #0080ff;
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 1000;
+  padding: 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+}
+
+.minimap-toggle:hover {
+  background-color: #f0f8ff;
+  transform: scale(1.05);
+}
+
+/* Keep the marker styles unchanged */
+.vehicle-marker {
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 16px solid #ff3300;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  transform: translateY(-8px);
+  /* Adjust positioning to center on vehicle location */
+}
+
+.target-marker {
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  border: 3px solid #00ff00;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.8);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+
+  70% {
+    transform: scale(1.5);
+    opacity: 0.7;
+  }
+
+  100% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+}
+
+/* Update the loading message styles for a more cinematic feel */
+
+.loading-message {
+  position: absolute;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #3cf;
+  padding: 15px 30px;
+  border-radius: 4px;
+  font-size: 18px;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
+  text-align: center;
+  z-index: 1000;
+  border-left: 3px solid #3cf;
+  min-width: 300px;
+  box-shadow: 0 0 20px rgba(51, 204, 255, 0.3);
+  animation: pulse-border 2s infinite;
+}
+
+.ready-message {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 40, 80, 0.8);
+  color: white;
+  padding: 12px 25px;
+  border-radius: 6px;
+  font-size: 16px;
+  text-align: center;
+  z-index: 1000;
+  box-shadow: 0 0 30px rgba(0, 128, 255, 0.8);
+  transition: opacity 1s ease-in-out;
+  animation: slide-up 0.5s ease-out;
+}
+
+@keyframes pulse-border {
+  0% {
+    border-color: #3cf;
+    box-shadow: 0 0 20px rgba(51, 204, 255, 0.3);
+  }
+
+  50% {
+    border-color: #0af;
+    box-shadow: 0 0 30px rgba(0, 170, 255, 0.5);
+  }
+
+  100% {
+    border-color: #3cf;
+    box-shadow: 0 0 20px rgba(51, 204, 255, 0.3);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translate(-50%, 20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+/* Cinematic message styles */
+.cinematic-message {
+  position: absolute;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #3cf;
+  padding: 15px 30px;
+  border-radius: 4px;
+  font-size: 18px;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
+  text-align: center;
+  z-index: 1000;
+  border-left: 3px solid #3cf;
+  min-width: 300px;
+  box-shadow: 0 0 20px rgba(51, 204, 255, 0.3);
+  animation: pulse-border 2s infinite;
+}
+
+/* Ready message styles */
+.ready-message {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 40, 80, 0.8);
+  color: white;
+  padding: 12px 25px;
+  border-radius: 6px;
+  font-size: 16px;
+  text-align: center;
+  z-index: 1000;
+  box-shadow: 0 0 30px rgba(0, 128, 255, 0.8);
+  transition: opacity 1s ease-in-out;
+  animation: slide-up 0.5s ease-out;
+}
+
+/* POI marker styles */
+.poi-marker {
+  width: 16px;
+  height: 16px;
+  background-color: #ffcc00;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  transition: transform 0.2s ease-out;
+}
+
+.poi-marker:hover {
+  transform: scale(1.3);
+  background-color: #ff9900;
+}
+
+/* POI popup styles */
+.mapboxgl-popup-content {
+  padding: 12px;
+  border-radius: 4px;
+  max-width: 200px;
+}
+
+.poi-description {
+  font-size: 12px;
+  margin: 5px 0 8px 0;
+}
+
+.view-poi-btn {
+  background-color: #0080ff;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  font-weight: bold;
+}
+
+.view-poi-btn:hover {
+  background-color: #0066cc;
+}
+
+/* Vehicle marker on minimap */
+.vehicle-marker {
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 16px solid #ff3300;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  transform: translateY(-8px);
+  /* Adjust positioning to center on vehicle location */
+}
+
+/* Target marker for teleportation */
+.target-marker {
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  border: 3px solid #00ff00;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.8);
+  animation: pulse 1.5s infinite;
+}
+
+/* Animations */
+@keyframes pulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+
+  70% {
+    transform: scale(1.5);
+    opacity: 0.7;
+  }
+
+  100% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-border {
+  0% {
+    border-color: #3cf;
+    box-shadow: 0 0 20px rgba(51, 204, 255, 0.3);
+  }
+
+  50% {
+    border-color: #0af;
+    box-shadow: 0 0 30px rgba(0, 170, 255, 0.5);
+  }
+
+  100% {
+    border-color: #3cf;
+    box-shadow: 0 0 20px rgba(51, 204, 255, 0.3);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translate(-50%, 20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+/* Info panel styles */
+.info-panel {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  font-family: monospace;
+  font-size: 12px;
+  min-width: 180px;
+  z-index: 1000;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  user-select: none;
+}
+
+.info-panel-title {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: #3cf;
+  text-align: center;
+  border-bottom: 1px solid #555;
+  padding-bottom: 3px;
+}
+
+.info-panel-item {
+  margin: 5px 0;
+  line-height: 1.5;
+}
+
+.info-panel-item strong {
+  color: #3cf;
+}
+
+.destination-marker {
+  width: 24px;
+  height: 24px;
+  background-color: transparent;
+  border: 3px solid #3cf;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(51, 204, 255, 0.7);
+  animation: pulse 1.5s infinite;
+  position: relative;
+}
+
+.destination-marker:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background-color: #3cf;
+  border-radius: 50%;
+}
+
+/* Customize the Mapbox Directions UI */
+.mapboxgl-ctrl-directions {
+  max-height: 300px;
+  overflow-y: auto;
+  width: 300px !important;
+  background-color: rgba(0, 40, 80, 0.85) !important;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.directions-control-directions {
+  color: white !important;
+}
+
+/* Style the route line */
+.mapbox-directions-route-line {
+  opacity: 0.8 !important;
+}
+
+/* Custom animation for navigation panel */
+.mapboxgl-ctrl-directions.show {
+  animation: slide-in 0.3s ease-out;
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* New styles for the navigation mode button */
+.minimap-nav-toggle {
+  position: absolute;
+  bottom: 140px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(0, 40, 80, 0.7);
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.minimap-nav-toggle:hover {
+  background-color: rgba(0, 80, 150, 0.8);
+  transform: scale(1.05);
+}
+
+.minimap-nav-toggle.active {
+  background-color: rgba(51, 204, 255, 0.8);
+  box-shadow: 0 0 15px rgba(51, 204, 255, 0.5);
+}
+
+/* Improve the directions container styles */
+.mapboxgl-ctrl-directions {
+  border: 2px solid rgba(51, 204, 255, 0.5) !important;
+}
+
+.directions-icon {
+  background-color: #3cf !important;
+}
+
+/* Route information toast */
+.route-toast {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 40, 80, 0.9);
+  color: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  width: 300px;
+  transition: all 0.3s ease;
+  opacity: 0;
+  visibility: hidden;
+  border-left: 4px solid #3cf;
+}
+
+.route-toast.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.route-toast-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.route-toast-icon {
+  margin-right: 10px;
+  font-size: 20px;
+}
+
+.route-toast-details {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Arrival notification */
+.arrival-notification {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, rgba(0, 128, 0, 0.9), rgba(0, 64, 128, 0.95));
+  color: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 0 40px rgba(0, 200, 0, 0.5), 0 0 80px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  width: 360px;
+  text-align: center;
+  animation: arrival-pop-in 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  backdrop-filter: blur(6px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.arrival-notification.closing {
+  animation: arrival-pop-out 0.5s ease-in forwards;
+}
+
+.arrival-icon {
+  font-size: 56px;
+  margin-bottom: 15px;
+  animation: arrival-bounce 1s infinite alternate ease-in-out;
+  display: inline-block;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
+}
+
+.arrival-text {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  background: linear-gradient(to right, #43e97b, #38f9d7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.arrival-subtext {
+  font-size: 16px;
+  margin-bottom: 15px;
+  opacity: 0.9;
+}
+
+.arrival-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.arrival-close:hover {
+  opacity: 1;
+}
+
+/* New arrival animations */
+@keyframes arrival-pop-in {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
+    filter: blur(10px);
+  }
+
+  40% {
+    transform: translate(-50%, -50%) scale(1.08);
+    opacity: 1;
+    filter: blur(0px);
+  }
+
+  60% {
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+
+  80% {
+    transform: translate(-50%, -50%) scale(1.02);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes arrival-pop-out {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
+    filter: blur(10px);
+  }
+}
+
+@keyframes arrival-bounce {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  100% {
+    transform: translateY(-10px) rotate(5deg);
+  }
+}
+
+/* Confetti animation for arrival celebration */
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100px) rotate(0deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.arrival-confetti {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 999;
+  overflow: hidden;
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: #ffdd00;
+  top: -20px;
+  animation: confetti-fall 5s ease-in forwards;
+}
+
+/* Replace old animations with the new ones */
+@keyframes pop-in {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
+  }
+
+  70% {
+    transform: translate(-50%, -50%) scale(1.05);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pop-out {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
+  }
+}
+
+/* Temporary destination marker */
+.temp-destination-marker {
+  width: 20px;
+  height: 20px;
+  background-color: #ffaa00;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  position: relative;
+  animation: pulse 1.5s infinite;
+}
+
+/* Navigation toast notifications */
+.nav-toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100px);
+  padding: 12px 20px;
+  border-radius: 4px;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 2000;
+  opacity: 0;
+  transition: all 0.3s ease;
+  text-align: center;
+  pointer-events: none;
+}
+
+.nav-toast.visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.nav-toast-info {
+  background-color: #3498db;
+}
+
+.nav-toast-error {
+  background-color: #e74c3c;
+}
+
+/* Navigation toggle button in game UI */
+.navigation-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background-color: white;
+  border: 2px solid #0080ff;
+  border-radius: 50%;
+  color: #0080ff;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+}
+
+.navigation-toggle:hover {
+  background-color: #f0f8ff;
+  transform: scale(1.05);
+}
+
+.navigation-toggle.active {
+  background-color: #0080ff;
+  color: white;
+}
+
+/* Destination marker (final destination) */
+.destination-marker {
+  width: 24px;
+  height: 24px;
+  background-color: #00ff00;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+/* Mission notification */
+.mission-notification {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.85);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  z-index: 2000;
+  width: 400px;
+  max-width: 90vw;
+  text-align: center;
+  animation: pop-in 0.5s ease-out;
+  transition: opacity 1s ease;
+}
+
+.mission-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #ffcc00;
+}
+
+.mission-icon {
+  font-size: 28px;
+  margin-right: 10px;
+}
+
+.mission-details {
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.mission-tip {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #aaaaaa;
+  font-style: italic;
+}
+
+.mapboxgl-ctrl-bottom-right {
+  right: 50% !important;
+  transform: translateX(50%) !important;
+}
+
+.mapboxgl-ctrl-bottom-left {
+  margin-bottom: 15px;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+}

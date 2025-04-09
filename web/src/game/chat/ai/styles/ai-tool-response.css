@@ -1,0 +1,99 @@
+/* Styles for AI tool responses */
+
+.ai-tool-response {
+  border-radius: 6px;
+  margin: 4px 0;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.ai-tool-header {
+  background-color: rgba(50, 50, 50, 0.7);
+  padding: 6px 10px;
+  font-weight: 500;
+  color: #eee;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.8em;
+  display: flex;
+  align-items: center;
+}
+
+.ai-tool-icon {
+  margin-right: 6px;
+  font-size: 1.1em;
+}
+
+.ai-location-card {
+  border-radius: 6px;
+}
+
+.ai-location-top-row {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.ai-location-name {
+  font-weight: 500;
+  font-size: 1em;
+  color: #fff;
+  flex: 1;
+}
+
+.ai-location-description {
+  color: #ccc;
+  font-size: 0.85em;
+  margin-bottom: 4px;
+}
+
+.ai-location-coordinates {
+  display: none;
+  /* Hide coordinates completely */
+}
+
+.ai-json-response {
+  margin: 0;
+  padding: 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: monospace;
+  font-size: 0.8em;
+  color: #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.ai-tool-content {
+  padding: 8px;
+}
+
+.ai-tool-error {
+  padding: 8px;
+  color: #ff6b6b;
+  font-size: 0.85em;
+  font-style: italic;
+}
+
+.ai-places-container {
+  padding: 6px;
+}
+
+.ai-places-header {
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #eee;
+  font-size: 0.9em;
+  text-align: center;
+}
+
+.ai-location-image {
+  display: block;
+  width: 100%;
+  max-height: 120px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-top: 6px;
+}

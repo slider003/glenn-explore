@@ -1,0 +1,15 @@
+{
+    "rewrites": [
+      {
+        "source": "/api/:path*",
+        "destination": "https://api.playglenn.com/api/:path*"
+      }
+    ],
+    "redirects": [
+      {
+        "source": "/(.*)",
+        "destination": "https://playglenn.com/$1",
+        "permanent": true
+      }
+    ]
+}

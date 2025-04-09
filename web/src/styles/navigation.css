@@ -1,0 +1,243 @@
+/* Suggestions container styles */
+.navigation-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #1f2937;
+  color: #f3f4f6;
+  border-radius: 8px;
+  margin-top: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+}
+
+.navigation-suggestions::-webkit-scrollbar {
+  width: 8px;
+}
+
+.navigation-suggestions::-webkit-scrollbar-track {
+  background: #1f2937;
+  border-radius: 8px;
+}
+
+.navigation-suggestions::-webkit-scrollbar-thumb {
+  background-color: #4b5563;
+  border-radius: 8px;
+}
+
+/* Individual suggestion item */
+.navigation-suggestion-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f3f4f6;
+}
+
+.navigation-suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.navigation-suggestion-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.navigation-suggestion-item::before {
+  content: "📍";
+  margin-right: 10px;
+  font-size: 16px;
+  opacity: 0.8;
+}
+
+/* Navigation UI */
+.navigation-ui {
+  background: rgba(31, 41, 55, 0.85);
+  border-radius: 12px;
+  padding: 1px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  backdrop-filter: blur(10px);
+  color: #f3f4f6;
+  position: relative;
+}
+
+/* Input container */
+.navigation-input-container {
+  position: relative;
+  width: 100%;
+}
+
+.navigation-input-container::before {
+  content: "✈️";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Navigation input field */
+.navigation-address-input {
+  padding: 12px 16px 12px 42px;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #f3f4f6;
+  transition: all 0.3s ease;
+  font-family: 'Roboto', sans-serif;
+  letter-spacing: 0.3px;
+}
+
+.navigation-address-input:focus {
+  border-color: #3b82f6;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Buttons container */
+.navigation-buttons-container {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+.navigation-buttons-container.hidden {
+  display: none;
+}
+
+/* Navigation buttons */
+.navigation-find-button,
+.navigation-teleport-button {
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  flex: 1;
+}
+
+.navigation-find-button {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.navigation-find-button:hover {
+  background-color: #2563eb;
+}
+
+.navigation-teleport-button {
+  background-color: #8b5cf6;
+  color: white;
+}
+
+.navigation-teleport-button:hover {
+  background-color: #7c3aed;
+}
+
+.navigation-find-button:disabled,
+.navigation-teleport-button:disabled {
+  background-color: #4b5563;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Cancel button */
+.navigation-cancel-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #f3f4f6;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: all 0.2s ease;
+}
+
+.navigation-cancel-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.navigation-cancel-button.hidden {
+  display: none;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .navigation-ui {
+    padding: 8px;
+    gap: 8px;
+    background: rgba(31, 41, 55, 0.95) !important;
+  }
+
+  .navigation-input-container {
+    position: relative;
+  }
+
+  .navigation-input-container::before {
+    left: 8px;
+    font-size: 14px;
+  }
+
+  .navigation-address-input {
+    padding: 8px 12px 8px 32px;
+    font-size: 13px;
+    border-width: 1px;
+  }
+
+  /* Change suggestions positioning to appear above */
+  .navigation-suggestions {
+    top: auto;
+    bottom: calc(100% + 5px);
+    max-height: 160px;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .navigation-suggestion-item {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .navigation-find-button,
+  .navigation-teleport-button {
+    padding: 6px;
+    font-size: 12px;
+  }
+
+  .navigation-cancel-button {
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+    top: 8px;
+    right: 8px;
+  }
+
+  /* Adjust buttons container for mobile */
+  .navigation-buttons-container {
+    padding: 0 4px;
+  }
+}

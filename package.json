@@ -1,0 +1,17 @@
+{
+    "name": "glenn",
+    "private": true,
+    "version": "0.1.0",
+    "scripts": {
+        "start:api": "dotenv -- bash -c 'cd api && dotnet run'",
+        "start:web": "cd web && npm run dev",
+        "setup-vps": "bash infra/scripts/setup-local.sh",
+        "deploy": "bash infra/scripts/deploy-local.sh",
+        "tail-logs": "bash infra/scripts/tail-logs.sh",
+        "tail-errors": "bash infra/scripts/tail-errors.sh",
+        "ssh": "bash infra/scripts/ssh.sh"
+    },
+    "devDependencies": {
+        "dotenv-cli": "^8.0.0"
+    }
+}

@@ -1,0 +1,215 @@
+.settings-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.settings-header {
+  margin-bottom: 8px;
+}
+
+.settings-header h3 {
+  font-size: 15px;
+  margin: 0 0 4px 0;
+}
+
+.settings-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 10px;
+}
+
+.settings-section {
+  margin-bottom: 10px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+}
+
+.settings-section h4 {
+  font-size: 13px;
+  margin: 0 0 8px 0;
+  color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Section Icons */
+.camera-settings h4::before {
+  content: '📷';
+  font-size: 14px;
+}
+
+.map-settings h4::before {
+  content: '🗺️';
+  font-size: 14px;
+}
+
+/* New section icons */
+.movement-settings h4::before {
+  content: '🚗';
+  font-size: 14px;
+}
+
+.car-mode-settings h4::before {
+  content: '🛣️';
+  font-size: 14px;
+}
+
+/* Add after the existing section icons */
+.settings-section h4[data-section="collision"]::before {
+    content: '💥';
+    font-size: 14px;
+}
+
+/* Mode Toggles */
+.mode-toggle {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 8px;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 12px;
+}
+
+.mode-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.mode-btn.active {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.5), rgba(147, 51, 234, 0.5));
+  border-color: transparent;
+  color: white;
+}
+
+/* Car mode section (conditionally shown) */
+.car-mode-settings {
+  max-height: 0;
+  overflow: hidden;
+  margin-bottom: 0;
+  transition: max-height 0.3s ease, margin-bottom 0.3s ease, padding 0.3s ease;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.car-mode-settings.visible {
+  max-height: 100px;
+  margin-bottom: 10px;
+  padding: 8px;
+}
+
+/* Map Settings specific */
+.map-settings .mode-toggle {
+  margin-bottom: 0;
+}
+
+/* Camera Controls */
+.camera-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 8px;
+  transition: opacity 0.3s;
+}
+
+.camera-controls.hidden {
+  display: none;
+}
+
+.control-group {
+  display: flex;
+  gap: 3px;
+}
+
+.control-btn {
+  flex: 1;
+  padding: 6px;
+  border: none;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.control-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.control-btn:active {
+  transform: translateY(1px);
+}
+
+.control-btn span {
+  font-size: 12px;
+}
+
+/* Reset Button */
+.camera-reset {
+  margin-top: 3px;
+}
+
+.camera-reset .control-btn {
+  width: 100%;
+  background: rgba(59, 130, 246, 0.2);
+  font-size: 12px;
+  padding: 5px;
+}
+
+.camera-reset .control-btn:hover {
+  background: rgba(59, 130, 246, 0.3);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .settings-list {
+    padding: 0 8px;
+  }
+
+  .control-btn {
+    padding: 10px;
+  }
+
+  .mode-btn {
+    padding: 10px;
+  }
+}
+
+.settings-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+}
+
+.free-camera-help {
+  margin: 6px 0;
+  color: #ccc;
+  font-size: 12px;
+  text-align: center;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.free-camera-help.hidden {
+  display: none;
+} 

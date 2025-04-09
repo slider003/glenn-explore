@@ -1,0 +1,259 @@
+/* Minimap Container */
+.minimap-container {
+    position: fixed;
+    left: 20px;
+    top: 20px;
+    z-index: 1000;
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Navigation container below minimap */
+.minimap-navigation-container {
+    width: 100%;
+    margin-top: 0px;
+    transition: all 0.3s ease-in-out;
+}
+
+.minimap-navigation-container .navigation-ui {
+    position: relative !important;
+    top: unset !important;
+    left: unset !important;
+    right: unset !important;
+    bottom: unset !important;
+    width: 100% !important;
+    margin: 0 !important;
+    background: rgba(31, 41, 55, 0.85) !important;
+    border-radius: 12px !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+/* Make sure the suggestions dropdown appears correctly */
+.minimap-navigation-container .navigation-suggestions {
+    position: absolute !important;
+    width: 100% !important;
+    z-index: 1000 !important;
+}
+
+/* Map wrapper to handle the overflow properly */
+.minimap-wrapper {
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+}
+
+/* Circular Minimap */
+.minimap-small {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.minimap-small .mapboxgl-map {
+    width: 100%;
+    height: 100%;
+}
+
+/* Expanded Minimap */
+.minimap-large {
+    width: 400px;
+    height: 300px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.minimap-large .mapboxgl-map {
+    width: 100%;
+    height: 100%;
+}
+
+/* Toggle Button */
+.minimap-toggle {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: white;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    transition: all 0.2s ease;
+}
+
+.minimap-toggle:hover {
+    background: #f0f0f0;
+    transform: scale(1.1);
+}
+
+/* Vehicle Marker */
+.minimap-vehicle-marker {
+    width: 20px;
+    height: 20px;
+    background: #007bff;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Other Vehicle Marker */
+.minimap-other-vehicle-marker {
+    width: 16px;
+    height: 16px;
+    background: #ff4444;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Vehicle Name Label */
+.minimap-vehicle-name {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.4);
+    color: white;
+    padding: 2px;
+    border-radius: 20px;
+    font-size: 10px;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Adjust name size in expanded mode */
+.minimap-large .minimap-vehicle-name {
+    font-size: 12px;
+    padding: 3px 8px;
+    top: -24px;
+}
+
+/* Mapbox Controls Positioning */
+.minimap-small .mapboxgl-ctrl-top-right {
+    display: none; /* Hide controls in small state */
+}
+
+.minimap-large .mapboxgl-ctrl-top-right {
+    top: 55%;
+    right: 0px;
+}
+
+/* Custom styling for zoom controls */
+.mapboxgl-ctrl-group {
+    background: white !important;
+    border-radius: 20px !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
+    transition: opacity 0.3s ease; /* Smooth transition for showing/hiding */
+}
+
+.mapboxgl-ctrl-group button {
+    width: 36px !important;
+    height: 36px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.mapboxgl-ctrl-group button:first-child {
+    border-radius: 20px 20px 0 0 !important;
+}
+
+.mapboxgl-ctrl-group button:last-child {
+    border-radius: 0 0 20px 20px !important;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.minimap-vehicle-marker.pulse {
+    animation: pulse 1s infinite;
+}
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 768px) {
+    .minimap-container {
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        left: 25px;
+        top: unset; /* Remove top positioning */
+        bottom: 80px; /* Add some padding from bottom */
+    }
+
+    /* Circular Minimap */
+    .minimap-small {
+        width: 130px;  /* 65% of 200px */
+        height: 130px;
+    }
+
+    /* Expanded Minimap */
+    .minimap-large {
+        width: 260px;  /* 65% of 400px */
+        height: 195px; /* 65% of 300px */
+    }
+
+    /* Navigation container positioning */
+    .minimap-navigation-container {
+        width: auto; /* Let it take content width */
+        margin-top: 50px;
+        margin-left: -40px; /* Pull it slightly closer to minimap */
+    }
+
+    .minimap-navigation-container .navigation-ui {
+        width: 200px !important; /* Fixed width for mobile */
+    }
+
+    /* Hide buttons container when not needed to save space */
+    .minimap-navigation-container .navigation-buttons-container.hidden {
+        display: none;
+    }
+
+    /* Adjust toggle button size */
+    .minimap-toggle {
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
+    }
+
+    /* Adjust vehicle markers for smaller map */
+    .minimap-vehicle-marker {
+        width: 14px;
+        height: 14px;
+    }
+
+    .minimap-other-vehicle-marker {
+        width: 12px;
+        height: 12px;
+    }
+
+    /* Adjust name labels for smaller map */
+    .minimap-vehicle-name {
+        font-size: 8px;
+        top: -16px;
+    }
+
+    .minimap-large .minimap-vehicle-name {
+        font-size: 10px;
+        top: -20px;
+    }
+} 

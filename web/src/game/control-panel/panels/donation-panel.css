@@ -1,0 +1,81 @@
+.donation-panel {
+  padding: 20px;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.donation-header {
+  font-size: 24px;
+  margin: 0 0 15px 0;
+  color: #fff;
+}
+
+.donation-description {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  color: #ccc;
+}
+
+.donation-benefits {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.donation-benefits h3 {
+  font-size: 18px;
+  margin: 0 0 10px 0;
+  color: #fff;
+}
+
+.donation-benefits ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.donation-benefits li {
+  margin: 8px 0;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.recent-donations {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.recent-donations h3 {
+  font-size: 18px;
+  margin: 0 0 10px 0;
+  color: #fff;
+}
+
+.no-donations {
+  color: #ccc;
+  font-style: italic;
+  margin: 0;
+}
+
+.donate-button {
+  display: inline-block;
+  background: #ffdd00;
+  color: #000;
+  padding: 12px 24px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.donate-button:hover {
+  background: #ffe333;
+  transform: translateY(-1px);
+} 

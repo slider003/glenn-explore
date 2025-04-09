@@ -1,0 +1,326 @@
+import { DEFAULT_COORDINATES } from "../../config";
+
+export class PlayerStore {
+    private static playerId: string;
+    private static playerName: string;
+    private static isGuest: boolean;
+    private static isOnline: boolean = false;
+    private static followCar: boolean = false;
+    private static timeOfDay: 'day' | 'night';
+    private static map: 'satellite' | 'standard';
+    private static kilometersDriven: number = 0;
+    private static currentSpeed: number = 0;
+    private static allowedToDrive: boolean = true;
+    private static collisionEnabled: boolean | null = null;
+    private static coordinates: [number, number, number] = [DEFAULT_COORDINATES.lng, DEFAULT_COORDINATES.lat, 0];
+    private static rotation: { x: number, y: number, z: number } = { x: 0, y: 0, z: 0 };
+    private static modelType: string = 'cesiumMan';
+    private static animationState: string = 'idle';
+    private static stateType: 'car' | 'walking' = 'walking';
+    private static saveInterval: ReturnType<typeof setInterval>;
+    private static isFlying: boolean = false;
+    private static flyingElevation: number = 0;
+    private static movementMode: 'car' | 'walking' = 'car';
+    private static carMode: 'normal' | 'fly' = 'normal';
+
+    public static setAllowedToDrive(allowedToDrive: boolean): void {
+        PlayerStore.allowedToDrive = allowedToDrive;
+    }
+    // Setters
+    public static setPlayerId(id: string): void {
+        PlayerStore.playerId = id;
+    }
+
+    public static setPlayerName(name: string): void {
+        PlayerStore.playerName = name;
+    }
+
+    public static setIsGuest(isGuest: boolean): void {
+        PlayerStore.isGuest = isGuest;
+    }
+
+    public static setOnlineStatus(isOnline: boolean): void {
+        PlayerStore.isOnline = isOnline;
+    }
+
+    public static setFollowCar(followCar: boolean): void {
+        PlayerStore.followCar = followCar;
+    }
+
+    public static setTimeOfDay(timeOfDay: 'day' | 'night'): void {
+        PlayerStore.timeOfDay = timeOfDay;
+    }
+
+    public static setMap(map: 'satellite' | 'standard'): void {
+        PlayerStore.map = map;
+    }
+
+    public static setKilometersDriven(km: number): void {
+        PlayerStore.kilometersDriven = km;
+    }
+
+    public static setCollisionEnabled(collisionEnabled: boolean): void {
+        PlayerStore.collisionEnabled = collisionEnabled;
+    }
+
+    // Getters
+    public static getPlayerId(): string {
+        return PlayerStore.playerId;
+    }
+
+    public static getPlayerName(): string {
+        return PlayerStore.playerName;
+    }
+
+    public static isPlayerGuest(): boolean {
+        return PlayerStore.isGuest;
+    }
+
+    public static isPlayerOnline(): boolean {
+        return PlayerStore.isOnline;
+    }
+
+    public static isFollowingCar(): boolean {
+        return PlayerStore.followCar;
+    }
+
+    public static getTimeOfDay(): 'day' | 'night' {
+        const timeOfDayKey = 'timeOfDay';
+        if (PlayerStore.timeOfDay) {
+            return PlayerStore.timeOfDay;
+        }
+        let timeOfDay = localStorage.getItem(timeOfDayKey);
+        if (!timeOfDay) {
+            timeOfDay = 'day';
+            localStorage.setItem(timeOfDayKey, timeOfDay);
+        }
+        return timeOfDay as 'day' | 'night';
+    }
+
+    public static getMap(): 'satellite' | 'standard' {
+        return PlayerStore.map as 'satellite' | 'standard';
+    }
+
+    // Add getters and setters for kilometers driven
+    public static getKilometersDriven(): number {
+        if (PlayerStore.kilometersDriven) {
+            return PlayerStore.kilometersDriven;
+        }
+        const storedKm = localStorage.getItem('kilometersDriven');
+        if (!PlayerStore.kilometersDriven && storedKm) {
+            PlayerStore.kilometersDriven = parseFloat(storedKm);
+        }
+        return PlayerStore.kilometersDriven;
+    }
+
+    public static addKilometers(km: number): void {
+        const currentKm = PlayerStore.getKilometersDriven();
+        PlayerStore.setKilometersDriven(currentKm + km);
+    }
+
+    // Add speed tracking
+    public static getCurrentSpeed(): number {
+        return PlayerStore.currentSpeed;
+    }
+
+
+    public static getAllowedToDrive(): boolean {
+        return PlayerStore.allowedToDrive;
+    }
+
+    public static setCurrentSpeed(speed: number): void {
+        PlayerStore.currentSpeed = Math.round(speed);
+    }
+
+    public static getCollisionEnabled(): boolean {
+        if (PlayerStore.collisionEnabled !== null) {
+            return PlayerStore.collisionEnabled;
+        }
+        const collisionEnabled = localStorage.getItem('collisionEnabled');
+        if (collisionEnabled === null) {
+            // Default to false if not set
+            PlayerStore.setCollisionEnabled(false);
+            return false;
+        }
+        return collisionEnabled === 'true';
+    }
+
+    // Add flying mode getters and setters
+    public static isPlayerFlying(): boolean {
+        return PlayerStore.isFlying;
+    }
+
+    public static setIsFlying(isFlying: boolean): void {
+        PlayerStore.isFlying = isFlying;
+    }
+
+    public static getFlyingElevation(): number {
+        return PlayerStore.flyingElevation;
+    }
+
+    public static setFlyingElevation(elevation: number): void {
+        PlayerStore.flyingElevation = elevation;
+    }
+
+    // New getter for movement mode
+    public static getMovementMode(): 'car' | 'walking' {
+        return PlayerStore.movementMode;
+    }
+
+    // New setter for movement mode
+    public static setMovementMode(mode: 'car' | 'walking'): void {
+        PlayerStore.movementMode = mode;
+        // When changing movement mode, also update the stateType for animation purposes
+        PlayerStore.setStateType(mode);
+        
+        // If switching to walking, turn off flying mode
+        if (mode === 'walking') {
+            PlayerStore.setIsFlying(false);
+        }
+    }
+
+    // New getter for car mode
+    public static getCarMode(): 'normal' | 'fly' {
+        return PlayerStore.carMode;
+    }
+
+    // New setter for car mode
+    public static setCarMode(mode: 'normal' | 'fly'): void {
+        PlayerStore.carMode = mode;
+        // Update flying state based on car mode
+        PlayerStore.setIsFlying(mode === 'fly');
+    }
+
+    // Utility methods
+    public static _saveStateToLocalStorage(): void {
+        console.log("Saving map:", PlayerStore.map)
+        const state = {
+            playerName: PlayerStore.playerName,
+            isGuest: PlayerStore.isGuest,
+            isOnline: PlayerStore.isOnline,
+            followCar: PlayerStore.followCar,
+            timeOfDay: PlayerStore.timeOfDay,
+            map: PlayerStore.map,
+            kilometersDriven: PlayerStore.kilometersDriven,
+            collisionEnabled: PlayerStore.collisionEnabled,
+            coordinates: PlayerStore.coordinates,
+            rotation: PlayerStore.rotation,
+            modelType: PlayerStore.modelType,
+            animationState: PlayerStore.animationState,
+            stateType: PlayerStore.stateType,
+            allowedToDrive: PlayerStore.allowedToDrive,
+            isFlying: PlayerStore.isFlying,
+            flyingElevation: PlayerStore.flyingElevation,
+            movementMode: PlayerStore.movementMode,
+            carMode: PlayerStore.carMode
+        };
+
+        localStorage.setItem('playerState', JSON.stringify(state));
+    }
+
+    public static initializePlayer(): void {
+        const playerIdKey = 'playerId';
+        let id = localStorage.getItem(playerIdKey);
+        if (!id) {
+            id = crypto.randomUUID();
+            localStorage.setItem(playerIdKey, id);
+        }
+        PlayerStore.playerId = id;
+
+        const savedState = localStorage.getItem('playerState');
+        console.log("savedState", savedState);
+        if (savedState) {
+            const state = JSON.parse(savedState);
+            console.log("state", state, state.coordinates);
+            PlayerStore.playerName = state.playerName || 'Guest';
+            PlayerStore.isGuest = state.isGuest ?? true;
+            PlayerStore.isOnline = state.isOnline ?? false;
+            PlayerStore.followCar = state.followCar ?? false;
+            PlayerStore.timeOfDay = state.timeOfDay || 'day';
+            PlayerStore.map = state.map || 'standard';
+            PlayerStore.kilometersDriven = state.kilometersDriven || 0;
+            PlayerStore.collisionEnabled = state.collisionEnabled ?? false;
+            PlayerStore.coordinates = state.coordinates || [0, 0, 0];
+            PlayerStore.rotation = state.rotation || { x: 0, y: 0, z: 0 };
+            PlayerStore.modelType = state.modelType || 'cesiumMan';
+            PlayerStore.animationState = state.animationState || 'idle';
+            PlayerStore.stateType = state.stateType || 'walking';
+            PlayerStore.allowedToDrive = state.allowedToDrive ?? true;
+            PlayerStore.isFlying = state.isFlying ?? false;
+            PlayerStore.flyingElevation = state.flyingElevation ?? 0;
+            PlayerStore.movementMode = state.movementMode || 'car';
+            PlayerStore.carMode = state.carMode || 'normal';
+        } else {
+            PlayerStore.playerName = 'Guest';
+            PlayerStore.isGuest = true;
+            PlayerStore.isOnline = false;
+            PlayerStore.movementMode = 'car';
+            PlayerStore.carMode = 'normal';
+        }
+
+        PlayerStore.saveInterval = setInterval(() => {
+            PlayerStore._saveStateToLocalStorage();
+        }, 500);
+    }
+
+    public static getCoordinates(): [number, number, number] {
+        return PlayerStore.coordinates;
+    }
+
+    public static setCoordinates(coordinates: [number, number, number]): void {
+        PlayerStore.coordinates = coordinates;
+    }
+
+    public static getRotation(): { x: number, y: number, z: number } {
+        return PlayerStore.rotation;
+    }
+
+    public static setRotation(rotation: { x: number, y: number, z: number }): void {
+        PlayerStore.rotation = rotation;
+    }
+
+    public static getState(): { modelType: string, animationState: string, stateType: 'car' | 'walking' } {
+        return {
+            modelType: PlayerStore.modelType,
+            animationState: PlayerStore.animationState,
+            stateType: PlayerStore.stateType
+        };
+    }
+
+    public static setModelType(modelType: string): void {
+        PlayerStore.modelType = modelType;
+    }
+
+    public static setAnimationState(animationState: string): void {
+        PlayerStore.animationState = animationState;
+    }
+
+    public static setStateType(stateType: 'car' | 'walking'): void {
+        PlayerStore.stateType = stateType;
+    }
+
+    public static reset(): void {
+        clearInterval(PlayerStore.saveInterval);
+        
+        localStorage.removeItem('playerState');
+        
+        PlayerStore.playerName = '';
+        PlayerStore.isGuest = false;
+        PlayerStore.isOnline = false;
+        PlayerStore.kilometersDriven = 0;
+        PlayerStore.followCar = false;
+        PlayerStore.timeOfDay = 'day';
+        PlayerStore.map = 'standard';
+        PlayerStore.collisionEnabled = false;
+        PlayerStore.coordinates = [0, 0, 0];
+        PlayerStore.rotation = { x: 0, y: 0, z: 0 };
+        PlayerStore.modelType = 'cesiumMan';
+        PlayerStore.animationState = 'idle';
+        PlayerStore.stateType = 'walking';
+        PlayerStore.allowedToDrive = true;
+        PlayerStore.isFlying = false;
+        PlayerStore.flyingElevation = 0;
+        PlayerStore.movementMode = 'car';
+        PlayerStore.carMode = 'normal';
+    }
+} 

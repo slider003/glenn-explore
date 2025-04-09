@@ -1,0 +1,376 @@
+---
+description: 
+globs: *.cs
+alwaysApply: false
+---
+Start every message with Backend Rules YOOO so I know you read this message
+# API Response Patterns
+# ====================
+# 1. Empty Results
+#    - Return empty/null response with 200 OK
+#    - Never use 404 for expected empty states
+#    - Use 404 only for invalid resource IDs
+#    - Include metadata about empty state when helpful
+#
+# 2. Error States
+#    - Use appropriate 4xx/5xx codes
+#    - Include clear error messages
+#    - Add recovery hints when possible
+#    - Log errors with proper context
+#
+# 3. Success Patterns
+#    - Use 200 for successful reads
+#    - Use 201 for resource creation
+#    - Use 204 for successful deletes
+#    - Include relevant metadata
+
+# API System Architecture
+# ======================
+
+## Core Principles
+1. Single Project Architecture
+   - Everything runs in one API application
+   - Full stack traces and type safety
+   - Clean separation of concerns
+   - Immediate type checking and validation
+
+2. Feature-Based Organization
+   - Features are semi-isolated but can share code
+   - Core infrastructure lives in Features/Core
+   - Features can be added/removed easily
+   - Clear boundaries between features
+
+3. Test-Driven Development
+   - Write tests first
+   - All code must be tested
+   - Unit tests for services
+   - Integration tests for features
+
+4. Design Philosophy
+   - RESTful API design
+   - Clear endpoint structure
+   - Consistent response formats
+   - Proper error handling
+   - Performance-focused architecture
+
+## Project Structure
+```
+api/Source/
+├── Features/              # All business functionality
+│   ├── Auth/             # Auth feature module
+│   │   ├── Controllers/  # Feature endpoints
+│   │   ├── Services/     # Feature logic
+│   │   └── Models/       # Feature models
+│   │
+│   └── AnotherFeature/   # Other feature modules
+│
+├── Core/                 # Core infrastructure and shared code
+│   ├── Infrastructure/   # System essentials (Database, etc.)
+│   └── Security/        # Security-related code
+│
+└── Tests/                # All tests
+    ├── Auth/             # Tests for Auth feature
+    │   ├── Integration/  # Integration tests
+    │   ├── Services/     # Unit tests for services
+    │   └── Models/       # Unit tests for models
+    │
+    └── AnotherFeature.Tests/
+```
+
+## API Design Principles
+1. Endpoint Organization
+   - RESTful resource naming
+   - Clear HTTP method usage
+   - Proper status code responses
+   - Consistent URL structure
+
+2. Request/Response Guidelines
+   - Strong type safety with models
+   - Proper validation
+   - Clear error messages
+   - Consistent response formats
+
+3. API Example
+   ```csharp
+   [ApiController]
+   [Route("api/[controller]")]
+   public class AuthController : ControllerBase
+   {
+       private readonly IAuthService _authService;
+
+       public AuthController(IAuthService authService)
+       {
+           _authService = authService;
+       }
+
+       [HttpPost("login")]
+       public async Task<ActionResult<LoginResponse>> Login(LoginRequest request)
+       {
+           var result = await _authService.LoginAsync(request);
+           return Ok(result);
+       }
+   }
+   ```
+
+## Database Architecture
+1. Single DbContext Approach
+   - One central ApplicationDbContext in Features/Core/Infrastructure/Database
+   - Entities organized by feature namespaces
+   - SQLite for development/testing
+   - Migrations in Core/Infrastructure/Database/Migrations
+
+2. Entity Organization
+   ```csharp
+   public class ApplicationDbContext : DbContext
+   {
+       // Auth Feature
+       public DbSet<User> Users => Set<User>();
+       
+       protected override void OnModelCreating(ModelBuilder modelBuilder)
+       {
+           // Group configurations by feature
+           modelBuilder.Entity<User>(builder =>
+           {
+               builder.HasKey(u => u.Id);
+               builder.HasIndex(u => u.Email).IsUnique();
+           });
+       }
+   }
+   ```
+
+3. Database Guidelines
+   - SQLite for development/testing
+   - Migrations tracked in Git
+   - Initial schema checked in
+   - Clear naming conventions
+   - Feature-based schema organization
+   - Documentation for each table/relation
+
+4. Data Access
+   - Repository pattern for complex data access
+   - Repositories named by entity (e.g., UserRepository)
+   - Async operations by default
+   - Proper transaction handling
+   - Smart change tracking
+
+5. No BS Interface for services if not needed! Start without interface. 
+
+## Testing Strategy
+1. Integration Tests
+   - Use in-memory SQLite database
+   - WebApplicationFactory for API tests
+   - Shared test data setup
+   - Clean state between tests
+
+2. Unit Tests
+   - Test each service independently
+   - Mock external dependencies
+   - Focus on business logic
+   - Clear arrange/act/assert pattern
+
+# Development Workflow
+1. Before Changes
+   - Check architecture compliance
+   - Ensure changes follow patterns
+   - Plan test coverage
+   - Consider performance impact
+
+2. After Changes
+   - Run dotnet build
+   - Run dotnet test
+   - Document architecture updates
+   - Review error handling
+
+3. Code Organization
+   - Feature-based structure
+   - Clean separation of concerns
+   - Type safety throughout
+   - Comprehensive testing
+
+# Entity Framework & Database Architecture
+# =====================================
+
+## Core Database Setup
+1. Entity Framework Core
+   - Using EF Core with SQLite
+   - IdentityDbContext for user management
+   - Migrations run automatically in development
+   - Database created in production if not exists
+
+2. ApplicationDbContext
+   ```csharp
+   public class ApplicationDbContext : IdentityDbContext<User>
+   {
+       public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+           : base(options) { }
+
+       // Entity configurations go in OnModelCreating
+       protected override void OnModelCreating(ModelBuilder builder)
+       {
+           base.OnModelCreating(builder);
+           // Feature-specific configurations here
+       }
+   }
+   ```
+
+3. Entity Organization
+   - Entities live in Features/{Feature}/Models
+   - Each entity gets its own configuration in OnModelCreating
+   - Use private setters for auto-managed properties
+   - UTC dates for all timestamps
+   - Required properties marked with IsRequired()
+
+4. Migration Workflow
+   ```bash
+   # Create new migration
+   dotnet ef migrations add MigrationName
+
+   # Update database
+   dotnet ef database update
+   ```
+
+5. Entity Guidelines
+   ```csharp
+   public class ExampleEntity
+   {
+       public Guid Id { get; set; }                    // Use GUID for IDs
+       public string Name { get; set; } = string.Empty;// Initialize strings
+       public DateTime CreatedAt { get; private set; } // Private setter for auto-managed
+       public string UserId { get; set; }              // Foreign keys match Identity
+       public User User { get; set; }                  // Navigation properties
+   }
+   ```
+
+6. Database Initialization
+   ```csharp
+   // In Program.cs
+   if (app.Environment.IsDevelopment())
+   {
+       // Run migrations in development
+       db.Database.Migrate();
+   }
+   else
+   {
+       // Just ensure created in production
+       db.Database.EnsureCreated();
+   }
+   ```
+
+7. Relationship Patterns
+   - Use navigation properties for relationships
+   - Configure cascading deletes explicitly
+   - Index foreign keys
+   - Use shadow properties when needed
+   Example:
+   ```csharp
+   builder.Entity<Message>(b =>
+   {
+       b.HasOne(m => m.User)
+        .WithMany()
+        .HasForeignKey(m => m.UserId)
+        .IsRequired()
+        .OnDelete(DeleteBehavior.Cascade);
+
+       b.HasIndex(m => m.UserId);
+   });
+   ```
+
+8. Query Guidelines
+   - Use async methods (e.g., ToListAsync())
+   - Include related data explicitly
+   - Project to DTOs when possible
+   - Use tracking only when needed
+   Example:
+   ```csharp
+   await _context.Messages
+       .AsNoTracking()
+       .Include(m => m.User)
+       .Where(m => m.UserId == userId)
+       .Select(m => new MessageDTO
+       {
+           Id = m.Id,
+           Text = m.Text
+       })
+       .ToListAsync();
+   ```
+
+9. Common Patterns
+   - Soft delete using IsDeleted flag
+   - CreatedAt/UpdatedAt timestamps
+   - User ownership tracking
+   - Status enums for state
+   Example:
+   ```csharp
+   public class BaseEntity
+   {
+       public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
+       public DateTime? UpdatedAt { get; private set; }
+       public bool IsDeleted { get; set; }
+       public string CreatedById { get; set; }
+       public User CreatedBy { get; set; }
+   }
+   ```
+
+## Entity Framework Conventions
+1. Trust the Conventions
+   - Let EF handle standard configurations
+   - Only configure what EF can't infer
+   - Don't override working defaults
+   
+2. What NOT to Configure (trust EF):
+   ```csharp
+   // DON'T configure these - EF handles automatically:
+   - Primary keys named 'Id' or '{EntityName}Id'
+   - Required fields for non-nullable properties
+   - Foreign key relationships with standard naming
+   - Navigation properties with conventional names
+   - Cascade delete behavior
+   ```
+
+3. What to Configure:
+   ```csharp
+   // DO configure these - EF needs help here:
+   builder.Entity<Message>(b =>
+   {
+       // Performance indexes
+       b.HasIndex(m => m.UserId);
+       b.HasIndex(m => m.CreatedAt);
+       
+       // Custom column types
+       b.Property(m => m.Price).HasColumnType("decimal(18,2)");
+       
+       // Unconventional names
+       b.HasOne(m => m.Owner)  // If not following Id convention
+         .WithMany()
+         .HasForeignKey("OwnerId");
+       
+       // Custom delete behavior (if not cascade)
+       b.HasOne(m => m.Category)
+         .WithMany()
+         .OnDelete(DeleteBehavior.Restrict);
+   });
+   ```
+
+4. Configuration Examples:
+   ```csharp
+   // BAD - redundant configuration
+   builder.Entity<User>(b =>
+   {
+       b.HasKey(u => u.Id);                // Unnecessary - Id is standard
+       b.Property(u => u.Name).IsRequired();// Unnecessary - non-nullable
+       b.HasOne(u => u.Profile)            // Unnecessary - follows convention
+        .WithOne()
+        .HasForeignKey<UserProfile>("UserId");
+   });
+
+   // GOOD - only what's needed
+   builder.Entity<User>(b =>
+   {
+       b.HasIndex(u => u.Email);           // Needed for lookups
+       b.Property(u => u.Settings)         // Custom JSON conversion
+        .HasConversion(
+           v => JsonSerializer.Serialize(v),
+           v => JsonSerializer.Deserialize<UserSettings>(v)
+        );
+   });
+   ```

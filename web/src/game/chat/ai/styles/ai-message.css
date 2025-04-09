@@ -1,0 +1,262 @@
+/* AI Message Styles */
+
+/* AI Tab styles */
+.filter-tab.ai {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(147, 51, 234, 0.2));
+  color: rgba(255, 255, 255, 0.9);
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 14px;
+}
+
+.filter-tab.ai::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.5), rgba(147, 51, 234, 0.5));
+  filter: blur(15px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+  transform: translateZ(0);
+}
+
+.filter-tab.ai:hover::before,
+.filter-tab.ai.active::before {
+  opacity: 0.7;
+}
+
+.filter-tab.ai.active {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.8), rgba(147, 51, 234, 0.8));
+  color: white;
+  box-shadow: 0 0 15px rgba(147, 51, 234, 0.4);
+}
+
+/* AI Message styling */
+.message.ai {
+  background: linear-gradient(135deg, rgba(30, 64, 175, 0.2), rgba(124, 58, 237, 0.2));
+  border-left: 3px solid rgba(124, 58, 237, 0.6);
+  animation: aiMessageAppear 0.3s ease-out;
+}
+
+@keyframes aiMessageAppear {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message.ai:hover {
+  background: linear-gradient(135deg, rgba(30, 64, 175, 0.25), rgba(124, 58, 237, 0.25));
+}
+
+.message.ai .player-name {
+  color: #a78bfa;
+  display: flex;
+  align-items: center;
+}
+
+.message.ai .player-name::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #a78bfa;
+  border-radius: 50%;
+  margin-right: 6px;
+  box-shadow: 0 0 8px #a78bfa;
+}
+
+/* Streaming text animation */
+.message.ai.streaming {
+  position: relative;
+  border-left: 3px solid #a78bfa;
+  background: linear-gradient(135deg, rgba(30, 64, 175, 0.3), rgba(124, 58, 237, 0.3));
+  box-shadow: 0 0 10px rgba(124, 58, 237, 0.1);
+  animation: streamingPulse 2s infinite alternate;
+}
+
+@keyframes streamingPulse {
+  0% {
+    border-left-color: rgba(124, 58, 237, 0.6);
+    box-shadow: 0 0 5px rgba(124, 58, 237, 0.1);
+  }
+  100% {
+    border-left-color: rgba(167, 139, 250, 1);
+    box-shadow: 0 0 15px rgba(124, 58, 237, 0.2);
+  }
+}
+
+.message.ai.streaming .message-content::after {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 14px;
+  margin-left: 4px;
+  background-color: #a78bfa;
+  animation: blink 1s infinite;
+  vertical-align: middle;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+/* Tool response styling */
+.ai-tool-response {
+  border-radius: 8px;
+  padding: 0px;
+  margin-top: 8px;
+}
+
+.ai-tool-header {
+  font-size: 12px;
+  font-weight: 600;
+  color: #a78bfa;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ai-tool-content {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.ai-json-response {
+  font-family: monospace;
+  font-size: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 8px;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.ai-tool-error {
+  color: #f87171;
+  font-style: italic;
+  font-size: 13px;
+}
+
+/* Location card styling */
+.ai-location-card {
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border-left: 3px solid #818cf8;
+}
+
+.ai-location-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #e0e7ff;
+  margin-bottom: 4px;
+}
+
+.ai-location-description {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.ai-location-coordinates {
+  font-family: monospace;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 10px;
+}
+
+.ai-teleport-button {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  margin: 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.ai-teleport-button:hover {
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+  transform: translateY(-1px);
+}
+
+.ai-location-image {
+  width: 100%;
+  height: auto;
+  max-height: 120px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-top: 8px;
+}
+
+/* Places container */
+.ai-places-container {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.ai-places-header {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e0e7ff;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Scrollbar for places container */
+.ai-places-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ai-places-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.ai-places-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.ai-places-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .ai-location-card {
+    padding: 8px;
+    margin-bottom: 6px;
+  }
+  
+  .ai-teleport-button {
+    padding: 8px;
+    font-size: 13px;
+  }
+  
+  .ai-places-container {
+    max-height: 300px;
+  }
+} 

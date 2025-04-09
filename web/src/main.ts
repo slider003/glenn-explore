@@ -1,0 +1,218 @@
+import './style.css'
+import mapboxgl from 'mapbox-gl'
+import * as threebox from 'threebox-plugin'
+import { MAPBOX_ACCESS_TOKEN, DEFAULT_COORDINATES, MAPBOX_STYLE_STANDARD, MAPBOX_STYLE_SATELLITE } from './config'
+import { CameraController } from './game/CameraController'
+import { InfoPanel } from './game/InfoPanel'
+import { RealtimeController } from './game/realtime/RealtimeController'
+import { InputUtils } from './game/InputUtils'
+import { PlayerStore } from './game/stores/PlayerStore'
+import { Toast } from './game/toast/ToastController'
+import { IntroController } from './game/intro/IntroController'
+import { RadioService } from './game/radio/RadioService'
+import { UIController } from './game/UI/UIController'
+import { PlayerController } from './game/player/PlayerController'
+import { AuthClient } from './game/realtime/AuthClient'
+import { TeleportOptions } from './types/teleport'
+
+// Initialize input focus tracking
+InputUtils.initialize();
+PlayerStore.initializePlayer();
+const Threebox = threebox.Threebox;
+
+// Set Mapbox access token
+mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN
+
+// Global variables
+let infoPanel: InfoPanel;
+let isSmallScreen = window.innerWidth < 768; // Determine once if this is a small screen device
+
+window.isSmallScreen = isSmallScreen;
+
+console.log("PlayerStore.getMap()", PlayerStore.getMap())
+const map = new mapboxgl.Map({
+  container: 'map',
+  style: PlayerStore.getMap() === 'satellite' ? MAPBOX_STYLE_SATELLITE : MAPBOX_STYLE_STANDARD,
+  center: [0, 0], // Start at center of the world (will be changed by intro)
+  zoom: 1.5, // Zoomed all the way out to see the entire Earth
+  pitch: 0, // Start with a top-down view
+  bearing: DEFAULT_COORDINATES.bearing,
+  antialias: true,
+})
+
+map.setConfigProperty('basemap', 'lightPreset', PlayerStore.getTimeOfDay());
+// Add terrain source and layer
+map.on('style.load', () => {
+
+  map.addSource('mapbox-dem', {
+    'type': 'raster-dem',
+    'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+    'tileSize': 512,
+    'maxzoom': 12,  // Reduced from 14 to improve performance
+    'minzoom': 3    // Add minzoom to prevent loading terrain data when zoomed out
+  });
+
+  map.setTerrain({
+    'source': 'mapbox-dem',
+    'exaggeration': 0.7,
+  });
+
+  // Add custom layer for Threebox
+  map.addLayer({
+    id: 'custom-threebox-layer',
+    type: 'custom',
+    renderingMode: '3d',
+    onAdd: function (map: mapboxgl.Map, gl: WebGLRenderingContext) {
+      // Initialize Threebox
+      window.tb = new Threebox(
+        map,
+        gl,
+        {
+          defaultLights: true,
+          enableSelectingObjects: true,
+          enableDraggingObjects: true,
+          enableTooltips: true,
+          enableSelectingFeatures: true,
+        }
+      )
+
+      // Set up the scene and start the intro animation
+      setupScene();
+    },
+    render: function (_gl: WebGLRenderingContext, _matrix: number[]) {
+      // Update Threebox scene on each frame
+      window.tb?.update()
+    }
+  } as any)
+})
+
+// Function to set up the scene with vehicle and camera
+async function setupScene() {
+  // Initialize radio service early
+  RadioService.getInstance();
+
+  // Initialize auth client
+  const authClient = new AuthClient();
+
+  // Initialize player controller
+  const player = new PlayerController(window.tb, map);
+
+  // Initialize camera controller
+  CameraController.initialize(map, window.tb);
+  CameraController.setCameraSettings({
+    pitch: DEFAULT_COORDINATES.pitch,
+    distance: 40,
+    height: 5,
+    zoom: DEFAULT_COORDINATES.zoom || 5
+  });
+
+  // Create a teleport wrapper function that adapts the interface expected by UIController
+  const teleportWrapper = (teleportOptions: TeleportOptions) => {
+    player.teleport(teleportOptions);
+  };
+
+  const realtimeController = new RealtimeController(
+    map,
+    window.tb
+  );
+
+  // Remove the navigation toggle button since it will be part of the minimap now
+  const existingToggle = document.querySelector('.navigation-toggle');
+  if (existingToggle) {
+    existingToggle.remove();
+  }
+
+  // Initialize info panel only if not on a small screen
+  if (!isSmallScreen) {
+    infoPanel = new InfoPanel();
+  }
+
+  // Add keyboard shortcut to toggle info panel (I key)
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'i' || e.key === 'I') {
+      infoPanel?.toggle();
+    }
+  });
+
+  // Check if user is already authenticated
+  const authResult = await authClient.checkAuthentication();
+
+  if (authResult) {
+    // User is already authenticated, skip login and proceed with the game
+    console.log("User already authenticated:", authResult.username);
+
+    // Update player store with user data
+    PlayerStore.setPlayerName(authResult.username);
+    PlayerStore.setIsGuest(authResult.isGuest);
+    PlayerStore.setPlayerId(authResult.playerId);
+    let hasPosition = false;
+    if (authResult.lastPosition) {
+      PlayerStore.setCoordinates([authResult.lastPosition.x, authResult.lastPosition.y, authResult.lastPosition.z]);
+      hasPosition = true;
+    }
+
+    // Initialize the game
+    initializeGame(player, hasPosition ? [PlayerStore.getCoordinates()[0], PlayerStore.getCoordinates()[1]] : [DEFAULT_COORDINATES.lng, DEFAULT_COORDINATES.lat], realtimeController, teleportWrapper);
+  } else {
+    // User is not authenticated, show login screen
+    const introController = new IntroController(authClient, (name: string) => {
+      // Fire and forget name change
+      realtimeController.changePlayerName(name);
+    });
+    await introController.showIntro((initialPosition: [number, number]) => {
+      // After authentication is successful, initialize the game
+      initializeGame(player, initialPosition, realtimeController, teleportWrapper);
+    });
+  }
+}
+
+/**
+ * Initialize the game after authentication is successful
+ */
+function initializeGame(
+  player: PlayerController,
+  initialPosition: [number, number],
+  realtimeController: RealtimeController,
+  teleport: (teleportOptions: TeleportOptions) => void
+) {
+  // Initialize UI controller
+  new UIController(
+    map,
+    teleport,
+    realtimeController.changePlayerName.bind(realtimeController),
+    player.setKeyState.bind(player),
+    player.switchToCar.bind(player),
+    player.switchToWalking.bind(player),
+    player.toggleFlyingMode.bind(player)
+  );
+
+  // Connect to websocket
+  realtimeController.connect().then(() => {
+    // Initialize player state at the provided position
+    player.initializeState(initialPosition);
+
+    Toast.show({
+      type: 'success',
+      message: 'Welcome to Gothenburg! Enjoy your drive!',
+      duration: 3000
+    });
+  });
+}
+
+// Update Window interface
+declare global {
+  interface Window {
+    tb: any;
+    isSmallScreen: boolean;
+  }
+}
+
+// Make isSmallScreen accessible globally
+window.isSmallScreen = isSmallScreen;
+
+// Add event listener to save position before page unloads
+window.addEventListener('beforeunload', () => {
+  // Clean up radio
+  RadioService.getInstance().destroy();
+});
+

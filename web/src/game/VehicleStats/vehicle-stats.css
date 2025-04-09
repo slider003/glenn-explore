@@ -1,0 +1,68 @@
+.vehicle-stats-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    gap: 16px;
+    padding: 12px 16px;
+    background: rgba(31, 41, 55, 0.85);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    font-family: 'Inter', sans-serif;
+}
+
+.vehicle-stat-item {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 600;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    min-width: 60px;
+    text-align: right;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+}
+
+/* Animation for value changes */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.stat-value.changed {
+    animation: pulse 0.3s ease-in-out;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .vehicle-stats-container {
+        top: 45px;
+        right: 50%;
+        transform: translateX(50%);
+        gap: 12px;
+        padding: 2px 4px;
+        font-size: 90%;
+    }
+
+    .stat-value {
+        font-size: 18px;
+        min-width: 50px;
+    }
+
+    .stat-label {
+        font-size: 11px;
+    }
+} 

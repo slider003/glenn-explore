@@ -1,0 +1,253 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Real Game - Feature Implementation Guidelines
+
+This project is a 3D driving game built with Mapbox GL JS and Three.js, allowing players to explore a virtual recreation of Gothenburg. The game features vehicle controls, navigation, minimap functionality, and multiplayer capabilities.
+
+## Core Architecture
+
+1. **Controller-UI Pattern**
+   - Split features into Controller (logic/state) and UI (DOM/interactions)
+   - Use direct method calls instead of event systems
+   - Pass callbacks from controller to UI
+   - Keep state centralized in controller
+   - UI should only maintain state needed for rendering
+
+2. **Type Safety**
+   - Use TypeScript interfaces for all props and state
+   - Keep types in separate `.ts` files
+   - Define clear boundaries between components
+   - Export only what's necessary
+
+## Implementation Structure
+
+1. **File Organization**
+   ```
+   feature/
+   ├── FeatureController.ts  # Logic and state
+   ├── FeatureUI.ts         # UI handling
+   ├── FeatureTypes.ts      # Types
+   └── feature.css          # Styles
+   ```
+
+2. **Naming Conventions**
+   - PascalCase: classes and interfaces
+   - camelCase: methods and properties
+   - Prefix private methods with underscore
+
+3. **Best Practices**
+   - Start simple, add complexity only when needed
+   - Keep state transitions clear and smooth
+   - Handle cleanup properly
+   - Document complex logic with clear comments
+
+## Code Examples
+
+```typescript
+// 1. Controller Setup
+class FeatureController {
+  private ui: FeatureUI;
+  private state: FeatureState;
+  
+  constructor(dependencies: Dependencies, options: Options) {
+    this.state = this.getInitialState();
+    this.ui = new FeatureUI(dependencies, {
+      onAction: () => this.handleAction()
+    });
+  }
+}
+
+// 2. State Management
+interface FeatureState {
+  isActive: boolean;
+  currentValue: string;
+}
+
+private updateState(newValue: string): void {
+  this.state = { ...this.state, currentValue: newValue };
+  this.ui.updateDisplay(newValue);
+}
+
+// 3. Resource Cleanup
+public destroy(): void {
+  clearInterval(this.updateInterval);
+  this.ui.destroy();
+  this.state = this.getInitialState();
+  this.dependencies = null;
+}
+```
+
+## Documentation
+
+- Document complex logic with clear comments
+- Use JSDoc for public methods
+- Keep interfaces well-documented
+- Explain non-obvious implementation decisions
+
+## Architecture Principles
+
+1. **State Management**
+   - State should be explicit and typed (use TypeScript interfaces)
+   - UI should not maintain its own state beyond what's needed for rendering
+   - State changes should flow from controller to UI
+
+3. **Type Safety**
+   - Define clear boundaries between components
+   - Keep types in a separate `.ts` file for reusability
+
+## Code Organization
+
+1. **Naming Conventions**
+   - Use PascalCase for class names and interfaces
+   - Use camelCase for methods and properties
+   - Prefix private methods with underscore
+   - Use descriptive names that indicate purpose
+
+## Implementation Guidelines
+
+1. **Start Simple**
+   - Begin with core functionality
+   - Add complexity only when necessary
+   - Prefer simple solutions over complex ones
+   - Build features incrementally
+
+2. **State Transitions**
+   - Define clear states (e.g., expanded/collapsed)
+   - Handle transitions smoothly with CSS
+   - Ensure state consistency between controller and UI
+   - Validate state changes in the controller
+
+3. **User Interactions**
+   - Keep interaction logic in the UI layer
+   - Pass user actions to controller via callbacks
+   - Controller decides how to handle actions
+   - Maintain clear separation of concerns
+
+4. **Styling**
+   - Use scoped CSS classes
+   - Handle transitions and animations in CSS
+   - Keep styles modular and reusable
+   - Use consistent naming patterns
+
+## Best Practices
+
+1. **Initialization**
+   ```typescript
+   class FeatureController {
+     private ui: FeatureUI;
+     
+     constructor(dependencies, options) {
+       this.ui = new FeatureUI(dependencies, options, {
+         onAction: () => this.handleAction()
+       });
+     }
+   }
+   ```
+
+2. **Method Exposure**
+   ```typescript
+   // Controller: Public methods for external use
+   public doAction(): void {
+     // Update state
+     this.state.someValue = newValue;
+     // Update UI
+     this.ui.updateDisplay(newValue);
+   }
+
+   // UI: Public methods for controller use
+   public updateDisplay(value: string): void {
+     // Update DOM
+     this.elements.someElement.textContent = value;
+   }
+   ```
+
+3. **State Updates**
+   ```typescript
+   // Define state interface
+   interface FeatureState {
+     isActive: boolean;
+     currentValue: string;
+     lastUpdateTime: number;
+   }
+
+   // Initialize state
+   private state: FeatureState = {
+     isActive: false,
+     currentValue: '',
+     lastUpdateTime: 0
+   };
+
+   // Update state
+   public updateState(): void {
+     this.state = {
+       ...this.state,
+       currentValue: newValue,
+       lastUpdateTime: Date.now()
+     };
+   }
+   ```
+
+## Testing Considerations
+
+1. **Component Testing**
+   - Test controller logic independently
+   - Test UI with DOM manipulation
+   - Mock dependencies appropriately
+   - Focus on behavior, not implementation
+
+2. **State Testing**
+   - Verify state transitions
+   - Test edge cases
+   - Ensure state consistency
+   - Test user interaction flows
+
+## Performance
+
+1. **Optimization**
+   - Use requestAnimationFrame for animations
+   - Debounce frequent updates
+   - Minimize DOM operations
+   - Clean up resources properly
+
+2. **Resource Management**
+   ```typescript
+   public destroy(): void {
+     // Clear intervals/timeouts
+     if (this.updateInterval) {
+       clearInterval(this.updateInterval);
+     }
+     
+     // Clean up UI
+     this.ui.destroy();
+     
+     // Reset state
+     this.state = this.getInitialState();
+     
+     // Clear dependencies
+     this.dependencies = null;
+   }
+   ```
+
+## Documentation
+
+1. **Code Comments**
+   - Document complex logic
+   - Explain non-obvious decisions
+   - Use JSDoc for public methods
+   - Keep comments up to date
+
+2. **Type Documentation**
+   ```typescript
+   /**
+    * Configuration options for the feature
+    */
+   interface FeatureOptions {
+     /** Initial state of the feature */
+     isEnabled?: boolean;
+     /** Update interval in milliseconds */
+     updateInterval?: number;
+   }
+   ``` 
