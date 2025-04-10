@@ -1,4 +1,4 @@
-# Glenn Explore
+# Glenn Explore, try it at [playglenn.com](https://playglenn.com)
 
 ## ⚠️ WARNING: THIS ENTIRE PROJECT IS VIBE-CODED ⚠️
 No best practices, no patterns, just vibes. Enter at your own risk!
