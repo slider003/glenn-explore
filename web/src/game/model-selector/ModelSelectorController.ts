@@ -37,7 +37,7 @@ export class ModelSelectorController {
         header.className = 'model-selector-header';
         header.innerHTML = `
             <div class="header-content">
-                <h2>Select Model</h2>
+                <h2>Click on the model you want to use</h2>
                 <div class="model-selector-subtitle">You can change this anytime in settings ⚙️</div>
             </div>
             <button class="model-selector-close">×</button>
@@ -48,7 +48,9 @@ export class ModelSelectorController {
         promoText.className = 'model-selector-promo';
         promoText.innerHTML = `
             Want your own model or car in the game? Send me an image of what you want!<br>
-            <a href="mailto:mail@playglenn.com">mail@playglenn.com</a> - I'll turn it into a 3D model for you <span class="price">2USD/model</span>
+            <a href="mailto:mail@playglenn.com">mail@playglenn.com</a> - I'll turn it into a 3D model for you <span class="price">2USD/model</span><br>
+            <a href="https://discord.gg/XzSzsDhB" target="_blank">Join our Discord community!</a>
+            <p>https://discord.gg/XzSzsDhB</p>
         `;
 
         // Create content
