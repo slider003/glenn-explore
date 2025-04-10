@@ -283,7 +283,7 @@ export class RealtimeServer {
                     },
                     currentSpeed: PlayerStore.getCurrentSpeed(),
                     kilometersDriven: PlayerStore.getKilometersDriven(),
-                    modelType: state.modelType || 'cesiumMan',
+                    modelType: state.modelType || 'dino',
                     animationState: state.animationState || 'idle',
                     stateType: state.stateType || 'walking'
                 });

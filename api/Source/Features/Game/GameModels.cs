@@ -10,7 +10,7 @@ public class PlayerState
     public TimeSpan TotalTimeOnline { get; set; }
     public double CurrentSpeed { get; set; }
     public double KilometersDriven { get; set; }
-    public string ModelType { get; set; } = "cesiumMan";
+    public string ModelType { get; set; } = "dino";
     public string AnimationState { get; set; } = "idle";
     public string StateType { get; set; } = "walking";
 }
@@ -20,7 +20,7 @@ public class PositionUpdate
     public Position Position { get; set; } = new();
     public double CurrentSpeed { get; set; }
     public double KilometersDriven { get; set; }
-    public string ModelType { get; set; } = "cesiumMan";
+    public string ModelType { get; set; } = "dino";
     public string AnimationState { get; set; } = "idle";
     public string StateType { get; set; } = "walking";
 }

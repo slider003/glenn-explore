@@ -212,4 +212,29 @@
 
 .free-camera-help.hidden {
   display: none;
+}
+
+.settings-section h4[data-section="model"]::before {
+    content: '🎭';
+    font-size: 14px;
+}
+
+.model-settings .control-btn {
+    width: 100%;
+    background: rgba(59, 130, 246, 0.2);
+    font-size: 12px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.model-settings .control-btn:hover {
+    background: rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+}
+
+.model-settings .control-btn:active {
+    transform: translateY(1px);
 } 

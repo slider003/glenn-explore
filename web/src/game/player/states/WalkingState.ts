@@ -11,7 +11,7 @@ export class WalkingState implements PlayerState<PlayerPhysics> {
     mixer: THREE.AnimationMixer | null = null;
     currentSpeed: number = 0;
     model: any;
-    modelType: string = 'cesiumMan';
+    modelType: string = 'dino';
     animationState: string = 'idle';
     stateType: 'car' | 'walking' = 'walking';
     private lastFrameTime: number = 0;
@@ -31,8 +31,9 @@ export class WalkingState implements PlayerState<PlayerPhysics> {
     private velocity: number = 0;
     private controller?: PlayerController;
 
-    constructor(private tb: Threebox) {
-        this.modelConfig = PlayerController.getModelConfig('cesiumMan');
+    constructor(private tb: Threebox, modelId: string) {
+        this.modelConfig = PlayerController.getModelConfig(modelId);
+        this.modelType = modelId;
     }
 
     async enter(player: PlayerController): Promise<void> {

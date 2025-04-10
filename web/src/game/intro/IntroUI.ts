@@ -52,17 +52,6 @@ export class IntroUI {
           <input type="text" class="name-input" placeholder="Enter your name" value="${this.playerName}" maxlength="20">
           <div class="name-validation-message">Name must be 2-20 characters and only contain letters, numbers, hyphens, and underscores</div>
         </div>
-        <h3>Choose Your Ride 🏎️</h3>
-        <div class="toggle-container">
-          <div class="toggle-option ${this.selectedVehicle === 'car' ? 'selected' : ''}" data-vehicle="car">
-            <div class="vehicle-icon">🚗</div>
-            <span>Car</span>
-          </div>
-          <div class="toggle-option ${this.selectedVehicle === 'dinosaur' ? 'selected' : ''}" data-vehicle="dinosaur">
-            <div class="vehicle-icon">🦖</div>
-            <span>Dino</span>
-          </div>
-        </div>
       </div>
     `;
   }

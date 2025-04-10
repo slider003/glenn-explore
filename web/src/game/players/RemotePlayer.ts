@@ -16,7 +16,7 @@ export class RemotePlayer {
     private lastUpdateTime: number = Date.now();
     private messageTimeout: number | null = null;
     private messageUpdateInterval: number | null = null;
-    private modelType: string = 'cesiumMan';
+    private modelType: string = 'dino';
     private animationState: string = 'idle';
     private animationFrameId: number | null = null;
     private lastAnimationTime: number = 0;
@@ -52,6 +52,8 @@ export class RemotePlayer {
     private async loadModel(): Promise<void> {
         this.modelType = this.data.state.modelType;
         this.animationState = this.data.state.animationState;
+        console.log(`Loading model: ${this.modelType}`);
+        console.log(`State type: ${this.data.state.stateType}`);
         const modelConfig = this.data.state.stateType === 'car' 
             ? PlayerController.getCarConfig(this.data.state.modelType)
             : PlayerController.getModelConfig(this.data.state.modelType);

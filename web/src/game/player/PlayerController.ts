@@ -20,6 +20,7 @@ import { ZoomController } from '../ZoomController';
 import mapboxgl from 'mapbox-gl'
 import { InputUtils } from '../InputUtils';
 import { TeleportOptions } from '../../types/teleport';
+import { DEFAULT_COORDINATES } from '../../config';
 
 export class PlayerController implements IFollowable {
     public static getModelConfig(modelType: keyof PlayerModels): ModelConfig<PlayerPhysics> {
@@ -55,11 +56,11 @@ export class PlayerController implements IFollowable {
         // Initialize state based on PlayerStore's saved movement mode
         const savedMode = PlayerStore.getMovementMode();
         if (savedMode === 'car') {
-            this.currentState = new CarState(this.tb);
+            this.currentState = new CarState(this.tb, PlayerStore.getState().modelType);
         } else {
-            this.currentState = new WalkingState(this.tb);
+            this.currentState = new WalkingState(this.tb, PlayerStore.getState().modelType);
         }
-        
+
         this.ui = new PlayerUI(map, this);
 
         new VehicleStatsController()
@@ -131,19 +132,12 @@ export class PlayerController implements IFollowable {
     get threebox(): Threebox { return this.tb; }
 
     public async initializeState(initialPosition: [number, number]): Promise<void> {
-        this._coordinates = initialPosition;
-        
+        this._coordinates = initialPosition ?? [DEFAULT_COORDINATES.lng, DEFAULT_COORDINATES.lat];
+
         // Make sure current state matches saved movement mode
-        const savedMode = PlayerStore.getMovementMode();
-        if ((savedMode === 'car' && !(this.currentState instanceof CarState)) || 
-            (savedMode === 'walking' && !(this.currentState instanceof WalkingState))) {
-            if (savedMode === 'car') {
-                this.currentState = new CarState(this.tb);
-            } else {
-                this.currentState = new WalkingState(this.tb);
-            }
-        }
-        
+        this.currentState = new CarState(this.tb, 'lambo');
+
+
         await this.setState(this.currentState);
         this.startUpdateLoop();
         setInterval(() => {
@@ -302,15 +296,29 @@ export class PlayerController implements IFollowable {
         CameraController.stopFollowing();
     }
 
-    public switchToCar(): void {
-        const carState = new CarState(this.tb);
-        this.setState(carState);
+    public async switchState(modelId: string, type: 'car' | 'walking'): Promise<void> {
+        // Create appropriate state based on type
+        const newState = type === 'car' ? new CarState(this.tb, modelId) : new WalkingState(this.tb, modelId);
+
+        // Update store values
+        PlayerStore.setMovementMode(type);
+        PlayerStore.setModelType(modelId);
+
+        console.log("HELLO!?", modelId)
+
+        // Switch state with new model
+        await this.setState(newState);
+    }
+
+    public async switchToCar(): Promise<void> {
+        const state = new CarState(this.tb, PlayerStore.getState().modelType);
+        await this.setState(state);
         PlayerStore.setMovementMode('car');
     }
 
-    public switchToWalking(): void {
-        const walkingState = new WalkingState(this.tb);
-        this.setState(walkingState);
+    public async switchToWalking(): Promise<void> {
+        const state = new WalkingState(this.tb, PlayerStore.getState().modelType);
+        await this.setState(state);
         PlayerStore.setMovementMode('walking');
     }
 
@@ -318,16 +326,16 @@ export class PlayerController implements IFollowable {
         this.currentState.exit(this);
         CameraController.stopFollowing();
         this._coordinates = [teleportOptions.position.lng, teleportOptions.position.lat];
-        if(teleportOptions.rotation) {
+        if (teleportOptions.rotation) {
             this._rotation = { x: 0, y: 0, z: teleportOptions.rotation.z ?? -CameraController.getBearing() };
         }
-        if(teleportOptions.zoom) {
+        if (teleportOptions.zoom) {
             ZoomController.setZoom(teleportOptions.zoom);
         }
-        if(teleportOptions.pitch) {
+        if (teleportOptions.pitch) {
             PitchController.setPitch(teleportOptions.pitch);
         }
-        if(teleportOptions.bearing) {
+        if (teleportOptions.bearing) {
             CameraController.setBearing(teleportOptions.bearing);
         }
         await this.setState(this.currentState);
@@ -372,6 +380,7 @@ export class PlayerController implements IFollowable {
                         reject(new Error('No model returned'));
                         return;
                     }
+                    console.log("Model loaded", model.animations)
                     if (model.animations && model.animations.length > 0) {
                         this.currentState.mixer = new THREE.AnimationMixer(model);
                     }
@@ -405,10 +414,10 @@ export class PlayerController implements IFollowable {
 
         const isCurrentlyFlying = PlayerStore.isPlayerFlying();
         PlayerStore.setIsFlying(!isCurrentlyFlying);
-        
+
         // Update car mode in PlayerStore for persistence
         PlayerStore.setCarMode(!isCurrentlyFlying ? 'fly' : 'normal');
-        
+
         const statusMessage = !isCurrentlyFlying ? 'ENABLED 🛸' : 'DISABLED';
         console.log('🔄 Flying mode:', !isCurrentlyFlying ? 'ENABLED 🛸' : 'DISABLED');
         this.showMessage(`Flying mode ${statusMessage}`, 2000);
@@ -426,14 +435,14 @@ export class PlayerController implements IFollowable {
         }
 
         const key = e.key.toLowerCase();
-        
+
         // Check if this is a key we're tracking
         if (key in this.keyStates) {
             this.setKeyState(key, true);
         } else if (key === ' ') {
             // Handle space bar specifically
             this.setKeyState('space', true);
-            
+
             if (PlayerStore.isPlayerFlying()) {
                 console.log('🚀 SPACE pressed in flying mode!');
             }
@@ -446,14 +455,14 @@ export class PlayerController implements IFollowable {
         }
 
         const key = e.key.toLowerCase();
-        
+
         // Check if this is a key we're tracking
         if (key in this.keyStates) {
             this.setKeyState(key, false);
         } else if (key === ' ') {
             // Handle space bar specifically
             this.setKeyState('space', false);
-            
+
             if (PlayerStore.isPlayerFlying()) {
                 console.log('🛬 SPACE released in flying mode!');
             }

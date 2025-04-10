@@ -25,7 +25,7 @@ public class Player
     public double KilometersDriven { get; set; }
 
     // State
-    public string ModelType { get; set; } = "cesiumMan";
+    public string ModelType { get; set; } = "dino";
     public string AnimationState { get; set; } = "idle";
     public string StateType { get; set; } = "walking";
     public TimeSpan TotalTimeOnline { get; set; }

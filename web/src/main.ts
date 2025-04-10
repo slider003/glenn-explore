@@ -183,14 +183,17 @@ function initializeGame(
     player.setKeyState.bind(player),
     player.switchToCar.bind(player),
     player.switchToWalking.bind(player),
-    player.toggleFlyingMode.bind(player)
+    player.toggleFlyingMode.bind(player),
+    player
   );
 
   // Connect to websocket
   realtimeController.connect().then(() => {
     // Initialize player state at the provided position
     player.initializeState(initialPosition);
-
+    setTimeout(() => {
+      window.showModelSelector();
+    }, 1000);
     Toast.show({
       type: 'success',
       message: 'Welcome to Gothenburg! Enjoy your drive!',

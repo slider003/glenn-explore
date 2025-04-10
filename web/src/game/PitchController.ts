@@ -6,7 +6,7 @@ import { InputUtils } from './InputUtils';
 export class PitchController {
   private static instance: PitchController;
   private static currentPitch: number = 45;
-  private static minPitch: number = 0;    // Completely flat (looking forward)
+  private static minPitch: number = -20;    // Completely flat (looking forward)
   private static maxPitch: number = 85;   // Almost straight down
 
   // How much to change pitch per key press (in degrees)

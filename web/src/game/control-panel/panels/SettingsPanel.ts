@@ -32,18 +32,15 @@ export class SettingsPanel extends BasePanelUI {
       </div>
       
       <div class="settings-list">
-        <!-- Movement Mode Section (NEW) -->
-        <div class="settings-section movement-settings">
-          <h4>Movement Mode</h4>
-          <div class="mode-toggle">
-            <button class="mode-btn ${movementMode === 'car' ? 'active' : ''}" data-movement-mode="car">
-              🚗 Car
-            </button>
-            <button class="mode-btn ${movementMode === 'walking' ? 'active' : ''}" data-movement-mode="walking">
-              🚶 Walking
-            </button>
-          </div>
+        <!-- Model Selection Section (NEW) -->
+        <div class="settings-section model-settings">
+          <h4>🎭 Model</h4>
+          <button class="control-btn change-model" title="Change Model">
+            Change Model
+          </button>
         </div>
+
+      
 
         <!-- Car Mode Section (NEW - conditionally shown) -->
         <div class="settings-section car-mode-settings ${movementMode === 'car' ? 'visible' : ''}">
@@ -149,6 +146,12 @@ export class SettingsPanel extends BasePanelUI {
 
     closeButton?.addEventListener('touchend', () => {
       this.closePanel();
+    });
+
+    // Model Change button (NEW)
+    const modelChangeBtn = content.querySelector('.change-model');
+    modelChangeBtn?.addEventListener('click', () => {
+        window.showModelSelector();
     });
 
     // Movement Mode toggle (NEW)

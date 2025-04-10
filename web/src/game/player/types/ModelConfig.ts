@@ -7,6 +7,7 @@ export interface ModelConfig<T> {
         rotation: { x: number; y: number; z: number };
         anchor: string;
         elevationOffset?: number;
+        screenshot?: string;
     };
     physics: T;
     walkingAnimation?: {

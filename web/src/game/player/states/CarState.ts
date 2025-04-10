@@ -6,7 +6,6 @@ import { Threebox } from 'threebox-plugin';
 import { ModelConfig } from '../types/ModelConfig';
 import { CarPhysics } from '../types/CarModels';
 import { PlayerStore } from '../../stores/PlayerStore';
-import { InputUtils } from '../../InputUtils';
 import { Toast } from '../../toast/ToastController';
 
 export class CarState implements PlayerState<CarPhysics> {
@@ -48,10 +47,11 @@ export class CarState implements PlayerState<CarPhysics> {
     private lastDistanceCalculation: number = 0;
     private distanceAccumulator: number = 0;
 
-    constructor(private tb: Threebox) {
-        this.modelConfig = PlayerController.getCarConfig('lambo');
+    constructor(private tb: Threebox, modelId: string) {
+        this.modelConfig = PlayerController.getCarConfig(modelId);
         // Initialize kilometers from PlayerStore
         this.distanceAccumulator = PlayerStore.getKilometersDriven();
+        this.modelType = modelId;
     }
 
     async enter(player: PlayerController): Promise<void> {

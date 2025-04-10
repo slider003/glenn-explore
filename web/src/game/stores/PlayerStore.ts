@@ -14,7 +14,7 @@ export class PlayerStore {
     private static collisionEnabled: boolean | null = null;
     private static coordinates: [number, number, number] = [DEFAULT_COORDINATES.lng, DEFAULT_COORDINATES.lat, 0];
     private static rotation: { x: number, y: number, z: number } = { x: 0, y: 0, z: 0 };
-    private static modelType: string = 'cesiumMan';
+    private static modelType: string = 'dino';
     private static animationState: string = 'idle';
     private static stateType: 'car' | 'walking' = 'walking';
     private static saveInterval: ReturnType<typeof setInterval>;
@@ -242,7 +242,7 @@ export class PlayerStore {
             PlayerStore.collisionEnabled = state.collisionEnabled ?? false;
             PlayerStore.coordinates = state.coordinates || [0, 0, 0];
             PlayerStore.rotation = state.rotation || { x: 0, y: 0, z: 0 };
-            PlayerStore.modelType = state.modelType || 'cesiumMan';
+            PlayerStore.modelType = state.modelType || 'dino';
             PlayerStore.animationState = state.animationState || 'idle';
             PlayerStore.stateType = state.stateType || 'walking';
             PlayerStore.allowedToDrive = state.allowedToDrive ?? true;
@@ -314,7 +314,7 @@ export class PlayerStore {
         PlayerStore.collisionEnabled = false;
         PlayerStore.coordinates = [0, 0, 0];
         PlayerStore.rotation = { x: 0, y: 0, z: 0 };
-        PlayerStore.modelType = 'cesiumMan';
+        PlayerStore.modelType = 'dino';
         PlayerStore.animationState = 'idle';
         PlayerStore.stateType = 'walking';
         PlayerStore.allowedToDrive = true;
