@@ -20,6 +20,10 @@ export class IntroUI {
           This helps us keep track of your achievements, lap times, and stats.
           A one-time password will be sent to your email.
         </p>
+        <p class="consent-message">
+          By providing your email, you agree to receive occasional updates about game features and improvements. 
+          You can easily unsubscribe via the link in any email you receive from us.
+        </p>
         <div class="email-input-container">
           <input type="email" class="email-input" placeholder="Enter your email" value="${this.email}">
         </div>

@@ -38,7 +38,7 @@ public partial class Program
             // Rate limit OTP requests to 3 per minute per IP address
             options.AddFixedWindowLimiter("otp", options =>
             {
-                options.PermitLimit = 5;
+                options.PermitLimit = 20;
                 options.Window = TimeSpan.FromMinutes(1);
                 options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
                 options.QueueLimit = 0;
@@ -73,7 +73,7 @@ public partial class Program
                         factory => new FixedWindowRateLimiterOptions
                         {
                             AutoReplenishment = true,
-                            PermitLimit = 5,
+                            PermitLimit = 20,
                             Window = TimeSpan.FromMinutes(1)
                         });
                 }
