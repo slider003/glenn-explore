@@ -252,7 +252,7 @@ export class PlayersOnlineUI {
     style.textContent = `
       .players-online-container {
         position: fixed;
-        top: 10px;
+        top: 50px;
         left: 50%;
         transform: translateX(-50%);
         z-index: 10000;

@@ -30,7 +30,7 @@ export const CAR_MODELS: CarModels = {
         physics: {
             maxSpeed: 0.1,         // Reduced from 5
             acceleration: 0.0003,      // Reduced from 1.2
-            brakeForce: 0.0008,       // Reduced from 60
+            brakeForce: 0.004,       // Reduced from 60
             reverseSpeed: 0.01,      // Reduced from 20
             turnSpeed: 1,        // Reduced from 2.0
             friction: 0.99         // Slightly increased from 0.95 for smoother deceleration
@@ -53,7 +53,7 @@ export const CAR_MODELS: CarModels = {
         physics: {
             maxSpeed: 0.04,         // Reduced from 5
             acceleration: 0.0001,      // Reduced from 1.2
-            brakeForce: 0.0002,       // Reduced from 60
+            brakeForce: 0.004,       // Reduced from 60
             reverseSpeed: 0.01,      // Reduced from 20
             turnSpeed: 1,        // Reduced from 2.0
             friction: 0.99         // Slightly increased from 0.95 for smoother deceleration
@@ -76,7 +76,7 @@ export const CAR_MODELS: CarModels = {
         physics: {
             maxSpeed: 0.06,         // Reduced from 5
             acceleration: 0.0003,      // Reduced from 1.2
-            brakeForce: 0.0002,       // Reduced from 60
+            brakeForce: 0.004,       // Reduced from 60
             reverseSpeed: 0.01,      // Reduced from 20
             turnSpeed: 0.7,        // Reduced from 2.0
             friction: 0.999         // Slightly increased from 0.95 for smoother deceleration
@@ -99,7 +99,7 @@ export const CAR_MODELS: CarModels = {
         physics: {
             maxSpeed: 0.06,         // Reduced from 5
             acceleration: 0.0001,      // Reduced from 1.2
-            brakeForce: 0.0002,       // Reduced from 60
+            brakeForce: 0.004,       // Reduced from 60
             reverseSpeed: 0.01,      // Reduced from 20
             turnSpeed: 1.2,        // Reduced from 2.0
             friction: 0.999         // Slightly increased from 0.95 for smoother deceleration

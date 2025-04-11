@@ -37,12 +37,4 @@ export const MENU_ITEMS: () => MenuItem[] = () => [
     label: 'Settings',
     panel: SettingsPanel
   },
-  // Only show donation panel on desktop
-  ...(window.isSmallScreen ? [] : [
-    {
-      id: 'donation',
-      emoji: '☕',
-      label: 'Buy me a coffee',
-      panel: DonationPanel
-    }])
 ]; 

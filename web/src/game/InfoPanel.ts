@@ -117,7 +117,7 @@ export class InfoPanel {
         font-size: 12px;
         padding: 10px;
         position: absolute;
-        top: 100px;
+        top: 140px;
         left: 100%;
         transform: translateX(-100%);
         z-index: 10;

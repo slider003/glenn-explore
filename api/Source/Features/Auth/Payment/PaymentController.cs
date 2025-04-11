@@ -63,8 +63,8 @@ public class PaymentController : ControllerBase
                 },
             },
             Mode = "payment",
-            SuccessUrl = $"{domain}/payment-success",
-            CancelUrl = $"{domain}/payment-cancel",
+            SuccessUrl = $"{domain}/play",
+            CancelUrl = $"{domain}/play",
             CustomerEmail = user.Email,
             Metadata = new Dictionary<string, string>
             {

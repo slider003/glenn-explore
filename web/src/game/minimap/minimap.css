@@ -2,7 +2,7 @@
 .minimap-container {
     position: fixed;
     left: 20px;
-    top: 20px;
+    top: 55px;
     z-index: 1000;
     transition: all 0.3s ease-in-out;
     display: flex;
