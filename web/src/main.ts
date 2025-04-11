@@ -80,7 +80,6 @@ async function setupScene() {
     PlayerStore.setPlayerName(authResult.username);
     PlayerStore.setIsGuest(authResult.isGuest);
     PlayerStore.setPlayerId(authResult.playerId);
-
     // If user hasn't paid, show intro with payment step
     if (!authResult.hasPaid) {
       const introController = new IntroController(authClient);

@@ -32,6 +32,7 @@ export interface LoginState {
   email: string;
   isVerified: boolean;
   otpSent: boolean;
+  isLoading: boolean;
 }
 
 export interface PaymentState {

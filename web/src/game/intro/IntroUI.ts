@@ -17,16 +17,27 @@ export class IntroUI {
 
   private renderLoginSection() {
     if (!this.state) return '';
-    
+
     if (!this.state.loginState.otpSent) {
       return `
         <div class="email-section">
           <h2 class="welcome-message">Login with your email</h2>
-          <p class="auth-explanation">
+            <p class="auth-explanation">
             To play Glenn Explore and save your progress, we need your email. 
             This helps us keep track of your achievements, lap times, and stats.
             A one-time password will be sent to your email.
           </p>
+          <p class="auth-explanation">
+            After verifying your email, you have to pay a onetime fee of 1USD to play.
+            I'm sincerely sorry for the inconvenience, but this is the only way I can cover the costs of the game.
+            <br/>
+            <br/>
+            We went viral a litle bit too fast and didn't expect the response to be this big.
+            <br/>
+            <br/>
+            I am looking into alternative funding options, I truly want this to be a free game for everyone!
+          </p>
+
           <a style="text-align:center;display:block;margin-bottom:10px;" href="https://discord.gg/XzSzsDhB" target="_blank">Join our Discord community!</a>
           <p class="consent-message">
             By providing your email, you agree to receive occasional updates about game features and improvements. 
@@ -164,7 +175,7 @@ export class IntroUI {
     this.state = initialState;
     this.element = document.createElement('div');
     this.element.className = 'intro-overlay';
-    
+
     this.renderIntroDialog();
 
     document.body.appendChild(this.element);
@@ -188,15 +199,18 @@ export class IntroUI {
 
     let content = '';
     let buttonText = '';
+    let isLoading = false;
 
     switch (this.state.currentStep) {
       case 'login':
         content = this.renderLoginSection();
         buttonText = this.state.loginState.otpSent ? 'Verify & Continue' : 'Send Verification Code';
+        isLoading = this.state.loginState.isLoading;
         break;
       case 'payment':
         content = this.renderPaymentSection();
         buttonText = this.state.paymentState.isProcessing ? 'Processing...' : 'Continue to Payment';
+        isLoading = this.state.paymentState.isProcessing;
         break;
       case 'instructions':
         content = this.renderInstructionsSection();
@@ -210,15 +224,15 @@ export class IntroUI {
         <div class="intro-content">
           ${content}
         </div>
-        <button class="start-game-btn" ${this.shouldDisableButton() ? 'disabled' : ''}>
-          ${buttonText}
+        <button class="start-game-btn" ${this.shouldDisableButton() || isLoading ? 'disabled' : ''}>
+          ${isLoading ? '<span class="loading-spinner"></span>' : ''}${buttonText}
         </button>
       </div>
     `;
   }
 
   private shouldDisableButton(): boolean {
-    console.log("Should disable button?", this.state);
+    if (this.state?.loginState.isLoading) return true;
     if (!this.state) return true;
 
     switch (this.state.currentStep) {
@@ -291,15 +305,20 @@ export class IntroUI {
     if (!emailInput) return;
 
     try {
+      this.state.loginState.isLoading = true;
+      this.updateButtonState();
       const response = await this.options.onRequestOtp(emailInput.value);
       if (response.success) {
         this.state.loginState.email = emailInput.value;
         this.state.loginState.otpSent = true;
+        this.state.loginState.isLoading = false;
         this.renderIntroDialog();
         this.addEventListeners();
       }
     } catch (error) {
       console.error('Failed to request OTP:', error);
+      this.state.loginState.isLoading = false;
+      this.updateButtonState();
     }
   }
 
@@ -310,24 +329,24 @@ export class IntroUI {
     if (!otpInput) return;
 
     try {
+      this.state.loginState.isLoading = true;
+      this.updateButtonState();
       const response = await this.options.onVerifyOtp(this.state.loginState.email, otpInput.value);
       if (response) {
         this.state.loginState.isVerified = true;
-        
-        // If user hasn't paid, move to payment step
+
         if (!response.hasPaid) {
           this.state.currentStep = 'payment';
-          this.renderIntroDialog();
-          this.addEventListeners();
         } else {
-          // If user has paid, move to instructions
           this.state.currentStep = 'instructions';
-          this.renderIntroDialog();
-          this.addEventListeners();
         }
       }
     } catch (error) {
       console.error('Failed to verify OTP:', error);
+    } finally {
+      this.state.loginState.isLoading = false;
+      this.renderIntroDialog();
+      this.addEventListeners();
     }
   }
 
@@ -389,7 +408,7 @@ export class IntroUI {
         if (!this.state || !this.options) return;
         const name = nameInput.value.trim();
         this.state.instructionsState.playerName = name;
-        
+
         if (name && !this.validateName(name)) {
           nameInput.classList.add('invalid');
           this.element?.querySelector('.name-validation-message')?.classList.add('visible');

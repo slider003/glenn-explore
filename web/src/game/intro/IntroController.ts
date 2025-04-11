@@ -31,7 +31,16 @@ export class IntroController {
       },
       onRequestOtp: async (email) => {
         try {
-          return await this.authClient.requestOtp(email);
+          const response = await this.authClient.requestOtp(email);
+          if (response.success) {
+            this.introUI.updateState('login', {
+              currentStep: 'login',
+              loginState: { email, isVerified: false, otpSent: true, isLoading: false },
+              paymentState: { isProcessing: false },
+              instructionsState: { playerName: '', selectedVehicle: this.selectedVehicle }
+            });
+          }
+          return response;
         } catch (error) {
           console.error('Failed to request OTP:', error);
           throw error;
@@ -97,8 +106,8 @@ export class IntroController {
     };
 
     this.introUI.show(options, {
-      currentStep: 'login',
-      loginState: { email: '', isVerified: false, otpSent: false },
+      currentStep: loginResponse ? 'payment' : 'login',
+      loginState: { email: '', isVerified: false, otpSent: false, isLoading: false },
       paymentState: { isProcessing: false },
       instructionsState: { playerName: '', selectedVehicle: this.selectedVehicle }
     });
