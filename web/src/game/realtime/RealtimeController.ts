@@ -14,15 +14,13 @@ export class RealtimeController {
     private authClient: AuthClient
 
     constructor(
-        map: mapboxgl.Map,
-        tb: Threebox
     ) {
         this.server = new RealtimeServer()
         this.authClient = new AuthClient()
         this.chatController = null
 
-        // Initialize PlayersController
-        PlayersController.initialize(map, tb)
+
+
 
         // Listen for chat message send requests
         window.addEventListener('chat:send_message', ((event: CustomEvent) => {
@@ -42,7 +40,7 @@ export class RealtimeController {
     /**
      * Try to connect to realtime server
      */
-    public async connect(): Promise<void> {
+    public async connect(map: mapboxgl.Map, tb: Threebox): Promise<void> {
         try {
             // // First authenticate as guest using vehicle's player ID
             // const guestId = PlayerStore.getPlayerId()
@@ -52,6 +50,7 @@ export class RealtimeController {
             // //if (loginResponse.lastPosition) {
             //     //this.onTeleport(loginResponse.lastPosition.x, loginResponse.lastPosition.y)
             // //}
+            PlayersController.initialize(map, tb)
 
             // Now try to connect to SignalR
             await this.server.connect(

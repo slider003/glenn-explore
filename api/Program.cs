@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.DataProtection.Repositories;
 using Microsoft.AspNetCore.DataProtection;
+using Api.Features.Auth.Payment;
 
 namespace Api.Shell;
 
@@ -318,6 +319,29 @@ public partial class Program
                 // Configure OpenTelemetry Protocol (OTLP) Exporter
                 .AddOtlpExporter();
         });
+
+        // Configure Stripe
+        var stripeSecretKey = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
+        var stripeWebhookSecret = Environment.GetEnvironmentVariable("STRIPE_WEBHOOK_SECRET");
+        if (string.IsNullOrEmpty(stripeSecretKey))
+        {
+            throw new InvalidOperationException("STRIPE_SECRET_KEY environment variable is not set");
+        }
+        if (string.IsNullOrEmpty(stripeWebhookSecret))
+        {
+            throw new InvalidOperationException("STRIPE_WEBHOOK_SECRET environment variable is not set");
+        }
+        builder.Configuration["Stripe:SecretKey"] = stripeSecretKey;
+        builder.Configuration["Stripe:WebhookSecret"] = stripeWebhookSecret;
+
+        // Configure domain
+        var domain = builder.Environment.IsDevelopment() 
+            ? "http://localhost:5173" 
+            : "https://playglenn.com";
+        builder.Configuration["App:Domain"] = domain;
+
+        // Add Stripe services
+        builder.Services.AddScoped<PaymentService>();
 
         var app = builder.Build();
 

@@ -30,61 +30,9 @@ let isSmallScreen = window.innerWidth < 768; // Determine once if this is a smal
 window.isSmallScreen = isSmallScreen;
 
 console.log("PlayerStore.getMap()", PlayerStore.getMap())
-const map = new mapboxgl.Map({
-  container: 'map',
-  style: PlayerStore.getMap() === 'satellite' ? MAPBOX_STYLE_SATELLITE : MAPBOX_STYLE_STANDARD,
-  center: [0, 0], // Start at center of the world (will be changed by intro)
-  zoom: 1.5, // Zoomed all the way out to see the entire Earth
-  pitch: 0, // Start with a top-down view
-  bearing: DEFAULT_COORDINATES.bearing,
-  antialias: true,
-})
+let map: mapboxgl.Map | null = null
 
-map.setConfigProperty('basemap', 'lightPreset', PlayerStore.getTimeOfDay());
-// Add terrain source and layer
-map.on('style.load', () => {
-
-  map.addSource('mapbox-dem', {
-    'type': 'raster-dem',
-    'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
-    'tileSize': 512,
-    'maxzoom': 12,  // Reduced from 14 to improve performance
-    'minzoom': 3    // Add minzoom to prevent loading terrain data when zoomed out
-  });
-
-  map.setTerrain({
-    'source': 'mapbox-dem',
-    'exaggeration': 0.7,
-  });
-
-  // Add custom layer for Threebox
-  map.addLayer({
-    id: 'custom-threebox-layer',
-    type: 'custom',
-    renderingMode: '3d',
-    onAdd: function (map: mapboxgl.Map, gl: WebGLRenderingContext) {
-      // Initialize Threebox
-      window.tb = new Threebox(
-        map,
-        gl,
-        {
-          defaultLights: true,
-          enableSelectingObjects: true,
-          enableDraggingObjects: true,
-          enableTooltips: true,
-          enableSelectingFeatures: true,
-        }
-      )
-
-      // Set up the scene and start the intro animation
-      setupScene();
-    },
-    render: function (_gl: WebGLRenderingContext, _matrix: number[]) {
-      // Update Threebox scene on each frame
-      window.tb?.update()
-    }
-  } as any)
-})
+setupScene();
 
 // Function to set up the scene with vehicle and camera
 async function setupScene() {
@@ -95,26 +43,14 @@ async function setupScene() {
   const authClient = new AuthClient();
 
   // Initialize player controller
-  const player = new PlayerController(window.tb, map);
-
-  // Initialize camera controller
-  CameraController.initialize(map, window.tb);
-  CameraController.setCameraSettings({
-    pitch: DEFAULT_COORDINATES.pitch,
-    distance: 40,
-    height: 5,
-    zoom: DEFAULT_COORDINATES.zoom || 5
-  });
+  const player = new PlayerController();
 
   // Create a teleport wrapper function that adapts the interface expected by UIController
   const teleportWrapper = (teleportOptions: TeleportOptions) => {
     player.teleport(teleportOptions);
   };
 
-  const realtimeController = new RealtimeController(
-    map,
-    window.tb
-  );
+  const realtimeController = new RealtimeController();
 
   // Remove the navigation toggle button since it will be part of the minimap now
   const existingToggle = document.querySelector('.navigation-toggle');
@@ -138,13 +74,23 @@ async function setupScene() {
   const authResult = await authClient.checkAuthentication();
 
   if (authResult) {
-    // User is already authenticated, skip login and proceed with the game
-    console.log("User already authenticated:", authResult.username);
+    console.log("User authenticated:", authResult.username);
 
     // Update player store with user data
     PlayerStore.setPlayerName(authResult.username);
     PlayerStore.setIsGuest(authResult.isGuest);
     PlayerStore.setPlayerId(authResult.playerId);
+
+    // If user hasn't paid, show intro with payment step
+    if (!authResult.hasPaid) {
+      const introController = new IntroController(authClient);
+      await introController.showIntro(authResult, (initialPosition: [number, number]) => {
+        initializeGame(player, initialPosition, realtimeController, teleportWrapper);
+      });
+      return;
+    }
+
+    // If user has paid, proceed with the game
     let hasPosition = false;
     if (authResult.lastPosition) {
       PlayerStore.setCoordinates([authResult.lastPosition.x, authResult.lastPosition.y, authResult.lastPosition.z]);
@@ -152,14 +98,19 @@ async function setupScene() {
     }
 
     // Initialize the game
-    initializeGame(player, hasPosition ? [PlayerStore.getCoordinates()[0], PlayerStore.getCoordinates()[1]] : [DEFAULT_COORDINATES.lng, DEFAULT_COORDINATES.lat], realtimeController, teleportWrapper);
+    initializeGame(
+      player, 
+      hasPosition ? [PlayerStore.getCoordinates()[0], PlayerStore.getCoordinates()[1]] : [DEFAULT_COORDINATES.lng, DEFAULT_COORDINATES.lat], 
+      realtimeController, 
+      teleportWrapper
+    );
   } else {
     // User is not authenticated, show login screen
     const introController = new IntroController(authClient, (name: string) => {
       // Fire and forget name change
       realtimeController.changePlayerName(name);
     });
-    await introController.showIntro((initialPosition: [number, number]) => {
+    await introController.showIntro(authResult, (initialPosition: [number, number]) => {
       // After authentication is successful, initialize the game
       initializeGame(player, initialPosition, realtimeController, teleportWrapper);
     });
@@ -175,31 +126,95 @@ function initializeGame(
   realtimeController: RealtimeController,
   teleport: (teleportOptions: TeleportOptions) => void
 ) {
-  // Initialize UI controller
-  new UIController(
-    map,
-    teleport,
-    realtimeController.changePlayerName.bind(realtimeController),
-    player.setKeyState.bind(player),
-    player.switchToCar.bind(player),
-    player.switchToWalking.bind(player),
-    player.toggleFlyingMode.bind(player),
-    player
-  );
+  map = new mapboxgl.Map({
+    container: 'map',
+    style: PlayerStore.getMap() === 'satellite' ? MAPBOX_STYLE_SATELLITE : MAPBOX_STYLE_STANDARD,
+    center: [0, 0], // Start at center of the world (will be changed by intro)
+    zoom: 1.5, // Zoomed all the way out to see the entire Earth
+    pitch: 0, // Start with a top-down view
+    bearing: DEFAULT_COORDINATES.bearing,
+    antialias: true,
+  })
 
-  // Connect to websocket
-  realtimeController.connect().then(() => {
-    // Initialize player state at the provided position
-    player.initializeState(initialPosition);
-    setTimeout(() => {
-      window.showModelSelector();
-    }, 1000);
-    Toast.show({
-      type: 'success',
-      message: 'Welcome to Gothenburg! Enjoy your drive!',
-      duration: 3000
+  map.setConfigProperty('basemap', 'lightPreset', PlayerStore.getTimeOfDay());
+  // Add terrain source and layer
+  map.on('style.load', () => {
+
+    map?.addSource('mapbox-dem', {
+      'type': 'raster-dem',
+      'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+      'tileSize': 512,
+      'maxzoom': 12,  // Reduced from 14 to improve performance
+      'minzoom': 3    // Add minzoom to prevent loading terrain data when zoomed out
     });
-  });
+
+    map?.setTerrain({
+      'source': 'mapbox-dem',
+      'exaggeration': 0.7,
+    });
+
+    // Add custom layer for Threebox
+    map?.addLayer({
+      id: 'custom-threebox-layer',
+      type: 'custom',
+      renderingMode: '3d',
+      onAdd: function (map: mapboxgl.Map, gl: WebGLRenderingContext) {
+        // Initialize Threebox
+        window.tb = new Threebox(
+          map,
+          gl,
+          {
+            defaultLights: true,
+            enableSelectingObjects: true,
+            enableDraggingObjects: true,
+            enableTooltips: true,
+            enableSelectingFeatures: true,
+          }
+        )
+
+        // Initialize camera controller
+        CameraController.initialize(map, window.tb);
+        CameraController.setCameraSettings({
+          pitch: DEFAULT_COORDINATES.pitch,
+          distance: 40,
+          height: 5,
+          zoom: DEFAULT_COORDINATES.zoom || 5
+        });
+
+        // Initialize UI controller
+        new UIController(
+          map!,
+          teleport,
+          realtimeController.changePlayerName.bind(realtimeController),
+          player.setKeyState.bind(player),
+          player.switchToCar.bind(player),
+          player.switchToWalking.bind(player),
+          player.toggleFlyingMode.bind(player),
+          player
+        );
+
+        // Connect to websocket
+        realtimeController.connect(map, window.tb!).then(() => {
+          // Initialize player state at the provided position
+          player.initializeState(window.tb!, map!, initialPosition);
+          setTimeout(() => {
+            window.showModelSelector();
+          }, 1000);
+          Toast.show({
+            type: 'success',
+            message: 'Welcome to Gothenburg! Enjoy your drive!',
+            duration: 3000
+          });
+        });
+
+        // Set up the scene and start the intro animation
+      },
+      render: function (_gl: WebGLRenderingContext, _matrix: number[]) {
+        // Update Threebox scene on each frame
+        window.tb?.update()
+      }
+    } as any)
+  })
 }
 
 // Update Window interface

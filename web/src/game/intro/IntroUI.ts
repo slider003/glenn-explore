@@ -1,122 +1,170 @@
 import { DEFAULT_COORDINATES } from '../../config';
 import { PlayerStore } from '../stores/PlayerStore';
-import { IntroOptions } from './IntroTypes';
+import { IntroOptions, IntroStep, LoginState, PaymentState, InstructionsState } from './IntroTypes';
 import './intro.css';
+
+interface IntroState {
+  currentStep: IntroStep;
+  loginState: LoginState;
+  paymentState: PaymentState;
+  instructionsState: InstructionsState;
+}
 
 export class IntroUI {
   private element: HTMLElement | null = null;
   private options: IntroOptions | null = null;
-  private selectedVehicle: 'car' | 'dinosaur' = 'car';
-  private authState: 'EMAIL_INPUT' | 'OTP_VERIFICATION' | 'GAME_INTRO' = 'EMAIL_INPUT';
-  private email: string = '';
-  private playerName: string = '';
+  private state: IntroState | null = null;
 
-  private renderEmailSection() {
-    return `
-      <div class="email-section">
-        <h2 class="welcome-message">Login with your email</h2>
-        <p class="auth-explanation">
-          To play Glenn Explore and save your progress, we need your email. 
-          This helps us keep track of your achievements, lap times, and stats.
-          A one-time password will be sent to your email.
-        </p>
-        <p class="consent-message">
-          By providing your email, you agree to receive occasional updates about game features and improvements. 
-          You can easily unsubscribe via the link in any email you receive from us.
-        </p>
-        <div class="email-input-container">
-          <input type="email" class="email-input" placeholder="Enter your email" value="${this.email}">
+  private renderLoginSection() {
+    if (!this.state) return '';
+    
+    if (!this.state.loginState.otpSent) {
+      return `
+        <div class="email-section">
+          <h2 class="welcome-message">Login with your email</h2>
+          <p class="auth-explanation">
+            To play Glenn Explore and save your progress, we need your email. 
+            This helps us keep track of your achievements, lap times, and stats.
+            A one-time password will be sent to your email.
+          </p>
+          <a style="text-align:center;display:block;margin-bottom:10px;" href="https://discord.gg/XzSzsDhB" target="_blank">Join our Discord community!</a>
+          <p class="consent-message">
+            By providing your email, you agree to receive occasional updates about game features and improvements. 
+            You can easily unsubscribe via the link in any email you receive from us.
+          </p>
+          <div class="email-input-container">
+            <input type="email" class="email-input" placeholder="Enter your email" value="${this.state.loginState.email}">
+          </div>
         </div>
+      `;
+    } else {
+      return `
+        <div class="otp-section">
+          <h2 class="welcome-message">Verify your email</h2>
+          <p class="otp-message">A verification code was sent to ${this.state.loginState.email}</p>
+          <div class="otp-input-container">
+            <input type="text" class="otp-input" placeholder="Enter verification code" maxlength="6">
+          </div>
+          <button class="try-again-btn">Try different email</button>
+        </div>
+      `;
+    }
+  }
+
+  private renderPaymentSection() {
+    return `
+      <div class="payment-section">
+        <div class="payment-message">
+          Hi! I could never imagined that this project would get as much attention as it did. 
+          With all the MAP data and buildings, and the recent surge in players, we need to cover some costs.
+        </div>
+        <div class="payment-features">
+          <div class="feature-item">✨ Unlimited driving time</div>
+          <div class="feature-item">🌟 All vehicles and characters</div>
+          <div class="feature-item">🎮 Save your progress</div>
+        </div>
+        <div class="payment-cost">
+          To join the game, you'll have to pay 1USD
+        </div>
+        <div class="payment-alternative">
+          The project is open source! If you prefer, you can run it on your own machine: 
+          <a href="https://github.com/WilliamAvHolmberg/glenn-explore" target="_blank" class="github-link">github.com/WilliamAvHolmberg/glenn-explore</a>
+          <br/>
+          <br/>
+          Already paid? Try reloading the page. 
+          <br/>
+          If the problem persists, please contact me on Discord or email at mail@playglenn.com.
+        </div>
+        ${this.state?.paymentState.error ? `
+          <p class="error-message">${this.state.paymentState.error}</p>
+        ` : ''}
       </div>
     `;
   }
 
-  private renderOtpSection() {
+  private renderInstructionsSection() {
+    const isMobile = window.isSmallScreen;
     return `
-      <div class="otp-section">
-        <h2 class="welcome-message">Verify your email</h2>
-        <p class="otp-message">A verification code was sent to ${this.email}</p>
-        <div class="otp-input-container">
-          <input type="text" class="otp-input" placeholder="Enter verification code" maxlength="6">
-        </div>
-        <button class="try-again-btn">Try different email</button>
-      </div>
-    `;
-  }
-
-  private renderVehicleToggle() {
-    return `
-      <div class="vehicle-selection">
+      <div class="instructions-section">
         <div class="name-input-section">
           <p class="name-message">You can set a name if you want! 😊</p>
-          <input type="text" class="name-input" placeholder="Enter your name" value="${this.playerName}" maxlength="20">
+          <input type="text" class="name-input" placeholder="Enter your name" value="${this.state?.instructionsState.playerName || ''}" maxlength="20">
           <div class="name-validation-message">Name must be 2-20 characters and only contain letters, numbers, hyphens, and underscores</div>
         </div>
+        ${this.renderInstructions()}
       </div>
     `;
   }
 
   private renderInstructions() {
     const isMobile = window.isSmallScreen;
-
     return `
       <div class="game-instructions">
-        ${isMobile ? `
-          <div class="instruction-list">
-            <div class="instruction-item">
-              <span>👆</span>
-              <span>Left thumb: steer</span>
-            </div>
-            <div class="instruction-item">
-              <span>👆</span>
-              <span>Right thumb: accelerate</span>
-            </div>
-            <div class="instruction-item">
-              <span>⚙️</span>
-              <span>Control the camera by clicking settings button</span>
-            </div>
-          </div>
-        ` : `
-          <div class="instruction-list">
-            <div class="instruction-item">
-              <div class="key-group">
-                <span class="instruction-key">W</span>
-                <div class="key-row">
-                  <span class="instruction-key">A</span>
-                  <span class="instruction-key">S</span>
-                  <span class="instruction-key">D</span>
-                </div>
-              </div>
-              <span>Drive & steer your ride</span>
-            </div>
-
-            <div class="instruction-item">
-              <span class="instruction-key">SHIFT</span>
-              <span>🚀 Boost your velocity</span>
-            </div>
-
-            <div class="instruction-item camera-controls">
-              <div class="key-group">
-                <span class="instruction-key">⬆️</span>
-                <div class="key-row">
-                  <span class="instruction-key">⬅️</span>
-                  <span class="instruction-key">⬇️</span>
-                  <span class="instruction-key">➡️</span>
-                </div>
-              </div>
-              <span>🎥 Control the camera view</span>
-            </div>
-          </div>
-        `}
+        ${isMobile ? this.renderMobileInstructions() : this.renderDesktopInstructions()}
       </div>
     `;
   }
 
-  public show(options: IntroOptions) {
+  private renderMobileInstructions() {
+    return `
+      <div class="instruction-list">
+        <div class="instruction-item">
+          <span>👆</span>
+          <span>Left thumb: steer</span>
+        </div>
+        <div class="instruction-item">
+          <span>👆</span>
+          <span>Right thumb: accelerate</span>
+        </div>
+        <div class="instruction-item">
+          <span>⚙️</span>
+          <span>Control the camera by clicking settings button</span>
+        </div>
+      </div>
+    `;
+  }
+
+  private renderDesktopInstructions() {
+    return `
+      <div class="instruction-list">
+        <div class="instruction-item">
+          <div class="key-group">
+            <span class="instruction-key">W</span>
+            <div class="key-row">
+              <span class="instruction-key">A</span>
+              <span class="instruction-key">S</span>
+              <span class="instruction-key">D</span>
+            </div>
+          </div>
+          <span>Drive & steer your ride</span>
+        </div>
+
+        <div class="instruction-item">
+          <span class="instruction-key">SHIFT</span>
+          <span>🚀 Boost your velocity</span>
+        </div>
+
+        <div class="instruction-item camera-controls">
+          <div class="key-group">
+            <span class="instruction-key">⬆️</span>
+            <div class="key-row">
+              <span class="instruction-key">⬅️</span>
+              <span class="instruction-key">⬇️</span>
+              <span class="instruction-key">➡️</span>
+            </div>
+          </div>
+          <span>🎥 Control the camera view</span>
+        </div>
+      </div>
+    `;
+  }
+
+  public show(options: IntroOptions, initialState: IntroState) {
     this.options = options;
+    this.state = initialState;
     this.element = document.createElement('div');
     this.element.className = 'intro-overlay';
-
+    
     this.renderIntroDialog();
 
     document.body.appendChild(this.element);
@@ -129,203 +177,231 @@ export class IntroUI {
     this.addEventListeners();
   }
 
+  public updateState(_currentStep: IntroStep, newState: IntroState) {
+    this.state = newState;
+    this.renderIntroDialog();
+    this.addEventListeners();
+  }
+
   private renderIntroDialog() {
-    if (!this.element) return;
+    if (!this.element || !this.state) return;
+
+    let content = '';
+    let buttonText = '';
+
+    switch (this.state.currentStep) {
+      case 'login':
+        content = this.renderLoginSection();
+        buttonText = this.state.loginState.otpSent ? 'Verify & Continue' : 'Send Verification Code';
+        break;
+      case 'payment':
+        content = this.renderPaymentSection();
+        buttonText = this.state.paymentState.isProcessing ? 'Processing...' : 'Continue to Payment';
+        break;
+      case 'instructions':
+        content = this.renderInstructionsSection();
+        buttonText = 'Start Playing!';
+        break;
+    }
 
     this.element.innerHTML = `
       <div class="intro-dialog">
         <h1 class="intro-title">Welcome to Glenn Explore! 🌍</h1>
-        ${this.authState === 'GAME_INTRO' ? `
-          <p class="welcome-verified">
-            You're all set! Welcome ${this.email.split('@')[0]}!
-          </p>
-        ` : ''}
         <div class="intro-content">
-          ${this.authState === 'GAME_INTRO' ? this.renderVehicleToggle() : ''}
-          ${this.authState === 'GAME_INTRO' ? this.renderInstructions() : ''}
-          ${this.authState === 'EMAIL_INPUT' || this.authState === 'OTP_VERIFICATION'
-        ? this.authState === 'EMAIL_INPUT' ? this.renderEmailSection() : this.renderOtpSection()
-        : ''}
+          ${content}
         </div>
-        <button class="start-game-btn" ${this.authState === 'EMAIL_INPUT' ? 'disabled' : ''}>
-          ${this.authState === 'EMAIL_INPUT'
-        ? 'Send Verification Code'
-        : this.authState === 'OTP_VERIFICATION'
-          ? 'Verify & Start'
-          : 'I Get It, Let Me Play!'}
+        <button class="start-game-btn" ${this.shouldDisableButton() ? 'disabled' : ''}>
+          ${buttonText}
         </button>
       </div>
     `;
   }
 
+  private shouldDisableButton(): boolean {
+    console.log("Should disable button?", this.state);
+    if (!this.state) return true;
+
+    switch (this.state.currentStep) {
+      case 'login':
+        if (this.state.loginState.otpSent) {
+          const otpInput = this.element?.querySelector('.otp-input') as HTMLInputElement;
+          return !otpInput?.value || otpInput.value.length !== 6;
+        }
+        const emailInput = this.element?.querySelector('.email-input') as HTMLInputElement;
+        return !emailInput?.value || !this.validateEmail(emailInput.value);
+      case 'payment':
+        return this.state.paymentState.isProcessing;
+      case 'instructions':
+        return false;
+      default:
+        return false;
+    }
+  }
+
   private addEventListeners() {
-    if (!this.element) return;
+    if (!this.element || !this.state || !this.options) return;
 
-    // Email validation
-    const emailInput = this.element.querySelector('.email-input') as HTMLInputElement;
     const startButton = this.element.querySelector('.start-game-btn') as HTMLButtonElement;
+    if (!startButton) return;
 
-    if (emailInput && startButton) {
+    // Remove existing listeners
+    startButton.replaceWith(startButton.cloneNode(true));
+    const newStartButton = this.element.querySelector('.start-game-btn') as HTMLButtonElement;
+
+    newStartButton.addEventListener('click', () => this.handleMainButtonClick());
+
+    // Add other listeners based on current state
+    switch (this.state.currentStep) {
+      case 'login':
+        this.addLoginListeners();
+        break;
+      case 'instructions':
+        this.addInstructionsListeners();
+        break;
+    }
+
+    // Update button state after adding listeners
+    this.updateButtonState();
+  }
+
+  private async handleMainButtonClick() {
+    if (!this.state || !this.options) return;
+
+    switch (this.state.currentStep) {
+      case 'login':
+        if (!this.state.loginState.otpSent) {
+          await this.handleRequestOtp();
+        } else {
+          await this.handleVerifyOtp();
+        }
+        break;
+      case 'payment':
+        await this.handlePayment();
+        break;
+      case 'instructions':
+        this.handleStartGame();
+        break;
+    }
+  }
+
+  private async handleRequestOtp() {
+    if (!this.options || !this.state) return;
+
+    const emailInput = this.element?.querySelector('.email-input') as HTMLInputElement;
+    if (!emailInput) return;
+
+    try {
+      const response = await this.options.onRequestOtp(emailInput.value);
+      if (response.success) {
+        this.state.loginState.email = emailInput.value;
+        this.state.loginState.otpSent = true;
+        this.renderIntroDialog();
+        this.addEventListeners();
+      }
+    } catch (error) {
+      console.error('Failed to request OTP:', error);
+    }
+  }
+
+  private async handleVerifyOtp() {
+    if (!this.options || !this.state) return;
+
+    const otpInput = this.element?.querySelector('.otp-input') as HTMLInputElement;
+    if (!otpInput) return;
+
+    try {
+      const response = await this.options.onVerifyOtp(this.state.loginState.email, otpInput.value);
+      if (response) {
+        this.state.loginState.isVerified = true;
+        
+        // If user hasn't paid, move to payment step
+        if (!response.hasPaid) {
+          this.state.currentStep = 'payment';
+          this.renderIntroDialog();
+          this.addEventListeners();
+        } else {
+          // If user has paid, move to instructions
+          this.state.currentStep = 'instructions';
+          this.renderIntroDialog();
+          this.addEventListeners();
+        }
+      }
+    } catch (error) {
+      console.error('Failed to verify OTP:', error);
+    }
+  }
+
+  private async handlePayment() {
+    if (!this.options) return;
+    await this.options.onInitiatePayment();
+  }
+
+  private handleStartGame() {
+    if (!this.options) return;
+    this.hide();
+    this.options.onStartGame([DEFAULT_COORDINATES.lng, DEFAULT_COORDINATES.lat]);
+  }
+
+  private addLoginListeners() {
+    if (!this.element || !this.state) return;
+
+    const emailInput = this.element.querySelector('.email-input') as HTMLInputElement;
+    const tryAgainButton = this.element.querySelector('.try-again-btn') as HTMLButtonElement;
+    const otpInput = this.element.querySelector('.otp-input') as HTMLInputElement;
+
+    if (emailInput) {
       emailInput.addEventListener('input', () => {
-        const isValid = this.validateEmail(emailInput.value);
-        startButton.disabled = !isValid;
-        this.email = emailInput.value;
+        if (!this.state) return;
+        this.state.loginState.email = emailInput.value;
+        this.updateButtonState();
       });
     }
 
-    // Vehicle selection
-    const vehicleOptions = this.element.querySelectorAll('.toggle-option');
-    vehicleOptions.forEach(option => {
-      option.addEventListener('click', () => {
-        const vehicleEl = option as HTMLElement;
-        const vehicleType = vehicleEl.dataset.vehicle as 'car' | 'dinosaur';
-        this.selectedVehicle = vehicleType;
-
-        // Update UI
-        vehicleOptions.forEach(opt => opt.classList.remove('selected'));
-        option.classList.add('selected');
-
-        if (this.options?.onVehicleSelect) {
-          this.options.onVehicleSelect(vehicleType);
-        }
-      });
-    });
-
-    // Add name input listener with validation
-    const nameInput = this.element.querySelector('.name-input') as HTMLInputElement;
-    const nameValidationMessage = this.element.querySelector('.name-validation-message') as HTMLElement;
-    
-    if (nameInput) {
-      nameInput.addEventListener('input', () => {
-        const name = nameInput.value.trim();
-        this.playerName = name;
-
-        if (!name) {
-          // Reset validation state if empty
-          nameInput.classList.remove('invalid');
-          nameValidationMessage?.classList.remove('visible');
-          return;
-        }
-
-        const isValid = this.validateName(name);
-        nameInput.classList.toggle('invalid', !isValid);
-        nameValidationMessage?.classList.toggle('visible', !isValid);
+    if (otpInput) {
+      otpInput.addEventListener('input', () => {
+        this.updateButtonState();
       });
     }
 
-    // Start button handler
-    if (startButton) {
-      startButton.addEventListener('click', async () => {
-        if (this.authState === 'EMAIL_INPUT') {
-          // Request OTP
-          startButton.disabled = true;
-          startButton.textContent = 'Sending...';
-
-          try {
-            if (this.options?.onRequestOtp) {
-              const response = await this.options.onRequestOtp(this.email);
-              if (response.success) {
-                this.authState = 'OTP_VERIFICATION';
-                this.renderIntroDialog();
-                this.addEventListeners(); // Re-add listeners after re-rendering
-              } else {
-                throw new Error(response.message);
-              }
-            }
-          } catch (error) {
-            console.error('Failed to send OTP:', error);
-            startButton.disabled = false;
-            startButton.textContent = 'Send Verification Code';
-
-            // Show error message
-            const emailSection = this.element!.querySelector('.email-section');
-            if (emailSection && this.element) {
-              const errorElement = this.element.querySelector('.error-message');
-              if (errorElement) {
-                errorElement.textContent = 'Failed to send verification code. Please try again.';
-              } else {
-                emailSection.innerHTML += `<p class="error-message">Failed to send verification code. Please try again.</p>`;
-              }
-            }
-          }
-        } else if (this.authState === 'OTP_VERIFICATION') {
-          // Verify OTP
-          const otpInput = this.element!.querySelector('.otp-input') as HTMLInputElement;
-
-          if (otpInput) {
-            const otpCode = otpInput.value;
-            if (!otpCode || otpCode.length < 6) {
-              const otpSection = this.element!.querySelector('.otp-section');
-              if (otpSection && this.element) {
-                const errorElement = this.element.querySelector('.error-message');
-                if (errorElement) {
-                  errorElement.textContent = 'Please enter a valid verification code.';
-                } else {
-                  otpSection.innerHTML += `<p class="error-message">Please enter a valid verification code.</p>`;
-                }
-              }
-              return;
-            }
-
-            startButton.disabled = true;
-            startButton.textContent = 'Verifying...';
-
-            try {
-              if (this.options?.onVerifyOtp) {
-                const success = await this.options.onVerifyOtp(this.email, otpCode);
-                if (success) {
-                  this.authState = 'GAME_INTRO';
-                  this.renderIntroDialog();
-                  this.addEventListeners(); // Re-add listeners after re-rendering
-                } else {
-                  throw new Error('Invalid verification code');
-                }
-              }
-            } catch (error) {
-              console.error('Failed to verify OTP:', error);
-              startButton.disabled = false;
-              startButton.textContent = 'Verify & Start';
-
-              // Show error message
-              const otpSection = this.element!.querySelector('.otp-section');
-              if (otpSection && this.element) {
-                const errorElement = this.element.querySelector('.error-message');
-                if (errorElement) {
-                  errorElement.textContent = 'Invalid verification code. Please try again.';
-                } else {
-                  otpSection.innerHTML += `<p class="error-message">Invalid verification code. Please try again.</p>`;
-                }
-              }
-            }
-          }
-        } else if (this.authState === 'GAME_INTRO') {
-          // Only validate if name is not empty
-          if (this.playerName && !this.validateName(this.playerName)) {
-            return; // Don't proceed if name is invalid
-          }
-
-          this.hide();
-          if (this.options?.onStartGame) {
-            this.options.onStartGame([PlayerStore.getCoordinates()[0], PlayerStore.getCoordinates()[1]]);
-            
-            // Set name after 500ms delay if provided and valid
-            if (this.playerName && this.options.onSetName) {
-              setTimeout(() => {
-                this.options?.onSetName?.(this.playerName);
-              }, 500);
-            }
-          }
-        }
-      });
-    }
-
-    // Try again button (only in OTP view)
-    const tryAgainButton = this.element.querySelector('.try-again-btn');
     if (tryAgainButton) {
       tryAgainButton.addEventListener('click', () => {
-        this.authState = 'EMAIL_INPUT';
+        if (!this.state) return;
+        this.state.loginState.otpSent = false;
         this.renderIntroDialog();
-        this.addEventListeners(); // Re-add listeners after re-rendering
+        this.addEventListeners();
+      });
+    }
+  }
+
+  private updateButtonState() {
+    const button = this.element?.querySelector('.start-game-btn') as HTMLButtonElement;
+    if (button) {
+      button.disabled = this.shouldDisableButton();
+    }
+  }
+
+  private addInstructionsListeners() {
+    if (!this.element || !this.state) return;
+
+    const nameInput = this.element.querySelector('.name-input') as HTMLInputElement;
+    if (nameInput) {
+      nameInput.addEventListener('input', () => {
+        if (!this.state || !this.options) return;
+        const name = nameInput.value.trim();
+        this.state.instructionsState.playerName = name;
+        
+        if (name && !this.validateName(name)) {
+          nameInput.classList.add('invalid');
+          this.element?.querySelector('.name-validation-message')?.classList.add('visible');
+        } else {
+          nameInput.classList.remove('invalid');
+          this.element?.querySelector('.name-validation-message')?.classList.remove('visible');
+        }
+
+        if (name) {
+          this.options.onSetName(name);
+        }
+        this.updateButtonState();
       });
     }
   }
@@ -336,15 +412,11 @@ export class IntroUI {
   }
 
   private validateName(name: string): boolean {
-    if (!name) return true; // Empty input is valid (optional name)
-    
+    if (!name) return true;
     const validNamePattern = /^[a-zA-Z0-9-_]+$/;
     const minLength = 2;
     const maxLength = 20;
-
-    return name.length >= minLength && 
-           name.length <= maxLength && 
-           validNamePattern.test(name);
+    return name.length >= minLength && name.length <= maxLength && validNamePattern.test(name);
   }
 
   public hide() {

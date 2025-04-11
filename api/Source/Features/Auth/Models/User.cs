@@ -14,6 +14,11 @@ public class User : IdentityUser
     public DateTime? LastLoginAt { get; private set; }
     public DateTime LastSeen { get; private set; } = DateTime.UtcNow;
     
+    // Payment properties
+    public bool HasPaid { get; set; } = false;
+    public string? StripeCustomerId { get; set; }
+    public DateTime? PaidAt { get; set; }
+    
     // OTP properties
     public string? OtpCode { get; private set; }
     public DateTime? OtpExpiration { get; private set; }
@@ -52,5 +57,12 @@ public class User : IdentityUser
     public void MarkEmailAsVerified()
     {
         IsEmailVerified = true;
+    }
+
+    public void MarkAsPaid(string stripeCustomerId)
+    {
+        HasPaid = true;
+        StripeCustomerId = stripeCustomerId;
+        PaidAt = DateTime.UtcNow;
     }
 }

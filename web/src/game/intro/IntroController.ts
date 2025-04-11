@@ -1,7 +1,8 @@
 import { PlayerStore } from '../stores/PlayerStore';
 import { AuthClient } from '../realtime/AuthClient';
-import { IntroOptions } from './IntroTypes';
+import { IntroOptions} from './IntroTypes';
 import { IntroUI } from './IntroUI';
+import { LoginResponse } from '../realtime/types/Auth';
 
 export class IntroController {
   private introUI: IntroUI;
@@ -18,8 +19,11 @@ export class IntroController {
   /**
    * Show the intro UI with authentication requirements
    */
-  public async showIntro(onComplete: (coords: [number, number]) => void): Promise<void> {
+  public async showIntro(loginResponse: LoginResponse | null, onComplete: (coords: [number, number]) => void): Promise<void> {
     const options: IntroOptions = {
+      isAuthenticated: !!loginResponse,
+      hasPaid: loginResponse?.hasPaid ?? false,
+      email: loginResponse?.email,
       onStartGame: onComplete,
       onVehicleSelect: (vehicleType) => {
         this.selectedVehicle = vehicleType;
@@ -36,6 +40,11 @@ export class IntroController {
       onVerifyOtp: async (_email, otpCode) => {
         try {
           const response = await this.authClient.verifyOtp(otpCode);
+
+          if (!response) {
+            window.alert('Something went wrong. Please try again.');
+            return null;
+          }
           
           // Update player store with data from login response
           PlayerStore.setPlayerName(response.username);
@@ -44,10 +53,14 @@ export class IntroController {
           // Store player ID for future sessions
           localStorage.setItem(this.playerIdKey, response.username);
           
-          // Mark intro as viewed
-          this.markIntroAsViewed();
+          // If user hasn't paid, show payment UI
+          if (!response.hasPaid) {
+            return response;
+          }
           
-          return response
+          // If user has paid, mark intro as viewed and proceed
+          this.markIntroAsViewed();
+          return response;
         } catch (error) {
           console.error('Failed to verify OTP:', error);
           return null;
@@ -57,10 +70,38 @@ export class IntroController {
         if (this.onNameChange) {
           this.onNameChange(name);
         }
+      },
+      onInitiatePayment: async () => {
+        try {
+          const response = await fetch('/api/payment/create-checkout-session', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to create checkout session');
+          }
+
+          const { url } = await response.json();
+          window.location.href = url;
+          
+          return { success: true };
+        } catch (error) {
+          console.error('Payment failed:', error);
+          throw error;
+        }
       }
     };
 
-    this.introUI.show(options);
+    this.introUI.show(options, {
+      currentStep: 'login',
+      loginState: { email: '', isVerified: false, otpSent: false },
+      paymentState: { isProcessing: false },
+      instructionsState: { playerName: '', selectedVehicle: this.selectedVehicle }
+    });
   }
 
   /**

@@ -7,6 +7,9 @@ set -e
 : "${DEPLOY_PATH:?'DEPLOY_PATH is required'}"
 : "${ASPNETCORE_ENVIRONMENT:?'ASPNETCORE_ENVIRONMENT is required'}"
 : "${RESEND_KEY:?'RESEND_KEY is required'}"
+: "${STRIPE_SECRET_KEY:?'STRIPE_SECRET_KEY is required'}"
+: "${STRIPE_PUBLIC:?'STRIPE_PUBLIC is required'}"
+: "${STRIPE_WEBHOOK_SECRET:?'STRIPE_WEBHOOK_SECRET is required'}"
 : "${OPENROUTER_API_KEY:?'OPENROUTER_API_KEY is required'}"
 
 echo "Starting remote deployment for $PROJECT_NAME..."
@@ -63,6 +66,9 @@ Environment=RESEND_KEY=$RESEND_KEY
 Environment=OPENROUTER_API_KEY=$OPENROUTER_API_KEY
 Environment=ELKS_API_USERNAME=$ELKS_API_USERNAME
 Environment=ELKS_API_PASSWORD=$ELKS_API_PASSWORD
+Environment=STRIPE_SECRET_KEY=$STRIPE_SECRET_KEY
+Environment=STRIPE_PUBLIC=$STRIPE_PUBLIC
+Environment=STRIPE_WEBHOOK_SECRET=$STRIPE_WEBHOOK_SECRET
 
 # Logging
 StandardOutput=append:/var/log/$PROJECT_NAME-api.log

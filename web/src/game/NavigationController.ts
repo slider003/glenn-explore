@@ -24,7 +24,7 @@ export class NavigationController {
     private map: mapboxgl.Map;
     private directions!: MapboxDirections;
     private isActive: boolean = false;
-    private updateInterval: number | null = null;
+    private updateInterval: NodeJS.Timeout | null = null;
     private destinationMarker: mapboxgl.Marker | null = null;
     private arrivalThreshold: number = 50; // Meters - how close to destination to consider "arrived"
     private eventListeners: Partial<NavigationEvents> = {};

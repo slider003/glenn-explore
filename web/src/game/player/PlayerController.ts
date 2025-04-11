@@ -33,13 +33,13 @@ export class PlayerController implements IFollowable {
 
     private currentAction: THREE.AnimationAction | null = null;
     private isAnimationPlaying: boolean = false;
-    private currentState: PlayerState<any>;
+    private currentState: PlayerState<any> | null = null;
     private _coordinates: [number, number] = [0, 0];
     private _rotation: { x: number; y: number; z: number } = { x: 0, y: 0, z: 40 };
     private _elevation: number = 0;
     private animationFrameId: number | null = null;
     private lastUpdateTime: number = 0;
-    private ui: PlayerUI;
+    private ui: PlayerUI | null = null;
     private keyStates: Record<string, boolean> = {
         w: false,    // Forward
         a: false,    // Left
@@ -48,30 +48,12 @@ export class PlayerController implements IFollowable {
         shift: false, // Run (walking state)
         space: false  // Jump (walking state) / Fly up (flying mode)
     };
+    private tb: Threebox | null = null;
+    private map: mapboxgl.Map | null = null;
 
     constructor(
-        private tb: Threebox,
-        private map: mapboxgl.Map,
     ) {
-        // Initialize state based on PlayerStore's saved movement mode
-        const savedMode = PlayerStore.getMovementMode();
-        if (savedMode === 'car') {
-            this.currentState = new CarState(this.tb, PlayerStore.getState().modelType);
-        } else {
-            this.currentState = new WalkingState(this.tb, PlayerStore.getState().modelType);
-        }
-
-        this.ui = new PlayerUI(map, this);
-
         new VehicleStatsController()
-        const minimapController = new MinimapController(map)
-        const navigationController = new NavigationController(map)
-        new NavigationUI(map, navigationController, (teleportOptions: TeleportOptions) => {
-            this.teleport(teleportOptions);
-        }, {
-            position: 'top-right',
-            container: minimapController.getNavigationContainer()
-        });
 
         // Set up chat message listener
         this.setupChatListener();
@@ -129,9 +111,26 @@ export class PlayerController implements IFollowable {
     get coordinates(): [number, number] { return this._coordinates; }
     get rotation(): { x: number; y: number; z: number } { return this._rotation; }
     get elevation(): number { return this._elevation; }
-    get threebox(): Threebox { return this.tb; }
+    get threebox(): Threebox { return this.tb!; }
 
-    public async initializeState(initialPosition: [number, number]): Promise<void> {
+    public async initializeState(tb: Threebox, map: mapboxgl.Map, initialPosition: [number, number]): Promise<void> {
+        this.tb = tb;
+        this.map = map;
+        const savedMode = PlayerStore.getMovementMode();
+        if (savedMode === 'car') {
+            this.currentState = new CarState(this.tb, PlayerStore.getState().modelType);
+        } else {
+            this.currentState = new WalkingState(this.tb, PlayerStore.getState().modelType);
+        }
+        const minimapController = new MinimapController(this.map!)
+        const navigationController = new NavigationController(this.map!)
+        new NavigationUI(this.map!, navigationController, (teleportOptions: TeleportOptions) => {
+            this.teleport(teleportOptions);
+        }, {
+            position: 'top-right',
+            container: minimapController.getNavigationContainer()
+        });
+        this.ui = new PlayerUI(this.map, this);
         this._coordinates = initialPosition ?? [DEFAULT_COORDINATES.lng, DEFAULT_COORDINATES.lat];
 
         // Make sure current state matches saved movement mode
@@ -141,8 +140,8 @@ export class PlayerController implements IFollowable {
         await this.setState(this.currentState);
         this.startUpdateLoop();
         setInterval(() => {
-            PlayerStore.setCurrentSpeed(this.currentState.currentSpeed);
-            PlayerStore.setCoordinates([this._coordinates[0], this._coordinates[1], this.currentState.verticalPosition ?? this._elevation]);
+            PlayerStore.setCurrentSpeed(this.currentState!.currentSpeed);
+            PlayerStore.setCoordinates([this._coordinates[0], this._coordinates[1], this.currentState!.verticalPosition ?? this._elevation]);
             PlayerStore.setRotation(this._rotation);
         }, 200);
     }
@@ -156,12 +155,12 @@ export class PlayerController implements IFollowable {
             this.update();
             this.animationFrameId = requestAnimationFrame(animate);
             if (PlayerStore.isFollowingCar()) {
-                if (PlayerStore.isPlayerFlying() && this.currentState.verticalPosition && this.currentState.verticalPosition > this._elevation + 5) {
+                if (PlayerStore.isPlayerFlying() && this.currentState!.verticalPosition && this.currentState!.verticalPosition > this._elevation + 5) {
                     const camera = CameraController.getMap().getFreeCameraOptions();
 
                     // Get current zoom and elevation data
                     const zoomLevel = ZoomController.getZoom();
-                    const elevationDifference = this.currentState.verticalPosition - this._elevation;
+                    const elevationDifference = this.currentState!.verticalPosition - this._elevation;
 
                     // Convert rotation to bearing (0 = north, clockwise)
                     // Mapbox uses 0 = north, clockwise positive
@@ -184,7 +183,7 @@ export class PlayerController implements IFollowable {
                     const offsetLat = this._coordinates[1] + Math.cos(cameraBearingRadians) * distance;
 
                     // Set camera elevation - slightly above vehicle for better visibility
-                    const cameraElevation = this.currentState.verticalPosition + (zoomLevel * 0.3);
+                    const cameraElevation = this.currentState!.verticalPosition + (zoomLevel * 0.3);
 
                     // Position camera at calculated position
                     camera.position = mapboxgl.MercatorCoordinate.fromLngLat(
@@ -219,7 +218,7 @@ export class PlayerController implements IFollowable {
         PlayerStore.setAnimationState(state.animationState);
         PlayerStore.setStateType(state.stateType);
         PlayerStore.setAllowedToDrive(false);
-        this.currentState.exit(this);
+        this.currentState!.exit(this);
         this.currentState = state;
         await this.loadModel();
         await this.currentState.enter(this);
@@ -255,7 +254,7 @@ export class PlayerController implements IFollowable {
             }
         }
 
-        this.currentState.update(this);
+        this.currentState!.update(this);
     }
 
     public setPosition(position: [number, number]): void {
@@ -267,7 +266,7 @@ export class PlayerController implements IFollowable {
     }
 
     public getElevation(): number {
-        const elevation = this.map.queryTerrainElevation([this._coordinates[0], this._coordinates[1]], {
+        const elevation = this.map!.queryTerrainElevation([this._coordinates[0], this._coordinates[1]], {
             exaggerated: true // Match the exaggeration setting
         });
         this._elevation = elevation || 0;
@@ -276,7 +275,7 @@ export class PlayerController implements IFollowable {
 
     // Public method to show messages (delegates to UI)
     public showMessage(message: string, duration?: number): void {
-        this.ui.showMessage(message, duration);
+        this.ui?.showMessage(message, duration);
     }
 
     public destroy(): void {
@@ -291,14 +290,14 @@ export class PlayerController implements IFollowable {
         document.removeEventListener('keydown', this.handleKeyDown);
         document.removeEventListener('keyup', this.handleKeyUp);
 
-        this.ui.destroy();
-        this.currentState.exit(this);
+        this.ui?.destroy();
+        this.currentState!.exit(this);
         CameraController.stopFollowing();
     }
 
     public async switchState(modelId: string, type: 'car' | 'walking'): Promise<void> {
         // Create appropriate state based on type
-        const newState = type === 'car' ? new CarState(this.tb, modelId) : new WalkingState(this.tb, modelId);
+        const newState = type === 'car' ? new CarState(this.tb!, modelId) : new WalkingState(this.tb!, modelId);
 
         // Update store values
         PlayerStore.setMovementMode(type);
@@ -311,19 +310,19 @@ export class PlayerController implements IFollowable {
     }
 
     public async switchToCar(): Promise<void> {
-        const state = new CarState(this.tb, PlayerStore.getState().modelType);
+        const state = new CarState(this.tb!, PlayerStore.getState().modelType);
         await this.setState(state);
         PlayerStore.setMovementMode('car');
     }
 
     public async switchToWalking(): Promise<void> {
-        const state = new WalkingState(this.tb, PlayerStore.getState().modelType);
+        const state = new WalkingState(this.tb!, PlayerStore.getState().modelType);
         await this.setState(state);
         PlayerStore.setMovementMode('walking');
     }
 
     public async teleport(teleportOptions: TeleportOptions): Promise<void> {
-        this.currentState.exit(this);
+        this.currentState!.exit(this);
         CameraController.stopFollowing();
         this._coordinates = [teleportOptions.position.lng, teleportOptions.position.lat];
         if (teleportOptions.rotation) {
@@ -338,23 +337,23 @@ export class PlayerController implements IFollowable {
         if (teleportOptions.bearing) {
             CameraController.setBearing(teleportOptions.bearing);
         }
-        await this.setState(this.currentState);
+        await this.setState(this.currentState!);
     }
 
     public playAnimation(animationName: string, speed: number = 1.0): void {
-        if (!this.currentState.mixer || !this.currentState.getModel().animations) return;
+        if (!this.currentState!.mixer || !this.currentState!.getModel().animations) return;
 
         if (PlayerStore.getState().animationState !== animationName) {
             PlayerStore.setAnimationState(animationName);
         }
-        const clip = this.currentState.getModel().animations.find((anim: any) => anim.name === animationName);
+        const clip = this.currentState!.getModel().animations.find((anim: any) => anim.name === animationName);
         if (clip) {
             if (this.currentAction) {
                 this.currentAction.setEffectiveTimeScale(speed);
                 return;
             }
 
-            this.currentAction = this.currentState.mixer.clipAction(clip);
+            this.currentAction = this.currentState!.mixer.clipAction(clip);
             this.currentAction.setLoop(THREE.LoopRepeat, Infinity);
             this.currentAction.clampWhenFinished = false;
             this.currentAction.setEffectiveTimeScale(speed);
@@ -374,15 +373,15 @@ export class PlayerController implements IFollowable {
 
     private async loadModel(): Promise<void> {
         try {
-            this.currentState.model = await new Promise((resolve, reject) => {
-                this.tb.loadObj(this.currentState.modelConfig.model, (model: any) => {
+            this.currentState!.model = await new Promise((resolve, reject) => {
+                this.tb!.loadObj(this.currentState!.modelConfig.model, (model: any) => {
                     if (!model) {
                         reject(new Error('No model returned'));
                         return;
                     }
                     console.log("Model loaded", model.animations)
                     if (model.animations && model.animations.length > 0) {
-                        this.currentState.mixer = new THREE.AnimationMixer(model);
+                        this.currentState!.mixer = new THREE.AnimationMixer(model);
                     }
 
                     resolve(model);
@@ -397,7 +396,7 @@ export class PlayerController implements IFollowable {
             });
 
 
-            this.tb.add(this.currentState.model);
+            this.tb!.add(this.currentState!.model);
         } catch (error) {
             console.error('WalkingState: Failed to load model:', error);
             throw error;

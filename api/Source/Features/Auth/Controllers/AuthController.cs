@@ -74,7 +74,11 @@ public class AuthController : ControllerBase
                 user.UserName!,
                 user.FirstName,
                 user.LastName,
-                user.IsGuest
+                user.Email,
+                user.IsGuest,
+                null,
+                null,
+                user.HasPaid
             );
             return Ok(response);
         }
@@ -120,6 +124,7 @@ public class AuthController : ControllerBase
                         existingUser.UserName!,
                         existingUser.FirstName,
                         existingUser.LastName,
+                        existingUser.Email,
                         existingUser.IsGuest,
                         existingPlayer != null ? new LastPosition
                         {
@@ -155,6 +160,7 @@ public class AuthController : ControllerBase
                     existingUser.UserName!,
                     existingUser.FirstName,
                     existingUser.LastName,
+                    existingUser.Email,
                     existingUser.IsGuest,
                     existingPlayer != null ? new LastPosition
                     {
@@ -208,6 +214,7 @@ public class AuthController : ControllerBase
                 existingPlayer != null ? existingPlayer.Name : user.UserName!,
                 user.FirstName,
                 user.LastName,
+                user.Email,
                 user.IsGuest,
                 existingPlayer != null ? new LastPosition
                 {
@@ -285,7 +292,11 @@ public class AuthController : ControllerBase
                 user.UserName!,
                 user.FirstName,
                 user.LastName,
-                user.IsGuest
+                user.Email,
+                user.IsGuest,
+                null,
+                null,
+                user.HasPaid
             ));
         }
         catch (Exception ex)
@@ -516,6 +527,7 @@ public class AuthController : ControllerBase
                 existingPlayer != null ? existingPlayer.Name : user.UserName!,
                 user.FirstName,
                 user.LastName,
+                user.Email,
                 user.IsGuest,
                 existingPlayer != null ? new LastPosition
                 {
@@ -525,7 +537,9 @@ public class AuthController : ControllerBase
                     RotationX = existingPlayer.RotationX,
                     RotationY = existingPlayer.RotationY,
                     RotationZ = existingPlayer.RotationZ
-                } : null
+                } : null,
+                null,
+                user.HasPaid
             ));
         }
         catch (Exception ex)
@@ -632,6 +646,7 @@ public class AuthController : ControllerBase
                 existingPlayer != null ? existingPlayer.Name : user.UserName!,
                 user.FirstName,
                 user.LastName,
+                user.Email,
                 user.IsGuest,
                 existingPlayer != null ? new LastPosition
                 {
@@ -641,7 +656,9 @@ public class AuthController : ControllerBase
                     RotationX = existingPlayer.RotationX,
                     RotationY = existingPlayer.RotationY,
                     RotationZ = existingPlayer.RotationZ
-                } : null
+                } : null,
+                null,
+                user.HasPaid
             ));
         }
         catch (Exception ex)

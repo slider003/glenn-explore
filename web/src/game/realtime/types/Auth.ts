@@ -26,7 +26,9 @@ export interface LoginResponse {
   username: string;
   firstName: string;
   lastName: string;
+  email?: string;
   isGuest: boolean;
+  hasPaid: boolean;
   lastPosition?: LastPosition;
   guestKey?: string;
 }

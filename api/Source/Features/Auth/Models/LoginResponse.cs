@@ -5,9 +5,11 @@ public record LoginResponse(
     string Username,
     string FirstName,
     string LastName,
+    string Email,
     bool IsGuest,
     LastPosition? LastPosition = null,
-    string? GuestKey = null  // Only returned on first guest login
+    string? GuestKey = null,
+    bool HasPaid = false
 );
 
 public class LastPosition

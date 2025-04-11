@@ -1,5 +1,6 @@
 import { PlayerStore } from '../stores/PlayerStore';
-import { CreateGuestRequest, LoginResponse, RequestOtpRequest, RequestOtpResponse, VerifyOtpRequest } from './types/Auth';
+import { CreateGuestRequest, LoginResponse, RequestOtpRequest, VerifyOtpRequest } from './types/Auth';
+import { RequestOtpResponse } from '../intro/IntroTypes';
 
 export class AuthClient {
   private baseUrl: string;
@@ -49,7 +50,7 @@ export class AuthClient {
   /**
    * Verify a one-time password
    */
-  public async verifyOtp(otpCode: string): Promise<LoginResponse> {
+  public async verifyOtp(otpCode: string): Promise<LoginResponse | null> {
     // Get the email from storage
     const email = localStorage.getItem(this.AUTH_EMAIL_STORAGE);
     if (!email) {
@@ -85,11 +86,7 @@ export class AuthClient {
       this.clearGuestKey();
     }
 
-    PlayerStore.setPlayerId(loginResponse.playerId);
     PlayerStore.setPlayerName(loginResponse.username);
-    if (loginResponse.lastPosition) {
-      PlayerStore.setCoordinates([loginResponse.lastPosition.x, loginResponse.lastPosition.y, loginResponse.lastPosition.z]);
-    }
     return loginResponse;
   }
 
@@ -161,11 +158,11 @@ export class AuthClient {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', // Important: This is needed to include cookies
+        credentials: 'include',
       });
 
       if (!response.ok) {
-        return null; // Not authenticated
+        return null;
       }
 
       return await response.json();
