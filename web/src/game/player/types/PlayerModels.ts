@@ -101,6 +101,34 @@ export const PLAYER_MODELS: PlayerModels = {
             runAnimation: 'running',
         }
     },
+    setupSpawn: {
+        model: {
+            obj: '/setup-spawn.glb',
+            type: 'glb',
+            scale: 2,
+            units: 'meters',
+            rotation: { x: 90, y: 0, z: 0 },
+            anchor: 'center',
+            screenshot: '/setup-spawn.png'
+        },
+        physics: {
+            walkMaxVelocity: 0.01,
+            runMaxVelocity: 0.03,
+            walkAcceleration: 0.001,
+            runAcceleration: 0.001,
+            deceleration: 0.95,
+            rotationSpeed: 1,
+            jumpForce: 0.15,
+            gravity: 0.005
+        },
+        walkingAnimation: {
+            walkSpeed: 2,
+            runSpeed: 3,
+            idleAnimation: 'idle',
+            walkAnimation: 'walk',
+            runAnimation: 'running',
+        }
+    },
     william: {
         model: {
             obj: '/william.glb',

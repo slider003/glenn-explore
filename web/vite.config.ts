@@ -7,7 +7,8 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 main: resolve(__dirname, 'index.html'),
-                about: resolve(__dirname, 'about.html'),
+                howToPlay: resolve(__dirname, 'how-to-play.html'),
+                play: resolve(__dirname, 'play.html'),
                 //contact: resolve(__dirname, 'contact.html'),
                 // Add other pages here as you create them
             }
