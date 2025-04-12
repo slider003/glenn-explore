@@ -335,6 +335,62 @@ public class UserController : ControllerBase
             return StatusCode(500, new { message = "Internal server error" });
         }
     }
+
+    [HttpPut("admin/{userId}/set-paid")]
+    [Authorize]
+    public async Task<ActionResult> SetUserPaid(string userId, [FromBody] SetUserPaidRequest request)
+    {
+        try
+        {
+            // Check if current user is admin
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null || !currentUser.IsAdmin)
+            {
+                return Forbid();
+            }
+
+            // Get target user
+            var targetUser = await _userManager.FindByIdAsync(userId);
+            if (targetUser == null)
+            {
+                return NotFound(new { message = "User not found" });
+            }
+
+            // Check if user is already paid
+            if (targetUser.HasPaid)
+            {
+                return BadRequest(new { message = "User has already paid" });
+            }
+
+            // Set user as paid
+            targetUser.MarkAsPaid(request.StripeCustomerId);
+            var result = await _userManager.UpdateAsync(targetUser);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(new
+                {
+                    message = "Failed to update user paid status",
+                    errors = result.Errors.Select(e => e.Description)
+                });
+            }
+
+            _logger.LogInformation(
+                "Admin {AdminId} marked user {UserId} ({UserName}) as paid with StripeCustomerId: {StripeCustomerId}",
+                currentUser.Id,
+                targetUser.Id,
+                targetUser.UserName,
+                request.StripeCustomerId
+            );
+
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error setting paid status for user {UserId}", userId);
+            return StatusCode(500, new { message = "Internal server error" });
+        }
+    }
 }
 
 public class AdminUserResponse
@@ -357,5 +413,11 @@ public class ChangeUserNameRequest
 
 public class MakeUserAdminRequest
 {
+    public bool Confirm { get; set; }
+}
+
+public class SetUserPaidRequest 
+{
+    public string StripeCustomerId { get; set; } = string.Empty;
     public bool Confirm { get; set; }
 }
