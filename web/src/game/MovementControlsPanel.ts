@@ -61,33 +61,33 @@ export class MovementControlsPanel {
 
     // Only add touch prevention to the actual control areas
     if (this.leftControl) {
-        this.leftControl.addEventListener('touchstart', (e) => {
-            e.preventDefault(); // Prevent only on the control
-            this.handleTouchStart(e, 'left');
-        }, { passive: false });
-        
-        this.leftControl.addEventListener('touchmove', (e) => {
-            e.preventDefault(); // Prevent only on the control
-        }, { passive: false });
+      this.leftControl.addEventListener('touchstart', (e) => {
+        e.preventDefault(); // Prevent only on the control
+        this.handleTouchStart(e, 'left');
+      }, { passive: false });
+
+      this.leftControl.addEventListener('touchmove', (e) => {
+        e.preventDefault(); // Prevent only on the control
+      }, { passive: false });
     }
-    
+
     if (this.rightControl) {
-        this.rightControl.addEventListener('touchstart', (e) => {
-            e.preventDefault(); // Prevent only on the control
-            this.handleTouchStart(e, 'right');
-        }, { passive: false });
-        
-        this.rightControl.addEventListener('touchmove', (e) => {
-            e.preventDefault(); // Prevent only on the control
-        }, { passive: false });
+      this.rightControl.addEventListener('touchstart', (e) => {
+        e.preventDefault(); // Prevent only on the control
+        this.handleTouchStart(e, 'right');
+      }, { passive: false });
+
+      this.rightControl.addEventListener('touchmove', (e) => {
+        e.preventDefault(); // Prevent only on the control
+      }, { passive: false });
     }
-    
+
     // Don't prevent default globally
     // Instead of these global preventions:
     // this.container.addEventListener('touchstart', this.preventDefault, { passive: false });
     // this.container.addEventListener('touchmove', this.preventDefault, { passive: false });
     // this.container.addEventListener('touchend', this.preventDefault, { passive: false });
-    
+
     // Use more targeted event listeners
     document.addEventListener('touchmove', this.handleTouchMove.bind(this));
     document.addEventListener('touchend', this.handleTouchEnd.bind(this));
@@ -148,14 +148,14 @@ export class MovementControlsPanel {
   private handleTouchMove(e: TouchEvent): void {
     // Only prevent default for touches we're tracking
     for (let i = 0; i < e.changedTouches.length; i++) {
-        const touch = e.changedTouches[i];
-        if (this.activeTouches[touch.identifier]) {
-            // This is one of our control touches, so prevent default
-            e.preventDefault();
-            break; // Only need to prevent once
-        }
+      const touch = e.changedTouches[i];
+      if (this.activeTouches[touch.identifier]) {
+        // This is one of our control touches, so prevent default
+        e.preventDefault();
+        break; // Only need to prevent once
+      }
     }
-    
+
     // Process each changed touch
     for (let i = 0; i < e.changedTouches.length; i++) {
       const touch = e.changedTouches[i];
@@ -273,14 +273,14 @@ export class MovementControlsPanel {
   private handleTouchEnd(e: TouchEvent): void {
     // Only prevent default for touches we're tracking
     for (let i = 0; i < e.changedTouches.length; i++) {
-        const touch = e.changedTouches[i];
-        if (this.activeTouches[touch.identifier]) {
-            // This is one of our control touches, so prevent default
-            e.preventDefault();
-            break; // Only need to prevent once
-        }
+      const touch = e.changedTouches[i];
+      if (this.activeTouches[touch.identifier]) {
+        // This is one of our control touches, so prevent default
+        e.preventDefault();
+        break; // Only need to prevent once
+      }
     }
-    
+
     // Process each removed touch
     for (let i = 0; i < e.changedTouches.length; i++) {
       const touch = e.changedTouches[i];
@@ -527,6 +527,19 @@ export class MovementControlsPanel {
             
             .arrow-left, .arrow-right, .arrow-up, .arrow-down {
                 font-size: 20px;
+            }
+        }
+
+        @media (max-width: 915px) and (max-height: 450px) and (orientation: landscape) {
+            .movement-controls-container {
+                bottom: 20% !important;
+            }
+        }
+        
+        /* Hide controls only on desktop devices (mouse/pointer input) */
+        @media (min-width: 1100px) and (hover: hover) and (pointer: fine) {
+            .movement-controls-container {
+                display: none !important;
             }
         }
     `;

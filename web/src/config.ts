@@ -6,9 +6,9 @@ export const MAPBOX_STYLE_SATELLITE = 'mapbox://styles/wavh/cm8sxv1j600gi01sa5hc
 
 // Default coordinates for the map center
 export const DEFAULT_COORDINATES = {
-  lng: 11.979369,
-  lat: 57.697281,
+  lng: 11.979125,
+  lat: 57.697530,
   zoom: 20,
-  pitch: 80,
-  bearing: -45.0
+  pitch: 85,
+  bearing: -140.0
 }; 

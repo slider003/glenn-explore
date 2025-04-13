@@ -5,6 +5,7 @@ import { DonationPanel } from './panels/DonationPanel';
 import { ToplistPanel } from './panels/toplist/ToplistPanel';
 import { RadioPanel } from './panels/radio/RadioPanel';
 import { TimeTrialPanel } from '../racing/TimeTrialPanel';
+import { TheaterPanel } from './panels/theater/TheaterPanel';
 
 export const MENU_ITEMS: () => MenuItem[] = () => [
   {
@@ -19,9 +20,17 @@ export const MENU_ITEMS: () => MenuItem[] = () => [
     label: 'Toplist',
     panel: ToplistPanel
   },
+  ...(window.isSmallScreen ? [] : [
+    {
+      id: 'theater',
+      emoji: '🎬',
+      label: 'Theater',
+      panel: TheaterPanel
+    }
+  ]),
   {
     id: 'cinematic',
-    emoji: '🎬',
+    emoji: '🎥',
     label: 'Cinematic',
     panel: CinematicPanel
   },

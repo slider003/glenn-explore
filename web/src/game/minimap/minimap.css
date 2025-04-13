@@ -191,11 +191,14 @@
 
 /* Mobile Responsive Adjustments */
 @media (max-width: 768px) {
+    .minimap-wrapper {
+        display: none;
+    }
     .minimap-container {
         flex-direction: row;
         align-items: center;
         gap: 10px;
-        left: 25px;
+        left: 40px;
         top: unset; /* Remove top positioning */
         bottom: 80px; /* Add some padding from bottom */
     }
@@ -257,3 +260,15 @@
         top: -20px;
     }
 } 
+
+
+@media (max-width: 915px) and (max-height: 450px) and (orientation: landscape) {
+    .minimap-wrapper {
+        display: none;
+    }
+    .minimap-container {
+        left: 95px;
+        top: unset;
+        bottom: 15px;
+    }
+}

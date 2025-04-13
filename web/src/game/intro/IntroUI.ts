@@ -28,7 +28,7 @@ export class IntroUI {
             A one-time password will be sent to your email.
           </p>
           <p class="auth-explanation">
-            After verifying your email, you have to pay a onetime fee of 1USD to play.
+            After verifying your email, you have to pay a onetime fee of $0.99 to play.
             I'm sincerely sorry for the inconvenience, but this is the only way I can cover the costs of the game.
             <br/>
             <br/>
@@ -75,7 +75,7 @@ export class IntroUI {
           <div class="feature-item">🎮 Save your progress</div>
         </div>
         <div class="payment-cost">
-          To join the game, you'll have to pay 1USD
+          To join the game, you'll have to pay $0.99
         </div>
         <div class="payment-alternative">
           The project is open source! If you prefer, you can run it on your own machine: 

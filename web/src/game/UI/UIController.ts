@@ -29,10 +29,9 @@ export class UIController {
         new PlayersOnlineUI(onTeleport);
         new ControlPanelController({ map, onTeleport, switchToCar, switchToWalking, toggleFlyingMode });
         new ChatController(onChangeName, onTeleport);
+        new MovementControlsPanel(setKeyState);
         // Initialize movement controls panel with player's setKeyState method
-        if (window.isSmallScreen) {
-            new MovementControlsPanel(setKeyState);
-        } else {
+        if (!window.isSmallScreen) {
             new InfoPanel();
         }
 

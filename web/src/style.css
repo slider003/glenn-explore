@@ -980,12 +980,29 @@ button:focus-visible {
 }
 
 .mapboxgl-ctrl-bottom-right {
+  bottom: 40px;
   right: 50% !important;
   transform: translateX(50%) !important;
+  margin-right: 190px;
 }
 
 .mapboxgl-ctrl-bottom-left {
-  margin-bottom: 15px;
+  bottom: 30px;
   left: 50% !important;
   transform: translateX(-50%) !important;
+}
+
+@media (max-width: 768px) {
+  .mapboxgl-ctrl-bottom-right {
+    bottom: 100px;
+    right: 0px !important;
+    margin-right: 0px;
+  }
+
+  .mapboxgl-ctrl-bottom-left {
+    bottom: 110px;
+    right: 0px !important;
+    transform: rotate(0deg) !important;
+  }
+
 }

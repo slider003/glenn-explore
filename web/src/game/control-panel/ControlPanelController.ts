@@ -1,6 +1,7 @@
 import { ControlPanelDependencies, ControlPanelState } from './ControlPanelTypes';
 import { ControlPanelUI } from './ControlPanelUI';
 import { PlayerStore } from '../stores/PlayerStore';
+import { TheaterPanel } from './panels/theater/TheaterPanel';
 
 export class ControlPanelController {
   private ui: ControlPanelUI;
@@ -10,12 +11,16 @@ export class ControlPanelController {
   private switchToCar?: () => void;
   private switchToWalking?: () => void;
   private toggleFlyingMode?: () => void;
+  private theaterPanel: TheaterPanel;
 
   constructor(private dependencies: ControlPanelDependencies) {
     this.ui = new ControlPanelUI(dependencies.map, dependencies.onTeleport);
     this.switchToCar = dependencies.switchToCar;
     this.switchToWalking = dependencies.switchToWalking;
     this.toggleFlyingMode = dependencies.toggleFlyingMode;
+    
+    // Initialize theater immediately
+    this.theaterPanel = new TheaterPanel(document.createElement('div'), dependencies.map);
     
     // Setup event listeners for movement mode changes
     this.setupEventListeners();
@@ -53,6 +58,9 @@ export class ControlPanelController {
     // Remove event listeners
     window.removeEventListener('movement:mode_changed', this.setupEventListeners);
     window.removeEventListener('car:mode_changed', this.setupEventListeners);
+    
+    // Destroy the theater
+    this.theaterPanel.destroyTheater();
     
     this.ui.destroy();
   }

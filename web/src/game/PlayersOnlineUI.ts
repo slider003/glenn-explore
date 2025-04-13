@@ -360,7 +360,7 @@ export class PlayersOnlineUI {
       /* Mobile adjustments */
       @media (max-width: 768px) {
         .players-online-container {
-          top: 5px;
+          top: 45px;
           width: 80%;
         }
 

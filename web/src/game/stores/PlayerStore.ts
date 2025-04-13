@@ -22,6 +22,7 @@ export class PlayerStore {
     private static flyingElevation: number = 0;
     private static movementMode: 'car' | 'walking' = 'car';
     private static carMode: 'normal' | 'fly' = 'normal';
+    private static lockZoom: boolean = false;
 
     public static setAllowedToDrive(allowedToDrive: boolean): void {
         PlayerStore.allowedToDrive = allowedToDrive;
@@ -250,6 +251,7 @@ export class PlayerStore {
             PlayerStore.flyingElevation = state.flyingElevation ?? 0;
             PlayerStore.movementMode = state.movementMode || 'car';
             PlayerStore.carMode = state.carMode || 'normal';
+            PlayerStore.lockZoom = state.lockZoom ?? false;
         } else {
             PlayerStore.playerName = 'Guest';
             PlayerStore.isGuest = true;
@@ -297,6 +299,14 @@ export class PlayerStore {
 
     public static setStateType(stateType: 'car' | 'walking'): void {
         PlayerStore.stateType = stateType;
+    }
+
+    public static setLockZoom(lockZoom: boolean): void {
+        PlayerStore.lockZoom = lockZoom;
+    }
+
+    public static getLockZoom(): boolean {
+        return PlayerStore.lockZoom;
     }
 
     public static reset(): void {

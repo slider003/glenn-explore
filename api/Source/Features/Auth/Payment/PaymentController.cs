@@ -51,7 +51,7 @@ public class PaymentController : ControllerBase
                 {
                     PriceData = new SessionLineItemPriceDataOptions
                     {
-                        UnitAmount = 100, // $1.00
+                        UnitAmount = 99, // $1.00
                         Currency = "usd",
                         ProductData = new SessionLineItemPriceDataProductDataOptions
                         {

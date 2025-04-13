@@ -49,7 +49,7 @@
 /* Mobile responsive adjustments */
 @media (max-width: 768px) {
     .vehicle-stats-container {
-        top: 45px;
+        top: 85px;
         right: 50%;
         transform: translateX(50%);
         gap: 12px;

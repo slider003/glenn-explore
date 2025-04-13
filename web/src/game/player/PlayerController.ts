@@ -50,6 +50,12 @@ export class PlayerController implements IFollowable {
     };
     private tb: Threebox | null = null;
     private map: mapboxgl.Map | null = null;
+    private hasSetZoom: boolean = false;
+    private lastBearing: number = 0;
+    private lastPitch: number = 0;
+    private lastZoom: number = 0;
+    private lastLng: number = 0;
+    private lastLat: number = 0;
 
     constructor(
     ) {
@@ -200,12 +206,33 @@ export class PlayerController implements IFollowable {
 
                     CameraController.getMap().setFreeCameraOptions(camera);
                 } else {
-                    CameraController.getMap().jumpTo({
-                        center: [this._coordinates[0], this._coordinates[1]],
-                        bearing: -this._rotation.z,
-                        pitch: PitchController.getPitch(),
-                        zoom: ZoomController.getZoom()
-                    });
+                    const bearing = -this._rotation.z + ZoomController.getZoom();
+                    const pitch = PitchController.getPitch();
+                    const lng = this._coordinates[0];
+                    const lat = this._coordinates[1];
+                    if(lng !== this.lastLng || lat !== this.lastLat) {
+                        CameraController.getMap().setCenter([lng, lat]);
+                        this.lastLng = lng;
+                        this.lastLat = lat;
+                    }
+                    if(bearing !== this.lastBearing || pitch !== this.lastPitch) {
+                        CameraController.getMap().setBearing(bearing);
+                        CameraController.getMap().setPitch(pitch);
+                        this.lastBearing = bearing;
+                        this.lastPitch = pitch;
+                    }
+
+                    if(this.lastZoom === 0) {
+                        CameraController.getMap().setZoom(20);
+                        this.lastZoom = 20;
+                    }
+                    // CameraController.getMap().jumpTo({
+                    //     center: [this._coordinates[0], this._coordinates[1]],
+                    //     bearing: -this._rotation.z + ZoomController.getZoom(),
+                    //     pitch: PitchController.getPitch(),
+                    //     //...(PlayerStore.getLockZoom() || !this.hasSetZoom ? { zoom: 20 } : {})
+                    // });
+                    this.hasSetZoom = true;
                 }
             }
         };
@@ -328,9 +355,9 @@ export class PlayerController implements IFollowable {
         if (teleportOptions.rotation) {
             this._rotation = { x: 0, y: 0, z: teleportOptions.rotation.z ?? -CameraController.getBearing() };
         }
-        if (teleportOptions.zoom) {
-            ZoomController.setZoom(teleportOptions.zoom);
-        }
+        // if (teleportOptions.zoom) {
+        //     ZoomController.setZoom(teleportOptions.zoom);
+        // }
         if (teleportOptions.pitch) {
             PitchController.setPitch(teleportOptions.pitch);
         }

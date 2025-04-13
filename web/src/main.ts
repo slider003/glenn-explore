@@ -98,9 +98,9 @@ async function setupScene() {
 
     // Initialize the game
     initializeGame(
-      player, 
-      hasPosition ? [PlayerStore.getCoordinates()[0], PlayerStore.getCoordinates()[1]] : [DEFAULT_COORDINATES.lng, DEFAULT_COORDINATES.lat], 
-      realtimeController, 
+      player,
+      hasPosition ? [PlayerStore.getCoordinates()[0], PlayerStore.getCoordinates()[1]] : [DEFAULT_COORDINATES.lng, DEFAULT_COORDINATES.lat],
+      realtimeController,
       teleportWrapper
     );
   } else {
@@ -133,7 +133,22 @@ function initializeGame(
     pitch: 0, // Start with a top-down view
     bearing: DEFAULT_COORDINATES.bearing,
     antialias: true,
+    // Enable only zoom-related interactions
+    interactive: true, // Need this for touch interactions
+    boxZoom: false,
+    dragRotate: false,
+    dragPan: false, // Enable for MacOS touchpad support
+    keyboard: true,
+    doubleClickZoom: false,
+    touchZoomRotate: false,
+    touchPitch: false,
+    scrollZoom: false
   })
+
+  map.scrollZoom.enable({ around: 'center'});
+
+  // Ensure touch zoom only affects zoom level, not rotation
+  map.touchZoomRotate.disableRotation();
 
   map.setConfigProperty('basemap', 'lightPreset', PlayerStore.getTimeOfDay());
   // Add terrain source and layer
@@ -143,7 +158,7 @@ function initializeGame(
       'type': 'raster-dem',
       'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
       'tileSize': 512,
-      'maxzoom': 12,  // Reduced from 14 to improve performance
+      'maxzoom': 18,  // Reduced from 14 to improve performance
       'minzoom': 3    // Add minzoom to prevent loading terrain data when zoomed out
     });
 
