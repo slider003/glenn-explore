@@ -460,7 +460,7 @@ export class PlayersOnlineUI {
       }
 
       /* Dark mode support */
-      @media (prefers-color-scheme: dark) {
+
         .players-online-panel {
           background-color: rgba(33, 33, 33, 0.95);
           color: white;
@@ -483,7 +483,7 @@ export class PlayersOnlineUI {
         .teleport-button:hover {
           background-color: #1565C0;
         }
-      }
+      
 
       .players-count-number {
         transition: color 0.3s ease;
@@ -514,12 +514,12 @@ export class PlayersOnlineUI {
       }
 
       /* Dark mode support */
-      @media (prefers-color-scheme: dark) {
+  
         .player-speed {
           color: #aaa;
           background: rgba(255, 255, 255, 0.1);
         }
-      }
+    
     `;
     document.head.appendChild(style);
   }

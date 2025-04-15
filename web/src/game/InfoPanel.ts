@@ -110,7 +110,7 @@ export class InfoPanel {
     const style = document.createElement('style');
     style.textContent = `
       .info-panel {
-        background-color: rgba(255, 255, 255, 0.9);
+        background-color: rgba(0, 40, 80, 0.8);
         border-radius: 4px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
         font-family: monospace;
@@ -192,7 +192,7 @@ export class InfoPanel {
         background-color: rgba(0, 0, 0, 0.1);
       }
       
-      @media (prefers-color-scheme: dark) {
+
         .info-panel {
           background-color: rgba(40, 40, 40, 0.9);
           color: #eee;
@@ -209,7 +209,6 @@ export class InfoPanel {
         
         .copy-coords-button:hover {
           background-color: rgba(255, 255, 255, 0.1);
-        }
       }
     `;
     document.head.appendChild(style);

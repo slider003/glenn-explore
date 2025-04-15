@@ -10,16 +10,18 @@ export class ZoomController {
   private static currentZoom: number = 0;
 
   // Zoom limits
-  private static minZoom: number = -10000;    // Furthest out
-  private static maxZoom: number = 10000;   // Closest in
+  private static minZoom: number = 1;    // Furthest out
+  private static maxZoom: number = 40;   // Closest in
 
   // How much to change zoom per key press
-  private static zoomStep: number = 10;
+  private static zoomStep: number = 1;
 
   // Track which arrow keys are pressed
   private static keys: Record<string, boolean> = {
-    ArrowLeft: false,
-    ArrowRight: false
+    '+': false,
+    '=': false,
+    '-': false,
+    '_': false
   };
 
   private constructor() {
@@ -74,11 +76,11 @@ export class ZoomController {
    * Update the zoom based on currently pressed keys
    */
   private static updateZoom(): void {
-    if (ZoomController.keys.ArrowLeft) {
-      // Decrease zoom (zoom out)
-      ZoomController.setZoom(ZoomController.currentZoom + ZoomController.zoomStep);
-    } else if (ZoomController.keys.ArrowRight) {
+    if (ZoomController.keys['+'] || ZoomController.keys['=']) {
       // Increase zoom (zoom in)
+      ZoomController.setZoom(ZoomController.currentZoom + ZoomController.zoomStep);
+    } else if (ZoomController.keys['-'] || ZoomController.keys['_']) {
+      // Decrease zoom (zoom out)
       ZoomController.setZoom(ZoomController.currentZoom - ZoomController.zoomStep);
     }
   }

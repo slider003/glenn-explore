@@ -2,6 +2,7 @@ import { Threebox } from 'threebox-plugin';
 import { PitchController } from './PitchController';
 import { ZoomController } from './ZoomController';
 import { PlayerStore } from './stores/PlayerStore';
+import { BearingController } from './BearingController';
 
 export class CameraController {
   private static instance: CameraController;
@@ -28,7 +29,8 @@ export class CameraController {
       CameraController.tb = tb;
       
       PitchController.initialize(60);
-      ZoomController.initialize(0);
+      ZoomController.initialize(20);
+      BearingController.initialize(0);
     }
   }
 

@@ -77,4 +77,70 @@ public class PaymentController : ControllerBase
 
         return Ok(new { url = session.Url });
     }
+    
+    [HttpPost("admin/create-custom-checkout")]
+    public async Task<IActionResult> CreateAdminCustomCheckout([FromBody] AdminCustomCheckoutRequest request)
+    {
+        // Check if current user is admin
+        var currentUser = await _userManager.GetUserAsync(User);
+        if (currentUser == null || !currentUser.IsAdmin)
+        {
+            return Forbid();
+        }
+        
+        // Validate request
+        if (request.UnitAmount <= 0)
+        {
+            return BadRequest(new { message = "Unit amount must be greater than 0" });
+        }
+        
+        if (string.IsNullOrWhiteSpace(request.CustomerEmail))
+        {
+            return BadRequest(new { message = "Customer email is required" });
+        }
+        
+        var domain = _configuration["App:Domain"] ?? "https://playglenn.com";
+        
+        var options = new SessionCreateOptions
+        {
+            LineItems = new List<SessionLineItemOptions>
+            {
+                new SessionLineItemOptions
+                {
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        UnitAmount = request.UnitAmount,
+                        Currency = "usd",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = "Custom Purchase",
+                            Description = request.ProductDescription ?? "Custom one-time payment"
+                        },
+                    },
+                    Quantity = 1,
+                },
+            },
+            Mode = "payment",
+            SuccessUrl = $"{domain}/payment-success",
+            CancelUrl = $"{domain}/payment-cancel",
+            CustomerEmail = request.CustomerEmail,
+            Metadata = new Dictionary<string, string>
+            {
+                { "initiatedBy", currentUser.Id },
+                { "isCustomPayment", "true" }
+            }
+        };
+
+        var service = new SessionService();
+        var session = await service.CreateAsync(options);
+
+        return Ok(new { url = session.Url });
+    }
+} 
+
+public class AdminCustomCheckoutRequest
+{
+    public long UnitAmount { get; set; }
+    public string CustomerEmail { get; set; } = string.Empty;
+    public string? ProductDescription { get; set; }
 } 

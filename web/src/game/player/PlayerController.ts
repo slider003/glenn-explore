@@ -21,6 +21,7 @@ import mapboxgl from 'mapbox-gl'
 import { InputUtils } from '../InputUtils';
 import { TeleportOptions } from '../../types/teleport';
 import { DEFAULT_COORDINATES } from '../../config';
+import { BearingController } from '../BearingController';
 
 export class PlayerController implements IFollowable {
     public static getModelConfig(modelType: keyof PlayerModels): ModelConfig<PlayerPhysics> {
@@ -206,7 +207,8 @@ export class PlayerController implements IFollowable {
 
                     CameraController.getMap().setFreeCameraOptions(camera);
                 } else {
-                    const bearing = -this._rotation.z + ZoomController.getZoom();
+                    const zoom = ZoomController.getZoom();
+                    const bearing = -this._rotation.z + BearingController.getBearing();
                     const pitch = PitchController.getPitch();
                     const lng = this._coordinates[0];
                     const lat = this._coordinates[1];
@@ -215,17 +217,21 @@ export class PlayerController implements IFollowable {
                         this.lastLng = lng;
                         this.lastLat = lat;
                     }
-                    if(bearing !== this.lastBearing || pitch !== this.lastPitch) {
-                        CameraController.getMap().setBearing(bearing);
+                    if(pitch !== this.lastPitch) {
                         CameraController.getMap().setPitch(pitch);
-                        this.lastBearing = bearing;
                         this.lastPitch = pitch;
                     }
 
-                    if(this.lastZoom === 0) {
-                        CameraController.getMap().setZoom(20);
-                        this.lastZoom = 20;
+                    if(bearing !== this.lastBearing || pitch !== this.lastPitch) {
+                        CameraController.getMap().setBearing(bearing);
+                        this.lastBearing = bearing;
                     }
+
+                    if(zoom !== this.lastZoom) {
+                        CameraController.getMap().setZoom(zoom);
+                        this.lastZoom = zoom;
+                    }
+
                     // CameraController.getMap().jumpTo({
                     //     center: [this._coordinates[0], this._coordinates[1]],
                     //     bearing: -this._rotation.z + ZoomController.getZoom(),

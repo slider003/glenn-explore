@@ -39,6 +39,29 @@ export const CAR_MODELS: CarModels = {
             drivingAnimation: 'Body.001Action.001'
         }
     },
+    whiteSedan: {
+        model: {
+            obj: '/white-sedan.glb',
+            type: 'glb',
+            scale: 2.5,
+            units: 'meters',
+            rotation: { x: 90, y: 90, z: 0 },
+            anchor: 'center',
+            elevationOffset: 0.7,
+            screenshot: '/white-sedan.jpg'
+        },
+        physics: {
+            maxSpeed: 0.1,         // Reduced from 5
+            acceleration: 0.0003,      // Reduced from 1.2
+            brakeForce: 0.004,       // Reduced from 60
+            reverseSpeed: 0.01,      // Reduced from 20
+            turnSpeed: 1,        // Reduced from 2.0
+            friction: 0.99         // Slightly increased from 0.95 for smoother deceleration
+        },
+        drivingAnimation: {
+            drivingAnimation: 'Body.001Action.001'
+        }
+    },
     golfCart: {
         model: {
             obj: '/golf-cart.glb',

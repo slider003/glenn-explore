@@ -21,27 +21,26 @@ export class IntroUI {
     if (!this.state.loginState.otpSent) {
       return `
         <div class="email-section">
-          <h2 class="welcome-message">Login with your email</h2>
+          <h2 class="welcome-message">Get ready to explore the world! 🌎</h2>
             <p class="auth-explanation">
-            To play Glenn Explore and save your progress, we need your email. 
-            This helps us keep track of your achievements, lap times, and stats.
-            A one-time password will be sent to your email.
+            Ready for an incredible journey? From London to Tokyo, New York to Sydney - the world is yours to explore!
+            We'll save all your adventures, achievements, and best moments.
           </p>
           <p class="auth-explanation">
-            After verifying your email, you have to pay a onetime fee of $0.99 to play.
-            I'm sincerely sorry for the inconvenience, but this is the only way I can cover the costs of the game.
+            For just $0.99 (one-time payment), you'll get lifetime access to Glenn Explore!
             <br/>
             <br/>
-            We went viral a litle bit too fast and didn't expect the response to be this big.
+            🎮 Join our community and explore the world together!
             <br/>
+            🌟 All future updates included
             <br/>
-            I am looking into alternative funding options, I truly want this to be a free game for everyone!
+            🏆 Your progress saved forever
           </p>
 
-          <a style="text-align:center;display:block;margin-bottom:10px;" href="https://discord.gg/XzSzsDhB" target="_blank">Join our Discord community!</a>
+          <a style="text-align:center;display:block;margin-bottom:10px;" href="https://discord.gg/XzSzsDhB" target="_blank">Join our amazing Discord community! 🚀</a>
           <p class="consent-message">
-            By providing your email, you agree to receive occasional updates about game features and improvements. 
-            You can easily unsubscribe via the link in any email you receive from us.
+            By providing your email, you'll get your access key and occasional exciting updates about new features. 
+            Unsubscribe anytime with one click.
           </p>
           <div class="email-input-container">
             <input type="email" class="email-input" placeholder="Enter your email" value="${this.state.loginState.email}">
@@ -51,8 +50,8 @@ export class IntroUI {
     } else {
       return `
         <div class="otp-section">
-          <h2 class="welcome-message">Verify your email</h2>
-          <p class="otp-message">A verification code was sent to ${this.state.loginState.email}</p>
+          <h2 class="welcome-message">Almost there! 🎉</h2>
+          <p class="otp-message">We sent your special access code to ${this.state.loginState.email}</p>
           <div class="otp-input-container">
             <input type="text" class="otp-input" placeholder="Enter verification code" maxlength="6">
           </div>
@@ -66,25 +65,27 @@ export class IntroUI {
     return `
       <div class="payment-section">
         <div class="payment-message">
-          Hi! I could never imagined that this project would get as much attention as it did. 
-          With all the MAP data and buildings, and the recent surge in players, we need to cover some costs.
+          You're about to unlock an incredible driving adventure! 🌎
+          Join our thriving community exploring the world together.
         </div>
         <div class="payment-features">
-          <div class="feature-item">✨ Unlimited driving time</div>
-          <div class="feature-item">🌟 All vehicles and characters</div>
-          <div class="feature-item">🎮 Save your progress</div>
+          <div class="feature-item">✨ LIFETIME access - no subscriptions ever!</div>
+          <div class="feature-item">🌟 All current vehicles and characters</div>
+          <div class="feature-item">🎮 Cross-country road trips with friends</div>
+          <div class="feature-item">🎵 In-game radio & music</div>
+          <div class="feature-item">🏆 Personal stats & achievements</div>
         </div>
         <div class="payment-cost">
-          To join the game, you'll have to pay $0.99
+          One-time payment of $0.99
         </div>
         <div class="payment-alternative">
-          The project is open source! If you prefer, you can run it on your own machine: 
-          <a href="https://github.com/WilliamAvHolmberg/glenn-explore" target="_blank" class="github-link">github.com/WilliamAvHolmberg/glenn-explore</a>
+          Want to try before buying? The project is open source! 
+          <a href="https://github.com/WilliamAvHolmberg/glenn-explore" target="_blank" class="github-link">Run it locally, check the code on GitHub</a>
           <br/>
           <br/>
-          Already paid? Try reloading the page. 
+          Already a member? Try reloading the page. 
           <br/>
-          If the problem persists, please contact me on Discord or email at mail@playglenn.com.
+          Need help? Reach out on Discord or email mail@playglenn.com - we're here for you! 
         </div>
         ${this.state?.paymentState.error ? `
           <p class="error-message">${this.state.paymentState.error}</p>

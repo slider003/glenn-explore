@@ -1,4 +1,5 @@
 import { PlayerStore } from "./stores/PlayerStore";
+import { ZoomController } from "./ZoomController";
 
 
 export class MovementControlsPanel {
@@ -8,6 +9,7 @@ export class MovementControlsPanel {
   // Touch control elements
   private leftControl: HTMLElement | null = null;
   private rightControl: HTMLElement | null = null;
+  private zoomControl: HTMLElement | null = null;
 
   // Touch tracking
   private activeTouches: {
@@ -37,7 +39,20 @@ export class MovementControlsPanel {
     this.container.className = 'movement-controls-container';
     document.body.appendChild(this.container);
 
-    // Set panel content with dual thumb controls (removed teleport button)
+    // Create separate zoom buttons container
+    const zoomButtonsContainer = document.createElement('div');
+    zoomButtonsContainer.className = 'zoom-buttons';
+    document.body.appendChild(zoomButtonsContainer);
+
+    // Add zoom buttons to separate container
+    zoomButtonsContainer.innerHTML = `
+        <button class="zoom-in-button">+</button>
+        <button class="zoom-out-button">-</button>
+    `;
+
+    this.zoomControl = zoomButtonsContainer;
+
+    // Set panel content with dual thumb controls
     this.container.innerHTML = `
             <div class="left-control-area">
                 <div class="control-background"></div>
@@ -82,13 +97,27 @@ export class MovementControlsPanel {
       }, { passive: false });
     }
 
-    // Don't prevent default globally
-    // Instead of these global preventions:
-    // this.container.addEventListener('touchstart', this.preventDefault, { passive: false });
-    // this.container.addEventListener('touchmove', this.preventDefault, { passive: false });
-    // this.container.addEventListener('touchend', this.preventDefault, { passive: false });
+    // Add simple click handlers for zoom buttons
+    if (this.zoomControl) {
+      const zoomInButton = this.zoomControl.querySelector('.zoom-in-button');
+      const zoomOutButton = this.zoomControl.querySelector('.zoom-out-button');
 
-    // Use more targeted event listeners
+      if (zoomInButton) {
+        zoomInButton.addEventListener('click', () => {
+          // Zoom in by 1 step
+          ZoomController.setZoom(ZoomController.getZoom() + 1);
+        });
+      }
+
+      if (zoomOutButton) {
+        zoomOutButton.addEventListener('click', () => {
+          // Zoom out by 1 step
+          ZoomController.setZoom(ZoomController.getZoom() - 1);
+        });
+      }
+    }
+
+    // Use targeted event listeners for movement controls
     document.addEventListener('touchmove', this.handleTouchMove.bind(this));
     document.addEventListener('touchend', this.handleTouchEnd.bind(this));
     document.addEventListener('touchcancel', this.handleTouchEnd.bind(this));
@@ -367,6 +396,45 @@ export class MovementControlsPanel {
             margin-right: 20px;  /* Aligned to right edge with margin */
         }
         
+        /* Zoom buttons styles */
+        .zoom-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: fixed;
+            bottom: 90px; /* Position above the control panel */
+            left: 0;
+            right: 0;
+            z-index: 20;
+            pointer-events: none;
+        }
+        
+        .zoom-in-button, .zoom-out-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            background-color: rgba(0, 40, 80, 0.7);
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            pointer-events: auto;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .zoom-in-button:active, .zoom-out-button:active {
+            background-color: rgba(0, 102, 255, 0.8);
+            transform: scale(0.95);
+        }
+        
         .control-background {
             position: absolute;
             top: 0;
@@ -532,14 +600,44 @@ export class MovementControlsPanel {
 
         @media (max-width: 915px) and (max-height: 450px) and (orientation: landscape) {
             .movement-controls-container {
-                bottom: 20% !important;
+                bottom: 25% !important;
             }
         }
         
-        /* Hide controls only on desktop devices (mouse/pointer input) */
+        /* Desktop styles for zoom buttons */
+        @media (min-width: 1100px) and (hover: hover) and (pointer: fine) {
+            .zoom-buttons {
+                bottom: 15px;
+                right: 15px;
+                gap: 5px;
+                justify-content: flex-end;
+            }
+            
+            .zoom-in-button, .zoom-out-button {
+                width: 40px;
+                height: 40px;
+                font-size: 24px;
+                opacity: 0.7;
+                transition: opacity 0.2s;
+            }
+            
+            .zoom-in-button:hover, .zoom-out-button:hover {
+                opacity: 1;
+            }
+        }
+        
+        /* Hide movement controls only on desktop devices */
         @media (min-width: 1100px) and (hover: hover) and (pointer: fine) {
             .movement-controls-container {
                 display: none !important;
+            }
+        }
+
+        /* For landscape mode */
+        @media (orientation: landscape) {
+            .zoom-buttons {
+                bottom: 60px; /* Position above the control panel */
+                flex-direction: row;
             }
         }
     `;
