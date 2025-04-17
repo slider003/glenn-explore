@@ -21,6 +21,7 @@ namespace Api.Features.Auth.Models
         
         [Required]
         public string OtpCode { get; set; } = string.Empty;
+        public bool IsLowPerformanceDevice { get; set; } = false;
     }
     
     public class RequestOtpResponse

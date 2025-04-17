@@ -127,6 +127,19 @@ export class SettingsPanel extends BasePanelUI {
               🚗 Disabled
             </button>
           </div>
+
+          <h4>Performance Mode</h4>
+          <div class="performance-description">
+            <small>📱 This is a resource heavy game. If enabled, certain features like terrain elevation will be simplified so the game runs smoother.</small>
+          </div>
+          <div class="mode-toggle">
+            <button class="mode-btn ${PlayerStore.getIsLowPerformanceDevice() ? 'active' : ''}" data-performance="enabled">
+              🚀 Enabled
+            </button>
+            <button class="mode-btn ${!PlayerStore.getIsLowPerformanceDevice() ? 'active' : ''}" data-performance="disabled">
+              🏞️ Disabled
+            </button>
+          </div>
         </div>
       </div>
     `;
@@ -299,6 +312,28 @@ export class SettingsPanel extends BasePanelUI {
         // Update state
         PlayerStore.setCollisionEnabled(isEnabled);
         localStorage.setItem('collisionEnabled', isEnabled.toString());
+      });
+    });
+
+    // Add Performance Mode toggle
+    const performanceButtons = content.querySelectorAll('.map-settings .mode-btn[data-performance]');
+    performanceButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const mode = (e.currentTarget as HTMLElement).dataset.performance;
+        const isEnabled = mode === 'enabled';
+
+        // Update UI
+        performanceButtons.forEach(b => b.classList.remove('active'));
+        (e.currentTarget as HTMLElement).classList.add('active');
+
+        // Update state
+        PlayerStore.setIsLowPerformanceDevice(isEnabled);
+        PlayerStore._saveStateToLocalStorage();
+        
+        // Reload the page to apply changes (like map style)
+        setTimeout(() => {
+          window.location.reload();
+        }, 400);
       });
     });
   }

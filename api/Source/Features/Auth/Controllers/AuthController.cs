@@ -504,7 +504,7 @@ public class AuthController : ControllerBase
             // OTP is valid, mark email as verified and clear OTP
             user.MarkEmailAsVerified();
             user.ClearOtp();
-            user.UpdateLastLogin();
+            user.UpdateLastLogin(request.IsLowPerformanceDevice);
             
             // If this was a guest account, update it to be a regular account
             if (user.IsGuest)

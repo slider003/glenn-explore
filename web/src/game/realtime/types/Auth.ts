@@ -19,6 +19,7 @@ export interface RequestOtpResponse {
 export interface VerifyOtpRequest {
   email: string;
   otpCode: string;
+  isLowPerformanceDevice: boolean;
 }
 
 export interface LoginResponse {

@@ -59,7 +59,8 @@ export class AuthClient {
 
     const request: VerifyOtpRequest = {
       email,
-      otpCode
+      otpCode,
+      isLowPerformanceDevice: PlayerStore.getIsLowPerformanceDevice()
     };
 
     const response = await fetch(`${this.baseUrl}/verify-otp`, {

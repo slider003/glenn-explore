@@ -23,6 +23,7 @@ export class PlayerStore {
     private static movementMode: 'car' | 'walking' = 'car';
     private static carMode: 'normal' | 'fly' = 'normal';
     private static lockZoom: boolean = false;
+    private static isLowPerformanceDevice: boolean | null = null;
 
     public static setAllowedToDrive(allowedToDrive: boolean): void {
         PlayerStore.allowedToDrive = allowedToDrive;
@@ -173,7 +174,7 @@ export class PlayerStore {
         PlayerStore.movementMode = mode;
         // When changing movement mode, also update the stateType for animation purposes
         PlayerStore.setStateType(mode);
-        
+
         // If switching to walking, turn off flying mode
         if (mode === 'walking') {
             PlayerStore.setIsFlying(false);
@@ -213,7 +214,8 @@ export class PlayerStore {
             isFlying: PlayerStore.isFlying,
             flyingElevation: PlayerStore.flyingElevation,
             movementMode: PlayerStore.movementMode,
-            carMode: PlayerStore.carMode
+            carMode: PlayerStore.carMode,
+            isLowPerformanceDevice: PlayerStore.isLowPerformanceDevice
         };
 
         localStorage.setItem('playerState', JSON.stringify(state));
@@ -252,6 +254,7 @@ export class PlayerStore {
             PlayerStore.movementMode = state.movementMode || 'car';
             PlayerStore.carMode = state.carMode || 'normal';
             PlayerStore.lockZoom = state.lockZoom ?? false;
+            PlayerStore.isLowPerformanceDevice = state.isLowPerformanceDevice ?? false;
         } else {
             PlayerStore.playerName = 'Guest';
             PlayerStore.isGuest = true;
@@ -309,11 +312,30 @@ export class PlayerStore {
         return PlayerStore.lockZoom;
     }
 
+    public static getIsLowPerformanceDevice(): boolean {
+        if (PlayerStore.isLowPerformanceDevice !== null) {
+            return PlayerStore.isLowPerformanceDevice;
+        }
+        // Check if it's a mobile device
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        // Check if it's a low-end device (simple approximation by checking CPU cores if available)
+        const hasLimitedCPU = navigator.hardwareConcurrency !== undefined && navigator.hardwareConcurrency <= 4;
+        // Check for low memory (not universally available, so use a fallback if not)
+        const hasLowMemory = (navigator as any).deviceMemory !== undefined && (navigator as any).deviceMemory <= 4;
+
+        // Consider it low performance if it's mobile or has limited CPU/memory
+        return isMobile || hasLimitedCPU || hasLowMemory;
+    }
+
+    public static setIsLowPerformanceDevice(isLowPerformanceDevice: boolean): void {
+        PlayerStore.isLowPerformanceDevice = isLowPerformanceDevice;
+    }
+
     public static reset(): void {
         clearInterval(PlayerStore.saveInterval);
-        
+
         localStorage.removeItem('playerState');
-        
+
         PlayerStore.playerName = '';
         PlayerStore.isGuest = false;
         PlayerStore.isOnline = false;

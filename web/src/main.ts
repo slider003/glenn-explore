@@ -26,10 +26,12 @@ mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN
 // Global variables
 let infoPanel: InfoPanel;
 let isSmallScreen = window.innerWidth < 768; // Determine once if this is a small screen device
+// Determine performance capabilities - used for rendering optimizations
+
 
 window.isSmallScreen = isSmallScreen;
+window.isLowPerformanceDevice = PlayerStore.getIsLowPerformanceDevice();
 
-console.log("PlayerStore.getMap()", PlayerStore.getMap())
 let map: mapboxgl.Map | null = null
 
 setupScene();
@@ -125,14 +127,15 @@ function initializeGame(
   realtimeController: RealtimeController,
   teleport: (teleportOptions: TeleportOptions) => void
 ) {
-  map = new mapboxgl.Map({
+  // Set up map with performance-optimized options
+  const mapOptions: mapboxgl.MapOptions = {
     container: 'map',
     style: PlayerStore.getMap() === 'satellite' ? MAPBOX_STYLE_SATELLITE : MAPBOX_STYLE_STANDARD,
     center: [0, 0], // Start at center of the world (will be changed by intro)
     zoom: 1.5, // Zoomed all the way out to see the entire Earth
     pitch: 0, // Start with a top-down view
     bearing: DEFAULT_COORDINATES.bearing,
-    antialias: true,
+    antialias: !window.isLowPerformanceDevice, // Disable antialiasing on low-performance devices
     // Enable only zoom-related interactions
     interactive: true, // Need this for touch interactions
     boxZoom: false,
@@ -142,10 +145,15 @@ function initializeGame(
     doubleClickZoom: false,
     touchZoomRotate: false,
     touchPitch: false,
-    scrollZoom: false
-  })
+    scrollZoom: false,
+    maxPitch: window.isLowPerformanceDevice ? 70 : 85, // Limit pitch on low-performance devices
+    fadeDuration: window.isLowPerformanceDevice ? 0 : 300, // Disable fade animations on low-performance devices
+    preserveDrawingBuffer: false // Better performance when false
+  };
 
-  map.scrollZoom.enable({ around: 'center'});
+  map = new mapboxgl.Map(mapOptions);
+
+  map.scrollZoom.enable({ around: 'center' });
 
   // Ensure touch zoom only affects zoom level, not rotation
   map.touchZoomRotate.disableRotation();
@@ -154,18 +162,20 @@ function initializeGame(
   // Add terrain source and layer
   map.on('style.load', () => {
 
-    map?.addSource('mapbox-dem', {
-      'type': 'raster-dem',
-      'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
-      'tileSize': 512,
-      'maxzoom': 18,  // Reduced from 14 to improve performance
-      'minzoom': 3    // Add minzoom to prevent loading terrain data when zoomed out
-    });
+    if (!window.isLowPerformanceDevice) {
+      map?.addSource('mapbox-dem', {
+        'type': 'raster-dem',
+        'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+        'tileSize': 512,
+        'maxzoom': 18,  // Reduced from 14 to improve performance
+        'minzoom': 3    // Add minzoom to prevent loading terrain data when zoomed out
+      });
 
-    map?.setTerrain({
-      'source': 'mapbox-dem',
-      'exaggeration': 0.7,
-    });
+      map?.setTerrain({
+        'source': 'mapbox-dem',
+        'exaggeration': 0.7,
+      });
+    }
 
     // Add custom layer for Threebox
     map?.addLayer({
@@ -179,10 +189,10 @@ function initializeGame(
           gl,
           {
             defaultLights: true,
-            enableSelectingObjects: true,
-            enableDraggingObjects: true,
-            enableTooltips: true,
-            enableSelectingFeatures: true,
+            enableSelectingObjects: false,
+            enableDraggingObjects: false,
+            enableTooltips: false,
+            enableSelectingFeatures: false,
           }
         )
 
@@ -236,6 +246,8 @@ declare global {
   interface Window {
     tb: any;
     isSmallScreen: boolean;
+    isLowPerformanceDevice: boolean;
+    showModelSelector: () => void;
   }
 }
 
