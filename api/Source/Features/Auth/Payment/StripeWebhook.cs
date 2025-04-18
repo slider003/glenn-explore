@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
 using Api.Features.Auth.Models;
+using Api.Source.Features.Models.Services;
 using Microsoft.AspNetCore.Identity;
 using Stripe.Checkout;
 
@@ -13,15 +14,18 @@ public class StripeWebhookController : ControllerBase
     private readonly UserManager<User> _userManager;
     private readonly ILogger<StripeWebhookController> _logger;
     private readonly string _endpointSecret;
+    private readonly ModelsService _modelsService;
 
     public StripeWebhookController(
         UserManager<User> userManager,
         ILogger<StripeWebhookController> logger,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        ModelsService modelsService)
     {
         _userManager = userManager;
         _logger = logger;
         _endpointSecret = configuration["Stripe:WebhookSecret"] ?? throw new ArgumentNullException("Stripe:WebhookSecret must be configured");
+        _modelsService = modelsService;
     }
 
     [HttpPost]
@@ -72,9 +76,20 @@ public class StripeWebhookController : ControllerBase
             return;
         }
 
-        user.MarkAsPaid(session.CustomerId);
-        await _userManager.UpdateAsync(user);
-        
-        _logger.LogInformation("User {UserId} marked as paid", userId);
+        // Check if this is a model purchase
+        if (session.Metadata.TryGetValue("type", out var type) && type == "model_purchase" && 
+            session.Metadata.TryGetValue("modelId", out var modelId))
+        {
+            // This is a model purchase, unlock the model
+            await _modelsService.UnlockModelAsync(userId, modelId);
+            _logger.LogInformation("Model {ModelId} unlocked for user {UserId}", modelId, userId);
+        }
+        else
+        {
+            // This is a general app purchase
+            user.MarkAsPaid(session.CustomerId);
+            await _userManager.UpdateAsync(user);
+            _logger.LogInformation("User {UserId} marked as paid", userId);
+        }
     }
 } 

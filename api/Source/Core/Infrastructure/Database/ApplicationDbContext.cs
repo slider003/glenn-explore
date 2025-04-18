@@ -1,6 +1,7 @@
 using Api.Features.Auth.Models;
 using Api.Features.OpenRouter.Models;
 using Api.Source.Features.Game;
+using Api.Source.Features.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public DbSet<Message> Messages => Set<Message>();
     public DbSet<RaceResult> RaceResults => Set<RaceResult>();
     public DbSet<LLMMessage> LLMMessages => Set<LLMMessage>();
+    public DbSet<UnlockedModel> UnlockedModels => Set<UnlockedModel>();
     
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -97,6 +99,19 @@ public class ApplicationDbContext : IdentityDbContext<User>
             
             b.Property(m => m.ToolName)
                 .HasMaxLength(100);
+        });
+        
+        // UnlockedModel configuration and indexes
+        builder.Entity<UnlockedModel>(b =>
+        {
+            // Relationship with User
+            b.HasOne(u => u.User)
+                .WithMany()
+                .HasForeignKey(u => u.UserId);
+                
+            // Index for efficient lookups by user and model
+            b.HasIndex(u => new { u.UserId, u.ModelId })
+                .HasDatabaseName("IX_UnlockedModels_UserId_ModelId");
         });
     }
 } 

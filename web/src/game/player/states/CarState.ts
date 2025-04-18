@@ -12,7 +12,7 @@ export class CarState implements PlayerState<CarPhysics> {
     currentSpeed: number = 0;
     mixer: THREE.AnimationMixer | null = null;
     model: any;
-    modelType: string = 'lambo';
+    modelType: string = 'golfCart';
     verticalPosition: number | null = null;
     animationState: string = 'idle';
     stateType: 'car' | 'walking' = 'car';

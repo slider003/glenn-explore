@@ -18,6 +18,7 @@ using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.DataProtection.Repositories;
 using Microsoft.AspNetCore.DataProtection;
 using Api.Features.Auth.Payment;
+using Api.Source.Features.Models.Services;
 
 namespace Api.Shell;
 
@@ -342,6 +343,9 @@ public partial class Program
 
         // Add Stripe services
         builder.Services.AddScoped<PaymentService>();
+
+        // Add model services
+        builder.Services.AddScoped<ModelsService>();
 
         var app = builder.Build();
 
