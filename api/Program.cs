@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.DataProtection.Repositories;
 using Microsoft.AspNetCore.DataProtection;
 using Api.Features.Auth.Payment;
 using Api.Source.Features.Models.Services;
+using Api.Source.Features.Files.Services;
+using Microsoft.Extensions.FileProviders;
 
 namespace Api.Shell;
 
@@ -211,8 +213,10 @@ public partial class Program
             ? Path.Combine(Environment.GetEnvironmentVariable("DEPLOY_PATH") ?? "", "data")
             : "data";
 
-        // Ensure data directory exists
+        // Ensure data directory and uploads directories exist
         Directory.CreateDirectory(dataPath);
+        Directory.CreateDirectory(Path.Combine(dataPath, "uploads"));
+        Directory.CreateDirectory(Path.Combine(dataPath, "uploads", "models"));
 
         builder.Services.AddHealthChecks();
 
@@ -347,6 +351,9 @@ public partial class Program
         // Add model services
         builder.Services.AddScoped<ModelsService>();
 
+        // Add file services
+        builder.Services.AddScoped<FileService>();
+
         var app = builder.Build();
 
         // Apply migrations or ensure database is created based on environment
@@ -403,6 +410,15 @@ public partial class Program
 
         // Add middleware to serve static files from wwwroot
         app.UseStaticFiles();
+
+        // Configure static file serving for uploads directory
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(
+                Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", "uploads"))
+            ),
+            RequestPath = "/uploads"
+        });
 
         // Map SignalR hub
         app.MapHub<GameHub>("/api/hubs/game");

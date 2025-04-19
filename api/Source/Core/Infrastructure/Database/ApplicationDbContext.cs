@@ -2,6 +2,7 @@ using Api.Features.Auth.Models;
 using Api.Features.OpenRouter.Models;
 using Api.Source.Features.Game;
 using Api.Source.Features.Models;
+using Api.Source.Features.Files.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +15,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public DbSet<RaceResult> RaceResults => Set<RaceResult>();
     public DbSet<LLMMessage> LLMMessages => Set<LLMMessage>();
     public DbSet<UnlockedModel> UnlockedModels => Set<UnlockedModel>();
+    public DbSet<FileEntity> Files => Set<FileEntity>();
     
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -112,6 +114,37 @@ public class ApplicationDbContext : IdentityDbContext<User>
             // Index for efficient lookups by user and model
             b.HasIndex(u => new { u.UserId, u.ModelId })
                 .HasDatabaseName("IX_UnlockedModels_UserId_ModelId");
+        });
+
+        // File configuration and indexes
+        builder.Entity<FileEntity>(b =>
+        {
+            // Primary key
+            b.HasKey(f => f.Id);
+
+            // Relationship with User (uploader)
+            b.HasOne<User>()
+                .WithMany()
+                .HasForeignKey(f => f.UploadedBy)
+                .OnDelete(DeleteBehavior.Restrict);  // Don't delete files if user is deleted
+
+            // Indexes for common queries
+            b.HasIndex(f => f.Name)
+                .HasDatabaseName("IX_Files_Name");
+            b.HasIndex(f => f.UploadedAt)
+                .HasDatabaseName("IX_Files_UploadedAt");
+            b.HasIndex(f => f.MimeType)
+                .HasDatabaseName("IX_Files_MimeType");
+
+            // Set reasonable max lengths for string fields
+            b.Property(f => f.Id)
+                .HasMaxLength(36);  // GUID length
+            b.Property(f => f.Name)
+                .HasMaxLength(255);
+            b.Property(f => f.Path)
+                .HasMaxLength(1024);
+            b.Property(f => f.MimeType)
+                .HasMaxLength(100);
         });
     }
 } 
