@@ -8,7 +8,7 @@ export interface PlayerState<T>{
   modelType: string;
   animationState: string;
   stateType: 'car' | 'walking';
-  verticalPosition: number | null;
+  verticalPosition: number | null;
   enter(player: PlayerController): Promise<void>;
   exit(player: PlayerController): void;
   update(player: PlayerController): void;

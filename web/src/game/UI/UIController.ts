@@ -22,12 +22,18 @@ export class UIController {
         onChangeName: (newName: string) => Promise<boolean>, 
         setKeyState: (key: string, isPressed: boolean) => void, 
         switchToCar: () => void, 
-        switchToWalking: () => void, 
+        switchToWalking: () => void,
         toggleFlyingMode: () => void,
         playerController: PlayerController
     ) {
         new PlayersOnlineUI(onTeleport);
-        new ControlPanelController({ map, onTeleport, switchToCar, switchToWalking, toggleFlyingMode });
+        new ControlPanelController({ 
+            map, 
+            onTeleport, 
+            switchToCar, 
+            switchToWalking,
+            toggleFlyingMode 
+        });
         new ChatController(onChangeName, onTeleport);
         new MovementControlsPanel(setKeyState);
         // Initialize movement controls panel with player's setKeyState method

@@ -45,6 +45,34 @@ export const PLAYER_MODELS: PlayerModels = {
             runAnimation: 'running',
         }
     },
+    cuteElephant: {
+        model: {
+            obj: './cute-elephant.glb',
+            type: 'glb',
+            scale: 1,
+            units: 'meters',
+            rotation: { x: 90, y: 0, z: 0 },
+            anchor: 'center',
+            screenshot: '/cute-elephant.jpg'
+        },
+        physics: {
+            walkMaxVelocity: 0.01,
+            runMaxVelocity: 0.03,
+            walkAcceleration: 0.001,
+            runAcceleration: 0.001,
+            deceleration: 0.95,
+            rotationSpeed: 1,
+            jumpForce: 0.2,
+            gravity: 0.005
+        },
+        walkingAnimation: {
+            walkSpeed: 3,
+            runSpeed: 4,
+            idleAnimation: 'idle',
+            walkAnimation: 'walk',
+            runAnimation: 'running',
+        }
+    },
     animeTeenage: {
         model: {
             obj: '/anime-teenage.glb',

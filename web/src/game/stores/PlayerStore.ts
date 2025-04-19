@@ -1,4 +1,5 @@
 import { DEFAULT_COORDINATES } from "../../config";
+import { UnlockedModel } from "../api/types/ModelTypes";
 
 export class PlayerStore {
     private static playerId: string;
@@ -22,8 +23,11 @@ export class PlayerStore {
     private static flyingElevation: number = 0;
     private static movementMode: 'car' | 'walking' = 'car';
     private static carMode: 'normal' | 'fly' = 'normal';
+
+    
     private static lockZoom: boolean = false;
     private static isLowPerformanceDevice: boolean | null = null;
+    private static unlockedModels: UnlockedModel[] = [];
 
     public static setAllowedToDrive(allowedToDrive: boolean): void {
         PlayerStore.allowedToDrive = allowedToDrive;
@@ -215,7 +219,8 @@ export class PlayerStore {
             flyingElevation: PlayerStore.flyingElevation,
             movementMode: PlayerStore.movementMode,
             carMode: PlayerStore.carMode,
-            isLowPerformanceDevice: PlayerStore.isLowPerformanceDevice
+            isLowPerformanceDevice: PlayerStore.isLowPerformanceDevice,
+            unlockedModels: PlayerStore.unlockedModels,
         };
 
         localStorage.setItem('playerState', JSON.stringify(state));
@@ -255,6 +260,7 @@ export class PlayerStore {
             PlayerStore.carMode = state.carMode || 'normal';
             PlayerStore.lockZoom = state.lockZoom ?? false;
             PlayerStore.isLowPerformanceDevice = state.isLowPerformanceDevice ?? false;
+            PlayerStore.unlockedModels = state.unlockedModels || [];
         } else {
             PlayerStore.playerName = 'Guest';
             PlayerStore.isGuest = true;
@@ -354,5 +360,32 @@ export class PlayerStore {
         PlayerStore.flyingElevation = 0;
         PlayerStore.movementMode = 'car';
         PlayerStore.carMode = 'normal';
+        PlayerStore.unlockedModels = [];
+    }
+
+    public static getUnlockedModels(): UnlockedModel[] {
+        return PlayerStore.unlockedModels;
+    }
+
+    public static setUnlockedModels(models: UnlockedModel[]): void {
+        PlayerStore.unlockedModels = models;
+    }
+
+    public static isModelUnlocked(modelId: string): boolean {
+        // Free models are always unlocked (this is a backup check, the API determines this)
+        const freeModels = ['vikingBoat', 'golfCart', 'pepeFrogRide', 'dino', 'animeTeenage', 'levels', 'setupSpawn'];
+        if (freeModels.includes(modelId)) {
+            return true;
+        }
+        
+        // Check if model is in unlocked models
+        return PlayerStore.unlockedModels.some(model => model.modelId === modelId);
+    }
+
+    public static addUnlockedModel(model: UnlockedModel): void {
+        // Check if model is already in the list
+        if (!PlayerStore.unlockedModels.some(m => m.modelId === model.modelId)) {
+            PlayerStore.unlockedModels.push(model);
+        }
     }
 } 

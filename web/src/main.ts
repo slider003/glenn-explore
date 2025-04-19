@@ -14,6 +14,7 @@ import { UIController } from './game/UI/UIController'
 import { PlayerController } from './game/player/PlayerController'
 import { AuthClient } from './game/realtime/AuthClient'
 import { TeleportOptions } from './types/teleport'
+import { ModelClient } from './game/api/ModelClient'
 
 // Initialize input focus tracking
 InputUtils.initialize();
@@ -217,13 +218,27 @@ function initializeGame(
           player
         );
 
+        // Initialize model client
+        const modelClient = new ModelClient();
+
         // Connect to websocket
-        realtimeController.connect(map, window.tb!).then(() => {
+        realtimeController.connect(map, window.tb!).then(async () => {
           // Initialize player state at the provided position
           player.initializeState(window.tb!, map!, initialPosition);
+          
+          // Fetch unlocked models from the server
+          try {
+            const unlockedModels = await modelClient.getUnlockedModels();
+            PlayerStore.setUnlockedModels(unlockedModels);
+            console.log('Loaded unlocked models:', unlockedModels);
+          } catch (error) {
+            console.error('Failed to fetch unlocked models:', error);
+          }
+          
           setTimeout(() => {
             window.showModelSelector();
           }, 1000);
+          
           Toast.show({
             type: 'success',
             message: 'Welcome to Gothenburg! Enjoy your drive!',

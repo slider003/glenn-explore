@@ -14,10 +14,11 @@ public class ModelsService
     private readonly Dictionary<string, ModelInfo> _modelsData = new()
     {
         // Premium car models
-        { "lambo", new ModelInfo { Name = "Lamborghini", Price = 1.99m, IsPremium = true, Category = "car" } },
+        { "limousineLondon", new ModelInfo { Name = "Limousine", Price = 0.99m, IsPremium = true, Category = "car" } },
         { "whiteSedan", new ModelInfo { Name = "White Sedan", Price = 0.5m, IsPremium = true, Category = "car" } },
         
         // Free car models
+        { "lambo", new ModelInfo { Name = "Lamborghini", Price = 0m, IsPremium = false, Category = "car" } },
         { "vikingBoat", new ModelInfo { Name = "Viking Boat", Price = 0m, IsPremium = false, Category = "car" } },
         { "golfCart", new ModelInfo { Name = "Golf Cart", Price = 0m, IsPremium = false, Category = "car" } },
         { "pepeFrogRide", new ModelInfo { Name = "Pepe Frog", Price = 0m, IsPremium = false, Category = "car" } },
@@ -30,6 +31,9 @@ public class ModelsService
         { "animeTeenage", new ModelInfo { Name = "Anime Character", Price = 0m, IsPremium = false, Category = "character" } },
         { "levels", new ModelInfo { Name = "Levels", Price = 0m, IsPremium = false, Category = "character" } },
         { "setupSpawn", new ModelInfo { Name = "Spawn Character", Price = 0m, IsPremium = false, Category = "character" } }
+        
+        // To add a new model, follow this format:
+        // { "modelId", new ModelInfo { Name = "Display Name", Price = 0m, IsPremium = false, Category = "car" } },
     };
     
     // Private class for storing model information

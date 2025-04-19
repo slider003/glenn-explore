@@ -39,6 +39,29 @@ export const CAR_MODELS: CarModels = {
             drivingAnimation: 'Body.001Action.001'
         }
     },
+    // batmobile: {
+    //     model: {
+    //         obj: '/batmobile.glb',
+    //         type: 'glb',
+    //         scale: 1,
+    //         units: 'meters',
+    //         rotation: { x: 90, y: 0, z: 0 },
+    //         anchor: 'center',
+    //         elevationOffset: 0.7,
+    //         screenshot: '/batmobile.png'
+    //     },
+    //     physics: {
+    //         maxSpeed: 0.1,         // Reduced from 5
+    //         acceleration: 0.0003,      // Reduced from 1.2
+    //         brakeForce: 0.004,       // Reduced from 60
+    //         reverseSpeed: 0.01,      // Reduced from 20
+    //         turnSpeed: 1,        // Reduced from 2.0
+    //         friction: 0.99         // Slightly increased from 0.95 for smoother deceleration
+    //     },
+    //     drivingAnimation: {
+    //         drivingAnimation: 'Body.001Action.001'
+    //     }
+    // },
     whiteSedan: {
         model: {
             obj: '/white-sedan.glb',
@@ -53,6 +76,29 @@ export const CAR_MODELS: CarModels = {
         physics: {
             maxSpeed: 0.1,         // Reduced from 5
             acceleration: 0.0003,      // Reduced from 1.2
+            brakeForce: 0.004,       // Reduced from 60
+            reverseSpeed: 0.01,      // Reduced from 20
+            turnSpeed: 1,        // Reduced from 2.0
+            friction: 0.99         // Slightly increased from 0.95 for smoother deceleration
+        },
+        drivingAnimation: {
+            drivingAnimation: 'Body.001Action.001'
+        }
+    },
+    limousineLondon: {
+        model: {
+            obj: '/limousine-london.glb',
+            type: 'glb',
+            scale: 1,
+            units: 'meters',
+            rotation: { x: 90, y: 90, z: 0 },
+            anchor: 'center',
+            elevationOffset: 0,
+            screenshot: '/limousine-london.jpg'
+        },
+        physics: {
+            maxSpeed: 0.15,         // Reduced from 5
+            acceleration: 0.00025,      // Reduced from 1.2
             brakeForce: 0.004,       // Reduced from 60
             reverseSpeed: 0.01,      // Reduced from 20
             turnSpeed: 1,        // Reduced from 2.0
@@ -126,6 +172,75 @@ export const CAR_MODELS: CarModels = {
             reverseSpeed: 0.01,      // Reduced from 20
             turnSpeed: 1.2,        // Reduced from 2.0
             friction: 0.999         // Slightly increased from 0.95 for smoother deceleration
+        },
+        drivingAnimation: {
+            drivingAnimation: 'Body.001Action.001'
+        }
+    },
+    walter: {
+        model: {
+            obj: '/walter.glb',
+            type: 'glb',
+            scale: 1,
+            units: 'meters',
+            rotation: { x: 90, y: 90, z: 0 },
+            anchor: 'center',
+            elevationOffset: 0.7,
+            screenshot: '/walter.jpg'
+        },
+        physics: {
+            maxSpeed: 0.1,         // Reduced from 5
+            acceleration: 0.0003,      // Reduced from 1.2
+            brakeForce: 0.004,       // Reduced from 60
+            reverseSpeed: 0.01,      // Reduced from 20
+            turnSpeed: 1,        // Reduced from 2.0
+            friction: 0.99         // Slightly increased from 0.95 for smoother deceleration
+        },
+        drivingAnimation: {
+            drivingAnimation: 'Body.001Action.001'
+        }
+    },
+    legoNoa: {
+        model: {
+            obj: '/lego-noa.glb',
+            type: 'glb',
+            scale: 1,
+            units: 'meters',
+            rotation: { x: 90, y: 90, z: 0 },
+            anchor: 'center',
+            elevationOffset: 0.7,
+            screenshot: '/lego-noa.jpg'
+        },
+        physics: {
+            maxSpeed: 0.1,         // Reduced from 5
+            acceleration: 0.0003,      // Reduced from 1.2
+            brakeForce: 0.004,       // Reduced from 60
+            reverseSpeed: 0.01,      // Reduced from 20
+            turnSpeed: 1,        // Reduced from 2.0
+            friction: 0.99         // Slightly increased from 0.95 for smoother deceleration
+        },
+        drivingAnimation: {
+            drivingAnimation: 'Body.001Action.001'
+        }
+    },
+    benjaPaint: {
+        model: {
+            obj: '/benja-paint.glb',
+            type: 'glb',
+            scale: 1,
+            units: 'meters',
+            rotation: { x: 90, y: 90, z: 0 },
+            anchor: 'center',
+            elevationOffset: 0.7,
+            screenshot: '/benja-paint.jpg'
+        },
+        physics: {
+            maxSpeed: 0.1,         // Reduced from 5
+            acceleration: 0.0003,      // Reduced from 1.2
+            brakeForce: 0.004,       // Reduced from 60
+            reverseSpeed: 0.01,      // Reduced from 20
+            turnSpeed: 1,        // Reduced from 2.0
+            friction: 0.99         // Slightly increased from 0.95 for smoother deceleration
         },
         drivingAnimation: {
             drivingAnimation: 'Body.001Action.001'
