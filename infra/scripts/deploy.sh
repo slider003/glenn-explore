@@ -40,6 +40,14 @@ cd $DEPLOY_PATH/web
 tar xzf /tmp/web-dist.tar.gz
 rm /tmp/web-dist.tar.gz
 
+# Deploy studio-web
+echo "Deploying studio-web..."
+rm -rf $DEPLOY_PATH/studio-web/*
+mkdir -p $DEPLOY_PATH/studio-web
+cd $DEPLOY_PATH/studio-web
+tar xzf /tmp/studio-web-dist.tar.gz
+rm /tmp/studio-web-dist.tar.gz
+
 # Deploy backend
 echo "Deploying backend..."
 rm -rf $DEPLOY_PATH/api/*

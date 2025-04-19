@@ -27,7 +27,7 @@ sudo apt install -y dotnet-sdk-9.0
 
 # Create application directory structure
 echo "Creating directory structure..."
-sudo mkdir -p $DEPLOY_PATH/{web,api,data/backups,api/secrets}
+sudo mkdir -p $DEPLOY_PATH/{web,api,studio-web,data/backups,api/secrets}
 sudo chown -R www-data:www-data $DEPLOY_PATH
 
 # Create backup script

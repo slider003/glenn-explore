@@ -17,7 +17,6 @@ STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:?"STRIPE_SECRET_KEY is required"}
 STRIPE_PUBLIC=${STRIPE_PUBLIC:?"STRIPE_PUBLIC is required"}
 STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:?"STRIPE_WEBHOOK_SECRET is required"}
 
-
 OPENROUTER_API_KEY=${OPENROUTER_API_KEY:?"OPENROUTER_API_KEY is required"}
 OTEL_EXPORTER_OTLP_PROTOCOL=${OTEL_EXPORTER_OTLP_PROTOCOL:?"OTEL_EXPORTER_OTLP_PROTOCOL is required"}
 OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:?"OTEL_EXPORTER_OTLP_ENDPOINT is required"}
@@ -27,23 +26,52 @@ echo "Starting local deployment for $PROJECT_NAME..."
 echo "Machine IP: $MACHINE_IP"
 echo "Deploy path: $DEPLOY_PATH"
 
-# Clean and build frontend
-echo "Building frontend..."
-cd "$ROOT_DIR/web"
-echo "Cleaning frontend build..."
-rm -rf dist node_modules/.vite
-npm run build
-tar czf web-dist.tar.gz -C dist .
-scp web-dist.tar.gz root@$MACHINE_IP:/tmp/
-rm web-dist.tar.gz
+# Build all applications first
+echo "Building all applications..."
 
-# Clean and build backend
+# Build main web
+echo "Building main web..."
+cd "$ROOT_DIR/web"
+echo "Cleaning main web build..."
+rm -rf dist node_modules/.vite
+npm run build || { echo "❌ Main web build failed"; exit 1; }
+echo "✅ Main web build successful"
+
+# Build studio web
+echo "Building studio web..."
+cd "$ROOT_DIR/studio-web"
+echo "Cleaning studio web build..."
+rm -rf dist node_modules/.vite
+npm run build || { echo "❌ Studio web build failed"; exit 1; }
+echo "✅ Studio web build successful"
+
+# Build backend
 echo "Building backend..."
 cd "$ROOT_DIR/api"
 echo "Cleaning backend build..."
 rm -rf bin obj
-dotnet publish -c Release
-cd bin/Release/net9.0/publish
+dotnet publish -c Release || { echo "❌ Backend build failed"; exit 1; }
+echo "✅ Backend build successful"
+
+echo "✅ All builds successful! Proceeding with deployment..."
+
+# Package and deploy main web
+echo "Packaging main web..."
+cd "$ROOT_DIR/web"
+tar czf web-dist.tar.gz -C dist .
+scp web-dist.tar.gz root@$MACHINE_IP:/tmp/
+rm web-dist.tar.gz
+
+# Package and deploy studio web
+echo "Packaging studio web..."
+cd "$ROOT_DIR/studio-web"
+tar czf studio-web-dist.tar.gz -C dist .
+scp studio-web-dist.tar.gz root@$MACHINE_IP:/tmp/
+rm studio-web-dist.tar.gz
+
+# Package and deploy backend
+echo "Packaging backend..."
+cd "$ROOT_DIR/api/bin/Release/net9.0/publish"
 tar czf api-dist.tar.gz *
 scp api-dist.tar.gz root@$MACHINE_IP:/tmp/
 rm api-dist.tar.gz
@@ -79,8 +107,8 @@ HEALTH_URL="http://$MACHINE_IP/api/health"
 
 while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
     if curl -s -f "$HEALTH_URL" > /dev/null; then
-        echo "Health check passed! API is responding."
-        echo "Local deployment completed!"
+        echo "✅ Health check passed! API is responding."
+        echo "✅ Local deployment completed!"
         exit 0
     fi
     
@@ -91,5 +119,5 @@ while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
     fi
 done
 
-echo "ERROR: Health check failed after $MAX_RETRIES attempts!"
+echo "❌ ERROR: Health check failed after $MAX_RETRIES attempts!"
 exit 1 

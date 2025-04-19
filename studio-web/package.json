@@ -10,7 +10,7 @@
     "dev": "npm run types:generate && vite",
     "types:generate": "orval",
     "types:watch": "orval --watch",
-    "build": "npm run types:generate && vite build",
+    "build": "vite build",
     "lint": "eslint . --quiet",
     "preview": "vite preview",
     "knip": "knip"

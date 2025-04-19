@@ -30,14 +30,14 @@ function WelcomePage() {
 
 export const routes: RouteConfig[] = [
   {
-    path: '/',
+    path: '/studio',
     element: <WelcomePage />,
     isHeaderItem: true,
     icon: <Bot className="h-4 w-4" />,
     label: 'Home'
   },
   {
-    path: '/users',
+    path: '/studio/users',
     element: <UsersPage />,
     isHeaderItem: true,
     requiresAuth: true,
@@ -45,13 +45,13 @@ export const routes: RouteConfig[] = [
     label: 'Users'
   },
   {
-    path: '/users/create',
+    path: '/studio/users/create',
     element: <CreateUserPage />,
     isHeaderItem: false,
     requiresAuth: true
   },
   {
-    path: '/files',
+    path: '/studio/files',
     element: <FilesPage />,
     isHeaderItem: true,
     requiresAuth: true,
