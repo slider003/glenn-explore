@@ -372,6 +372,65 @@ namespace Api.Features.Migrations
                     b.ToTable("RaceResults");
                 });
 
+            modelBuilder.Entity("Api.Source.Features.Models.Model", b =>
+                {
+                    b.Property<string>("ModelId")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ConfigJson")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsPremium")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ModelFileId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ThumbnailFileId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ModelId");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("IX_Models_IsActive");
+
+                    b.HasIndex("IsPremium")
+                        .HasDatabaseName("IX_Models_IsPremium");
+
+                    b.HasIndex("ModelFileId");
+
+                    b.HasIndex("ThumbnailFileId");
+
+                    b.HasIndex("Type")
+                        .HasDatabaseName("IX_Models_Type");
+
+                    b.ToTable("Models");
+                });
+
             modelBuilder.Entity("Api.Source.Features.Models.UnlockedModel", b =>
                 {
                     b.Property<int>("Id")
@@ -380,6 +439,7 @@ namespace Api.Features.Migrations
 
                     b.Property<string>("ModelId")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("PurchasedAt")
@@ -390,6 +450,8 @@ namespace Api.Features.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ModelId");
 
                     b.HasIndex("UserId", "ModelId")
                         .HasDatabaseName("IX_UnlockedModels_UserId_ModelId");
@@ -545,13 +607,38 @@ namespace Api.Features.Migrations
                     b.Navigation("Player");
                 });
 
+            modelBuilder.Entity("Api.Source.Features.Models.Model", b =>
+                {
+                    b.HasOne("Api.Source.Features.Files.Models.FileEntity", "ModelFile")
+                        .WithMany()
+                        .HasForeignKey("ModelFileId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Api.Source.Features.Files.Models.FileEntity", "ThumbnailFile")
+                        .WithMany()
+                        .HasForeignKey("ThumbnailFileId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("ModelFile");
+
+                    b.Navigation("ThumbnailFile");
+                });
+
             modelBuilder.Entity("Api.Source.Features.Models.UnlockedModel", b =>
                 {
+                    b.HasOne("Api.Source.Features.Models.Model", "Model")
+                        .WithMany("UnlockedModels")
+                        .HasForeignKey("ModelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Api.Features.Auth.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Model");
 
                     b.Navigation("User");
                 });
@@ -605,6 +692,11 @@ namespace Api.Features.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Api.Source.Features.Models.Model", b =>
+                {
+                    b.Navigation("UnlockedModels");
                 });
 #pragma warning restore 612, 618
         }

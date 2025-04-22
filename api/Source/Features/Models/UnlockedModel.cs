@@ -1,5 +1,6 @@
 using Api.Features.Auth.Models;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Api.Source.Features.Models;
 
@@ -14,6 +15,9 @@ public class UnlockedModel
     
     public DateTime PurchasedAt { get; set; } = DateTime.UtcNow;
     
-    // Navigation property
+    // Navigation properties
     public User User { get; set; }
+    
+    [ForeignKey("ModelId")]
+    public Model Model { get; set; }
 } 

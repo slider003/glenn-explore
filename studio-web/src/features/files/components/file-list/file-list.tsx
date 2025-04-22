@@ -65,7 +65,7 @@ export const FileList: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-6">
-      <FileUpload onUploadComplete={refetch} />
+      <FileUpload onUploadComplete={async () => { await refetch(); }} />
       
       {files && files.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">

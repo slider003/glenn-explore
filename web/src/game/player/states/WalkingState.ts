@@ -3,11 +3,11 @@ import { PlayerController } from '../PlayerController';
 import { CameraController } from '../../CameraController';
 import * as THREE from 'three';
 import { Threebox } from 'threebox-plugin';
-import { ModelConfig } from '../types/ModelConfig';
-import { PlayerPhysics } from '../types/PlayerModels';
+import { PlayerModelConfig } from '../../api/types/ModelTypes';
+import { PlayerStore } from '../../stores/PlayerStore';
 import { InputUtils } from '../../InputUtils';
 
-export class WalkingState implements PlayerState<PlayerPhysics> {
+export class WalkingState implements PlayerState<PlayerModelConfig> {
     mixer: THREE.AnimationMixer | null = null;
     currentSpeed: number = 0;
     model: any;
@@ -18,9 +18,10 @@ export class WalkingState implements PlayerState<PlayerPhysics> {
     private readonly TARGET_FRAME_RATE = 60;
     private readonly TIME_STEP = 1 / this.TARGET_FRAME_RATE;
     private previousAnimationName: string | null = null;
+    private distanceAccumulator: number = 0;
 
     // Get config from PlayerController
-    modelConfig: ModelConfig<PlayerPhysics>;
+    modelConfig: PlayerModelConfig;
 
     // Jump physics
     private isJumping: boolean = false;
@@ -31,9 +32,11 @@ export class WalkingState implements PlayerState<PlayerPhysics> {
     private velocity: number = 0;
     private controller?: PlayerController;
 
-    constructor(private tb: Threebox, modelId: string) {
-        this.modelConfig = PlayerController.getModelConfig(modelId);
+    constructor(private tb: Threebox, modelId: string, config: PlayerModelConfig) {
+        this.modelConfig = config;
         this.modelType = modelId;
+        // Initialize kilometers from PlayerStore
+        this.distanceAccumulator = PlayerStore.getKilometersWalked();
     }
 
     async enter(player: PlayerController): Promise<void> {
@@ -170,7 +173,15 @@ export class WalkingState implements PlayerState<PlayerPhysics> {
 
         // Update camera
         CameraController.setBearing(-this.model.rotation.z * 180 / Math.PI);
-        this.currentSpeed = this.velocity * 1000
+        this.currentSpeed = this.velocity * 1000;
+
+        // Calculate distance traveled
+        if (this.velocity !== 0) {
+            // Convert velocity (m/s) to kilometers and accumulate
+            const distanceInKm = (Math.abs(this.velocity) * deltaTime) / 1000;
+            this.distanceAccumulator += distanceInKm;
+            PlayerStore.setKilometersWalked(this.distanceAccumulator);
+        }
     }
 
     public getModel(): any {

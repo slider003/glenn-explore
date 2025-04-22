@@ -21,4 +21,6 @@ export interface ModelConfig<T> {
         idleAnimation?: string;
         drivingAnimation?: string;
     };
+    thumbnailUrl?: string;
+    modelUrl?: string;
 } 

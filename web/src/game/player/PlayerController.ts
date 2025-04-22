@@ -3,12 +3,8 @@ import { IFollowable } from '../types/IFollowable';
 import { PlayerState } from './states/PlayerState';
 import { WalkingState } from './states/WalkingState';
 import { CameraController } from '../CameraController';
-import { PlayerModels, PlayerPhysics } from './types/PlayerModels';
 import { PlayerUI } from './ui/PlayerUI';
-import { PLAYER_MODELS } from './types/PlayerModels';
-import { CarModels, CAR_MODELS, CarPhysics } from './types/CarModels';
 import { CarState } from './states/CarState';
-import { ModelConfig } from './types/ModelConfig';
 import { VehicleStatsController } from '../VehicleStats/VehicleStatsController';
 import { PlayerStore } from '../stores/PlayerStore';
 import { MinimapController } from '../minimap/MinimapController';
@@ -22,19 +18,32 @@ import { InputUtils } from '../InputUtils';
 import { TeleportOptions } from '../../types/teleport';
 import { DEFAULT_COORDINATES } from '../../config';
 import { BearingController } from '../BearingController';
+import { ModelConfig, CarModelConfig, PlayerModelConfig, ModelResponse, CarPhysics, CarDrivingAnimation } from '../api/types/ModelTypes';
+
+// Add type definition for Threebox model config
+export interface ThreeboxModelConfig {
+    obj: string;                   // Path to the model file
+    type: 'glb' | 'gltf' | 'obj'; // Type of model file
+    scale?: number | {            // Scale can be number or object
+        x: number;
+        y: number;
+        z: number;
+    };
+    units?: 'meters';             // Units for the model
+    rotation?: {                  // Initial rotation
+        x: number;
+        y: number;
+        z: number;
+    };
+    anchor?: 'center';           // Anchor point
+    elevationOffset?: number;    // Offset from ground
+}
 
 export class PlayerController implements IFollowable {
-    public static getModelConfig(modelType: keyof PlayerModels): ModelConfig<PlayerPhysics> {
-        return PLAYER_MODELS[modelType];
-    }
-
-    public static getCarConfig(modelType: keyof CarModels): ModelConfig<CarPhysics> {
-        return CAR_MODELS[modelType];
-    }
-
+    private model: ModelResponse | null = null;
     private currentAction: THREE.AnimationAction | null = null;
     private isAnimationPlaying: boolean = false;
-    private currentState: PlayerState<any> | null = null;
+    private currentState: PlayerState<ModelConfig> | null = null;
     private _coordinates: [number, number] = [0, 0];
     private _rotation: { x: number; y: number; z: number } = { x: 0, y: 0, z: 40 };
     private _elevation: number = 0;
@@ -58,17 +67,10 @@ export class PlayerController implements IFollowable {
     private lastLng: number = 0;
     private lastLat: number = 0;
 
-    constructor(
-    ) {
-        new VehicleStatsController()
-
-        // Set up chat message listener
+    constructor() {
+        new VehicleStatsController();
         this.setupChatListener();
-
-        // Add state switch listener
         this.setupStateSwitch();
-
-        // Add global key listeners for space bar in flying mode
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
     }
@@ -123,14 +125,38 @@ export class PlayerController implements IFollowable {
     public async initializeState(tb: Threebox, map: mapboxgl.Map, initialPosition: [number, number]): Promise<void> {
         this.tb = tb;
         this.map = map;
-        const savedMode = PlayerStore.getMovementMode();
-        if (savedMode === 'car') {
-            this.currentState = new CarState(this.tb, PlayerStore.getState().modelType);
-        } else {
-            this.currentState = new WalkingState(this.tb, PlayerStore.getState().modelType);
+
+        const defaultConfig =
+        {
+
+            model: {
+                obj: '/lambo.glb',
+                type: 'glb',
+                scale: 5,
+                units: 'meters',
+                rotation: { x: 90, y: 0, z: 0 },
+                anchor: 'center',
+                elevationOffset: 0.7,
+                screenshot: '/lambo.png'
+            },
+            physics: {
+                maxSpeed: 0.1,         // Reduced from 5
+                acceleration: 0.0003,      // Reduced from 1.2
+                brakeForce: 0.004,       // Reduced from 60
+                reverseSpeed: 0.01,      // Reduced from 20
+                turnSpeed: 1,        // Reduced from 2.0
+                friction: 0.99         // Slightly increased from 0.95 for smoother deceleration
+            },
+            drivingAnimation: {
+                drivingAnimation: 'Body.001Action.001'
+            }
         }
-        const minimapController = new MinimapController(this.map!)
-        const navigationController = new NavigationController(this.map!)
+
+        this.currentState = new CarState(this.tb, PlayerStore.getState().modelType, defaultConfig);
+
+
+        const minimapController = new MinimapController(this.map!);
+        const navigationController = new NavigationController(this.map!);
         new NavigationUI(this.map!, navigationController, (teleportOptions: TeleportOptions) => {
             this.teleport(teleportOptions);
         }, {
@@ -141,8 +167,7 @@ export class PlayerController implements IFollowable {
         this._coordinates = initialPosition ?? [DEFAULT_COORDINATES.lng, DEFAULT_COORDINATES.lat];
 
         // Make sure current state matches saved movement mode
-        this.currentState = new CarState(this.tb, 'lambo');
-
+        this.currentState = new CarState(this.tb, 'lambo', defaultConfig);
 
         await this.setState(this.currentState);
         this.startUpdateLoop();
@@ -212,25 +237,25 @@ export class PlayerController implements IFollowable {
                     const pitch = PitchController.getPitch();
                     const lng = this._coordinates[0];
                     const lat = this._coordinates[1];
-                    if(lng !== this.lastLng || lat !== this.lastLat) {
+                    if (lng !== this.lastLng || lat !== this.lastLat) {
                         CameraController.getMap().setCenter([lng, lat]);
                         this.lastLng = lng;
                         this.lastLat = lat;
                     }
-                    if(pitch !== this.lastPitch) {
+                    if (pitch !== this.lastPitch) {
                         CameraController.getMap().setPitch(pitch);
                         this.lastPitch = pitch;
                     }
 
-                    if(bearing !== this.lastBearing || pitch !== this.lastPitch) {
+                    if (bearing !== this.lastBearing || pitch !== this.lastPitch) {
                         CameraController.getMap().setBearing(bearing);
                         this.lastBearing = bearing;
                     }
 
-                    if(zoom !== this.lastZoom) {
-                        CameraController.getMap().setZoom(zoom);
-                        this.lastZoom = zoom;
-                    }
+                    //if(zoom !== this.lastZoom) {
+                    CameraController.getMap().setZoom(zoom);
+                    this.lastZoom = zoom;
+                    //}
 
                     // CameraController.getMap().jumpTo({
                     //     center: [this._coordinates[0], this._coordinates[1]],
@@ -245,7 +270,7 @@ export class PlayerController implements IFollowable {
         animate();
     }
 
-    public async setState(state: PlayerState<any>): Promise<void> {
+    public async setState(state: PlayerState<ModelConfig>): Promise<void> {
         CameraController.stopFollowing();
         PlayerStore.setModelType(state.modelType);
         PlayerStore.setAnimationState(state.animationState);
@@ -255,7 +280,7 @@ export class PlayerController implements IFollowable {
         this.currentState = state;
         await this.loadModel();
         await this.currentState.enter(this);
-        if (state.getModel().animations && state.getModel().animations.length > 0) {
+        if (state.getModel()?.animations && state.getModel().animations.length > 0) {
             console.log('WalkingState: Animations found:', state.getModel().animations.map((anim: any) => anim.name));
         }
         PlayerStore.setAllowedToDrive(true)
@@ -328,30 +353,26 @@ export class PlayerController implements IFollowable {
         CameraController.stopFollowing();
     }
 
-    public async switchState(modelId: string, type: 'car' | 'walking'): Promise<void> {
-        // Create appropriate state based on type
-        const newState = type === 'car' ? new CarState(this.tb!, modelId) : new WalkingState(this.tb!, modelId);
+    public async switchState(
+        modelId: string,
+        type: 'car' | 'walking',
+        model: ModelResponse
+    ): Promise<void> {
+        this.model = model;
+        const state = type === 'car'
+            ? new CarState(this.tb!, modelId, model.config as CarModelConfig)
+            : new WalkingState(this.tb!, modelId, model.config as PlayerModelConfig);
 
-        // Update store values
         PlayerStore.setMovementMode(type);
         PlayerStore.setModelType(modelId);
 
-        console.log("HELLO!?", modelId)
-
-        // Switch state with new model
-        await this.setState(newState);
+        await this.setState(state);
     }
 
     public async switchToCar(): Promise<void> {
-        const state = new CarState(this.tb!, PlayerStore.getState().modelType);
-        await this.setState(state);
-        PlayerStore.setMovementMode('car');
     }
 
     public async switchToWalking(): Promise<void> {
-        const state = new WalkingState(this.tb!, PlayerStore.getState().modelType);
-        await this.setState(state);
-        PlayerStore.setMovementMode('walking');
     }
 
     public async teleport(teleportOptions: TeleportOptions): Promise<void> {
@@ -405,21 +426,36 @@ export class PlayerController implements IFollowable {
     }
 
     private async loadModel(): Promise<void> {
+        console.log("Loading model", this.model);
+        if(this.model) {
         try {
             this.currentState!.model = await new Promise((resolve, reject) => {
-                this.tb!.loadObj(this.currentState!.modelConfig.model, (model: any) => {
+                if (!this.model) {
+                    reject(new Error('No model found'));
+                    return;
+                }
+                const modelConfig: ThreeboxModelConfig = {
+                    obj: this.model.modelUrl || this.model.config.model.obj,
+                    type: 'glb',
+                    scale: this.model.config.model.scale,
+                    units: this.model.config.model.units as 'meters',
+                    rotation: this.model.config.model.rotation,
+                    anchor: this.model.config.model.anchor as 'center',
+                    elevationOffset: this.model.config.model.elevationOffset
+                };
+                
+                this.tb!.loadObj(modelConfig, (model: any) => {
                     if (!model) {
                         reject(new Error('No model returned'));
                         return;
                     }
-                    console.log("Model loaded", model.animations)
+                    console.log("Model loaded", model.animations);
                     if (model.animations && model.animations.length > 0) {
                         this.currentState!.mixer = new THREE.AnimationMixer(model);
                     }
 
                     resolve(model);
                     model.setCoords(this._coordinates, this.getElevation());
-                    console.log("Camera bearing", CameraController.getBearing())
                     model.setRotation({
                         x: 0,
                         y: 0,
@@ -428,12 +464,12 @@ export class PlayerController implements IFollowable {
                 });
             });
 
-
             this.tb!.add(this.currentState!.model);
         } catch (error) {
-            console.error('WalkingState: Failed to load model:', error);
+            console.error('Failed to load model:', error);
             throw error;
         }
+    }
     }
 
     // New method to toggle flying mode

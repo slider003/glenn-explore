@@ -16,6 +16,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public DbSet<LLMMessage> LLMMessages => Set<LLMMessage>();
     public DbSet<UnlockedModel> UnlockedModels => Set<UnlockedModel>();
     public DbSet<FileEntity> Files => Set<FileEntity>();
+    public DbSet<Model> Models => Set<Model>();
     
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -103,17 +104,68 @@ public class ApplicationDbContext : IdentityDbContext<User>
                 .HasMaxLength(100);
         });
         
+        // Model configuration and indexes
+        builder.Entity<Model>(b =>
+        {
+            // Primary key is ModelId
+            b.HasKey(m => m.ModelId);
+                
+            // Index for type-based queries
+            b.HasIndex(m => m.Type)
+                .HasDatabaseName("IX_Models_Type");
+                
+            // Index for premium status
+            b.HasIndex(m => m.IsPremium)
+                .HasDatabaseName("IX_Models_IsPremium");
+                
+            // Index for active status
+            b.HasIndex(m => m.IsActive)
+                .HasDatabaseName("IX_Models_IsActive");
+                
+            // Relationships with files
+            b.HasOne(m => m.ThumbnailFile)
+                .WithMany()
+                .HasForeignKey(m => m.ThumbnailFileId)
+                .OnDelete(DeleteBehavior.SetNull);
+                
+            b.HasOne(m => m.ModelFile)
+                .WithMany()
+                .HasForeignKey(m => m.ModelFileId)
+                .OnDelete(DeleteBehavior.SetNull);
+                
+            // Set reasonable max lengths for string fields
+            b.Property(m => m.ModelId)
+                .HasMaxLength(100);
+            b.Property(m => m.Name)
+                .HasMaxLength(255);
+            b.Property(m => m.Type)
+                .HasMaxLength(50);
+        });
+        
         // UnlockedModel configuration and indexes
         builder.Entity<UnlockedModel>(b =>
         {
+            // Primary key
+            b.HasKey(u => u.Id);
+            
             // Relationship with User
             b.HasOne(u => u.User)
                 .WithMany()
                 .HasForeignKey(u => u.UserId);
                 
+            // Relationship with Model using ModelId
+            b.HasOne(u => u.Model)
+                .WithMany(m => m.UnlockedModels)
+                .HasForeignKey(u => u.ModelId)
+                .OnDelete(DeleteBehavior.Cascade);
+                
             // Index for efficient lookups by user and model
             b.HasIndex(u => new { u.UserId, u.ModelId })
                 .HasDatabaseName("IX_UnlockedModels_UserId_ModelId");
+                
+            // Set max length for ModelId to match Model table
+            b.Property(u => u.ModelId)
+                .HasMaxLength(100);
         });
 
         // File configuration and indexes

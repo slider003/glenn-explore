@@ -4,13 +4,25 @@
  * api
  * OpenAPI spec version: v1
  */
+import type { IModelConfigDTO } from './iModelConfigDTO';
 
 export interface ModelInfoDtoDTO {
   /** @nullable */
   modelId?: string | null;
   /** @nullable */
   name?: string | null;
+  /** @nullable */
+  type?: string | null;
   price?: number;
   isPremium?: boolean;
   isUnlocked?: boolean;
+  isActive?: boolean;
+  /** @nullable */
+  thumbnailUrl?: string | null;
+  /** @nullable */
+  modelUrl?: string | null;
+  /** @nullable */
+  config?: IModelConfigDTO | null;
+  /** @nullable */
+  screenshot?: string | null;
 }

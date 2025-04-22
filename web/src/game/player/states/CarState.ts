@@ -3,12 +3,11 @@ import { PlayerController } from '../PlayerController';
 import { CameraController } from '../../CameraController';
 import * as THREE from 'three';
 import { Threebox } from 'threebox-plugin';
-import { ModelConfig } from '../types/ModelConfig';
-import { CarPhysics } from '../types/CarModels';
+import { CarModelConfig, CarPhysics } from '../../api/types/ModelTypes';
 import { PlayerStore } from '../../stores/PlayerStore';
 import { Toast } from '../../toast/ToastController';
 
-export class CarState implements PlayerState<CarPhysics> {
+export class CarState implements PlayerState<CarModelConfig> {
     currentSpeed: number = 0;
     mixer: THREE.AnimationMixer | null = null;
     model: any;
@@ -25,7 +24,7 @@ export class CarState implements PlayerState<CarPhysics> {
     private readonly SPACE_MESSAGE_COOLDOWN = 10000; // 10 seconds in milliseconds
 
     // Get config from PlayerController
-    modelConfig: ModelConfig<CarPhysics>;
+    modelConfig: CarModelConfig;
 
     // Car state
     private velocity: number = 0;
@@ -47,11 +46,12 @@ export class CarState implements PlayerState<CarPhysics> {
     private lastDistanceCalculation: number = 0;
     private distanceAccumulator: number = 0;
 
-    constructor(private tb: Threebox, modelId: string) {
-        this.modelConfig = PlayerController.getCarConfig(modelId);
+    constructor(private tb: Threebox, modelId: string, config: CarModelConfig) {
+        console.log('CarState: constructor', config);
+        this.modelConfig = config;
+        this.modelType = modelId;
         // Initialize kilometers from PlayerStore
         this.distanceAccumulator = PlayerStore.getKilometersDriven();
-        this.modelType = modelId;
     }
 
     async enter(player: PlayerController): Promise<void> {
@@ -166,7 +166,7 @@ export class CarState implements PlayerState<CarPhysics> {
 
     private handleDriving(physics: CarPhysics): void {
         // Simplified driving physics with fixed timestep
-        let animationName = this.modelConfig.drivingAnimation?.drivingAnimation;
+        let animationName: string | undefined = this.modelConfig.drivingAnimation?.drivingAnimation;
         
         // Check for boost (shift key)
         const isBoost = this.controller?.getKeyState('shift');
@@ -197,7 +197,7 @@ export class CarState implements PlayerState<CarPhysics> {
                 this.animationState = 'reversing';
             }
         } else {
-            animationName = undefined;
+            animationName = this.modelConfig.drivingAnimation?.drivingAnimation;
             this.animationState = 'idle';
             // Natural slowdown with fixed timestep
             this.velocity *= physics.friction;
@@ -205,15 +205,14 @@ export class CarState implements PlayerState<CarPhysics> {
         }
 
         if (animationName) {
-            console.log("Playing animation", animationName)
             this.controller?.playAnimation(animationName, 10);
         } else {
             this.controller?.stopAnimation();
         }
 
         // Convert to km/h for display
-        this.currentSpeedKmh = Math.abs(this.velocity) * 1000
-        this.currentSpeed = this.currentSpeedKmh
+        this.currentSpeedKmh = Math.abs(this.velocity) * 1000;
+        this.currentSpeed = this.currentSpeedKmh;
     }
 
     private handleSteering(physics: CarPhysics): void {

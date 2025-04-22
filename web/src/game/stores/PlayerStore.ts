@@ -10,6 +10,7 @@ export class PlayerStore {
     private static timeOfDay: 'day' | 'night';
     private static map: 'satellite' | 'standard';
     private static kilometersDriven: number = 0;
+    private static kilometersWalked: number = 0;
     private static currentSpeed: number = 0;
     private static allowedToDrive: boolean = true;
     private static collisionEnabled: boolean | null = null;
@@ -122,6 +123,28 @@ export class PlayerStore {
     public static addKilometers(km: number): void {
         const currentKm = PlayerStore.getKilometersDriven();
         PlayerStore.setKilometersDriven(currentKm + km);
+    }
+
+    // Add getters and setters for kilometers walked
+    public static getKilometersWalked(): number {
+        if (PlayerStore.kilometersWalked) {
+            return PlayerStore.kilometersWalked;
+        }
+        const storedKm = localStorage.getItem('kilometersWalked');
+        if (!PlayerStore.kilometersWalked && storedKm) {
+            PlayerStore.kilometersWalked = parseFloat(storedKm);
+        }
+        return PlayerStore.kilometersWalked || 0;
+    }
+
+    public static setKilometersWalked(km: number): void {
+        PlayerStore.kilometersWalked = km;
+        localStorage.setItem('kilometersWalked', km.toString());
+    }
+
+    public static addKilometersWalked(km: number): void {
+        const currentKm = PlayerStore.getKilometersWalked();
+        PlayerStore.setKilometersWalked(currentKm + km);
     }
 
     // Add speed tracking

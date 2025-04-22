@@ -417,7 +417,16 @@ public partial class Program
             FileProvider = new PhysicalFileProvider(
                 Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", "uploads"))
             ),
-            RequestPath = "/uploads"
+            RequestPath = "/uploads",
+            ServeUnknownFileTypes = true,
+            DefaultContentType = "application/octet-stream",
+            ContentTypeProvider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider
+            {
+                Mappings = 
+                {
+                    [".glb"] = "model/gltf-binary"
+                }
+            }
         });
 
         // Map SignalR hub

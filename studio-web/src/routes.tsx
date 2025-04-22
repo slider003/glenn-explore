@@ -1,8 +1,11 @@
-import { Bot, Users, FolderOpen } from 'lucide-react';
+import { Bot, Users, FolderOpen, Box } from 'lucide-react';
 import { CreateUserPage } from './features/users/pages/create-user-page';
 import { UsersPage } from './features/users/pages/users-page';
 import { FilesPage } from './features/files/pages/files-page';
 import { Card, CardDescription, CardHeader, CardTitle } from './shared/components/ui/card';
+import { ModelsPage } from './features/models/pages/models-page';
+import { CreateModelPage } from './features/models/pages/create-model-page';
+import { EditModelPage } from './features/models/pages/edit-model-page';
 
 export interface RouteConfig {
   path: string;
@@ -57,5 +60,25 @@ export const routes: RouteConfig[] = [
     requiresAuth: true,
     icon: <FolderOpen className="h-4 w-4" />,
     label: 'Files'
+  },
+  {
+    path: '/studio/models',
+    element: <ModelsPage />,
+    isHeaderItem: true,
+    requiresAuth: true,
+    icon: <Box className="h-4 w-4" />,
+    label: 'Models'
+  },
+  {
+    path: '/studio/models/create',
+    element: <CreateModelPage />,
+    isHeaderItem: false,
+    requiresAuth: true
+  },
+  {
+    path: '/studio/models/:id',
+    element: <EditModelPage />,
+    isHeaderItem: false,
+    requiresAuth: true
   }
 ]; 

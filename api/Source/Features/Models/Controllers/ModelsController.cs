@@ -15,18 +15,18 @@ namespace Api.Source.Features.Models.Controllers;
 [Authorize]
 public class ModelsController : ControllerBase
 {
-    private readonly ModelsService _modelsService;
+    private readonly ModelsService _modelService;
     private readonly UserManager<User> _userManager;
     private readonly IConfiguration _configuration;
     private readonly ILogger<ModelsController> _logger;
 
     public ModelsController(
-        ModelsService modelsService,
+        ModelsService modelService,
         UserManager<User> userManager,
         IConfiguration configuration,
         ILogger<ModelsController> logger)
     {
-        _modelsService = modelsService;
+        _modelService = modelService;
         _userManager = userManager;
         _configuration = configuration;
         _logger = logger;
@@ -42,12 +42,12 @@ public class ModelsController : ControllerBase
             return Unauthorized();
         }
 
-        var unlockedModels = await _modelsService.GetUserUnlockedModelsAsync(user.Id);
+        var unlockedModels = await _modelService.GetUserUnlockedModelsAsync(user.Id);
         return Ok(unlockedModels);
     }
 
     [HttpGet("available")]
-    public async Task<ActionResult<List<ModelInfoDto>>> GetAvailableModels()
+    public async Task<ActionResult<List<ModelDetailsDto>>> GetAvailableModels()
     {
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
@@ -55,8 +55,15 @@ public class ModelsController : ControllerBase
             return Unauthorized();
         }
 
-        var models = await _modelsService.GetAllModelsWithStatusAsync(user);
-        return Ok(models);
+        var models = await _modelService.GetAllModelsWithDetailsAsync();
+        
+        // Set unlocked status for each model
+        foreach (var model in models)
+        {
+            model.IsUnlocked = await _modelService.IsModelUnlockedAsync(user.Id, model.ModelId);
+        }
+        
+        return Ok(models.Where(m => m.IsActive).ToList());
     }
 
     [HttpPost("purchase/{modelId}")]
@@ -69,26 +76,27 @@ public class ModelsController : ControllerBase
         }
 
         // Check if model is premium
-        if (!_modelsService.IsModelPremium(modelId))
+        if (!_modelService.IsModelPremium(modelId))
         {
             return BadRequest("This model is not available for purchase");
         }
 
         // Check if already unlocked
-        var isUnlocked = await _modelsService.IsModelUnlockedAsync(user.Id, modelId);
+        var isUnlocked = await _modelService.IsModelUnlockedAsync(user.Id, modelId);
         if (isUnlocked)
         {
             return BadRequest("You already own this model");
         }
 
-        // Get model price
-        var price = _modelsService.GetModelPrice(modelId);
-        var modelName = _modelsService.GetAllModelsWithStatusAsync(user)
-            .Result
-            .FirstOrDefault(m => m.ModelId == modelId)?.Name ?? modelId;
+        // Get model details
+        var model = await _modelService.GetModelByIdAsync(modelId);
+        if (model == null)
+        {
+            return NotFound("Model not found");
+        }
 
         // Create checkout session
-        var options = CreateCheckoutSessionOptions(user, modelId, modelName, price);
+        var options = CreateCheckoutSessionOptions(user, model);
         var service = new SessionService();
         var session = await service.CreateAsync(options);
 
@@ -107,7 +115,7 @@ public class ModelsController : ControllerBase
             return Unauthorized();
         }
 
-        var isUnlocked = await _modelsService.IsModelUnlockedAsync(user.Id, modelId);
+        var isUnlocked = await _modelService.IsModelUnlockedAsync(user.Id, modelId);
         return Ok(isUnlocked);
     }
 
@@ -137,11 +145,8 @@ public class ModelsController : ControllerBase
         }
 
         // Get all premium models
-        var premiumModels = _modelsService.GetAllModelsWithStatusAsync(user)
-            .Result
-            .Where(m => m.IsPremium)
-            .Select(m => m.ModelId)
-            .ToList();
+        var models = await _modelService.GetAllModelsAsync();
+        var premiumModels = models.Where(m => m.IsPremium).ToList();
 
         if (!premiumModels.Any())
         {
@@ -158,12 +163,12 @@ public class ModelsController : ControllerBase
         // For each paid user, grant all premium models
         foreach (var paidUser in paidUsers)
         {
-            foreach (var modelId in premiumModels)
+            foreach (var model in premiumModels)
             {
-                // Check if already unlocked to avoid duplicates
-                if (!await _modelsService.IsModelUnlockedAsync(paidUser.Id, modelId))
+                // Check if already unlocked
+                if (!await _modelService.IsModelUnlockedAsync(paidUser.Id, model.ModelId))
                 {
-                    await _modelsService.UnlockModelAsync(paidUser.Id, modelId);
+                    await _modelService.UnlockModelAsync(paidUser.Id, model.ModelId);
                     totalModelsGranted++;
                 }
             }
@@ -187,8 +192,8 @@ public class ModelsController : ControllerBase
             return Unauthorized("Admin access required");
         }
 
-        // Validate model ID
-        if (!_modelsService.IsModelPremium(request.ModelId))
+        // Validate model exists and is premium
+        if (!_modelService.IsModelPremium(request.ModelId))
         {
             return BadRequest($"Model {request.ModelId} is not a premium model or does not exist");
         }
@@ -201,7 +206,7 @@ public class ModelsController : ControllerBase
         }
 
         // Unlock the model
-        await _modelsService.UnlockModelAsync(request.UserId, request.ModelId);
+        await _modelService.UnlockModelAsync(request.UserId, request.ModelId);
         
         _logger.LogInformation(
             "Admin {AdminId} unlocked model {ModelId} for user {UserId} ({UserName})",
@@ -214,10 +219,141 @@ public class ModelsController : ControllerBase
         return Ok($"Model {request.ModelId} unlocked for user {targetUser.UserName}");
     }
 
-    private SessionCreateOptions CreateCheckoutSessionOptions(User user, string modelId, string modelName, decimal price)
+    [HttpPost]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<ModelDetailsDto>> CreateModel([FromBody] CreateModelRequest request)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null || !user.IsAdmin)
+        {
+            return Unauthorized("Admin access required");
+        }
+
+        try
+        {
+            var model = await _modelService.CreateModelAsync(request);
+            return Ok(model);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPut("{modelId}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<ModelDetailsDto>> UpdateModel(string modelId, [FromBody] UpdateModelRequest request)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null || !user.IsAdmin)
+        {
+            return Unauthorized("Admin access required");
+        }
+
+        try
+        {
+            var model = await _modelService.UpdateModelAsync(modelId, request);
+            return Ok(model);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound($"Model with ID {modelId} not found");
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpGet("admin/all")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<List<ModelDetailsDto>>> GetAllModels()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null || !user.IsAdmin)
+        {
+            return Unauthorized("Admin access required");
+        }
+
+        var models = await _modelService.GetAllModelsWithDetailsAsync();
+        return Ok(models);
+    }
+
+    [HttpGet("admin/{modelId}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<ModelDetailsDto>> GetModelById(string modelId)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null || !user.IsAdmin)
+        {
+            return Unauthorized("Admin access required");
+        }
+
+        var model = await _modelService.GetModelByIdWithDetailsAsync(modelId);
+        if (model == null)
+        {
+            return NotFound($"Model with ID {modelId} not found");
+        }
+
+        return Ok(model);
+    }
+
+    [HttpPost("admin/{modelId}/toggle-active")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<ModelDetailsDto>> ToggleModelActive(string modelId)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null || !user.IsAdmin)
+        {
+            return Unauthorized("Admin access required");
+        }
+
+        try
+        {
+            var model = await _modelService.ToggleModelActiveAsync(modelId);
+            _logger.LogInformation(
+                "Admin {AdminId} toggled model {ModelId} active status to {IsActive}",
+                user.Id,
+                modelId,
+                model.IsActive
+            );
+            return Ok(model);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound($"Model with ID {modelId} not found");
+        }
+    }
+
+    [HttpGet("config-types/{type}")]
+    [Authorize(Roles = "Admin")]
+    public ActionResult<IModelConfig> GetConfigType(string type)
+    {
+        switch (type.ToLower())
+        {
+            case "car":
+                return Ok(new CarModelConfig
+                {
+                    Model = new ModelObject(),
+                    Physics = new CarPhysics(),
+                    DrivingAnimation = new CarDrivingAnimation()
+                });
+            case "walking":
+                return Ok(new PlayerModelConfig
+                {
+                    Model = new ModelObject(),
+                    Physics = new PlayerPhysics(),
+                    WalkingAnimation = new PlayerWalkingAnimation()
+                });
+            default:
+                return BadRequest($"Unknown model type: {type}");
+        }
+    }
+
+    private SessionCreateOptions CreateCheckoutSessionOptions(User user, Model model)
     {
         var domain = _configuration["App:Domain"] ?? "https://playglenn.com";
-        var priceInCents = (long)(price * 100);
+        var priceInCents = (long)(model.Price * 100);
 
         return new SessionCreateOptions
         {
@@ -231,21 +367,21 @@ public class ModelsController : ControllerBase
                         Currency = "usd",
                         ProductData = new SessionLineItemPriceDataProductDataOptions
                         {
-                            Name = $"Model: {modelName}",
-                            Description = $"Purchase {modelName} model for Glenn"
+                            Name = $"Model: {model.Name}",
+                            Description = $"Purchase {model.Name} model for Glenn"
                         },
                     },
                     Quantity = 1,
                 },
             },
             Mode = "payment",
-            SuccessUrl = $"{domain}/play?modelPurchased={modelId}",
+            SuccessUrl = $"{domain}/play?modelPurchased={model.ModelId}",
             CancelUrl = $"{domain}/play",
             CustomerEmail = user.Email,
             Metadata = new Dictionary<string, string>
             {
                 { "userId", user.Id },
-                { "modelId", modelId },
+                { "modelId", model.ModelId },
                 { "type", "model_purchase" }
             }
         };

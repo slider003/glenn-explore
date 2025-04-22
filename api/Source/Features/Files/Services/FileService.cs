@@ -24,7 +24,8 @@ public class FileService
     { 
         "model/gltf-binary",  // .glb
         "image/jpeg",         // .jpg
-        "image/png"          // .png
+        "image/png",          // .png
+        "application/octet-stream" // .glb
     };
 
     public FileService(

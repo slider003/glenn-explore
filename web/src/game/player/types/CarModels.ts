@@ -20,7 +20,7 @@ export const CAR_MODELS: CarModels = {
         model: {
             obj: '/lambo.glb',
             type: 'glb',
-            scale: 1,
+            scale: 5,
             units: 'meters',
             rotation: { x: 90, y: 0, z: 0 },
             anchor: 'center',

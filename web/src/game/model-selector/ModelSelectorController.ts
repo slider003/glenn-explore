@@ -1,9 +1,7 @@
-import { PLAYER_MODELS } from '../player/types/PlayerModels';
-import { CAR_MODELS } from '../player/types/CarModels';
 import { PlayerStore } from '../stores/PlayerStore';
 import { PlayerController } from '../player/PlayerController';
 import { ModelClient } from '../api/ModelClient';
-import { ModelInfo } from '../api/types/ModelTypes';
+import { ModelResponse, ModelConfig } from '../api/types/ModelTypes';
 import './model-selector-dialog.css';
 import { Toast } from '../toast/ToastController';
 
@@ -11,7 +9,7 @@ export class ModelSelectorController {
     private dialogElement: HTMLElement | null = null;
     private onClose?: () => void;
     private modelClient: ModelClient;
-    private availableModels: ModelInfo[] = [];
+    private availableModels: ModelResponse[] = [];
     private isLoading: boolean = false;
 
     constructor(
@@ -163,82 +161,74 @@ export class ModelSelectorController {
     }
 
     private createContent(): string {
-        const currentCarModel = PlayerStore.getState().modelType;
+        const currentModel = PlayerStore.getState().modelType;
         const movementMode = PlayerStore.getMovementMode();
+
+        const carModels = this.availableModels.filter(m => m.type.toLowerCase() === 'car');
+        const characterModels = this.availableModels.filter(m => m.type.toLowerCase() === 'walking');
 
         return `
             <div class="model-selector-section">
                 <h3>🚗 Cars</h3>
                 <div class="model-grid">
-                    ${Object.entries(CAR_MODELS).map(([id, config]) => {
-            // Find model info from API
-            const modelInfo = this.availableModels.find(m => m.modelId === id);
-            const isPremium = modelInfo?.isPremium || false;
-            const isUnlocked = modelInfo?.isUnlocked || !isPremium;
-            const price = modelInfo?.price || 0;
-
-            return `
-                            <div class="model-card ${movementMode === 'car' && currentCarModel === id ? 'selected' : ''} ${!isUnlocked ? 'locked' : ''}" 
-                                data-model-id="${id}" 
+                    ${carModels.map(model => {
+                        const config = model.config;
+                        return `
+                            <div class="model-card ${movementMode === 'car' && currentModel === model.modelId ? 'selected' : ''} ${!model.isUnlocked ? 'locked' : ''}" 
+                                data-model-id="${model.modelId}" 
                                 data-model-type="car"
-                                data-is-premium="${isPremium}"
-                                data-is-unlocked="${isUnlocked}">
-                                <div class="model-preview ${!config.model.screenshot ? 'no-image' : ''}">
-                                    ${config.model.screenshot
-                    ? `<img src="${config.model.screenshot}" alt="${id}">`
-                    : id
-                }
-                                    ${!isUnlocked ? `<div class="model-lock-overlay">🔒</div>` : ''}
+                                data-is-premium="${model.isPremium}"
+                                data-is-unlocked="${model.isUnlocked}">
+                                <div class="model-preview ${!model.thumbnailUrl ? 'no-image' : ''}">
+                                    ${model.thumbnailUrl
+                                        ? `<img src="${model.thumbnailUrl}" alt="${model.name}">`
+                                        : model.name
+                                    }
+                                    ${!model.isUnlocked ? `<div class="model-lock-overlay">🔒</div>` : ''}
                                 </div>
-                                <p class="model-name">${id}</p>
+                                <p class="model-name">${model.name}</p>
                                 <div class="model-price">
-                                    ${isUnlocked
-                    ? `<span class="model-owned">Owned</span>`
-                    : `<span class="price-tag">$${price.toFixed(2)}</span>
-                                           <button class="purchase-button" data-model-id="${id}">Purchase</button>`
-                }
+                                    ${model.isUnlocked
+                                        ? `<span class="model-owned">Owned</span>`
+                                        : `<span class="price-tag">$${model.price.toFixed(2)}</span>
+                                           <button class="purchase-button" data-model-id="${model.modelId}">Purchase</button>`
+                                    }
                                 </div>
                             </div>
                         `;
-        }).join('')}
+                    }).join('')}
                 </div>
             </div>
-        
 
             <div class="model-selector-section">
                 <h3>🚶 Characters</h3>
                 <div class="model-grid">
-                    ${Object.entries(PLAYER_MODELS).map(([id, config]) => {
-            // Find model info from API
-            const modelInfo = this.availableModels.find(m => m.modelId === id);
-            const isPremium = modelInfo?.isPremium || false;
-            const isUnlocked = modelInfo?.isUnlocked || !isPremium;
-            const price = modelInfo?.price || 0;
-
-            return `
-                            <div class="model-card ${movementMode === 'walking' && currentCarModel === id ? 'selected' : ''} ${!isUnlocked ? 'locked' : ''}" 
-                                data-model-id="${id}" 
+                    ${characterModels.map(model => {
+                        const config = model.config;
+                        return `
+                            <div class="model-card ${movementMode === 'walking' && currentModel === model.modelId ? 'selected' : ''} ${!model.isUnlocked ? 'locked' : ''}" 
+                                data-model-id="${model.modelId}" 
                                 data-model-type="character"
-                                data-is-premium="${isPremium}"
-                                data-is-unlocked="${isUnlocked}">
-                                <div class="model-preview ${!config.model.screenshot ? 'no-image' : ''}">
-                                    ${config.model.screenshot
-                    ? `<img src="${config.model.screenshot}" alt="${id}">`
-                    : id
-                }
-                                    ${!isUnlocked ? `<div class="model-lock-overlay">🔒</div>` : ''}
+                                data-is-premium="${model.isPremium}"
+                                data-is-unlocked="${model.isUnlocked}">
+                                <div class="model-preview ${!model.thumbnailUrl ? 'no-image' : ''}">
+                                    ${model.thumbnailUrl
+                                        ? `<img src="${model.thumbnailUrl}" alt="${model.name}">`
+                                        : model.name
+                                    }
+                                    ${!model.isUnlocked ? `<div class="model-lock-overlay">🔒</div>` : ''}
                                 </div>
-                                <p class="model-name">${id}</p>
+                                <p class="model-name">${model.name}</p>
                                 <div class="model-price">
-                                    ${isUnlocked
-                    ? `<span class="model-owned">Owned</span>`
-                    : `<span class="price-tag">$${price.toFixed(2)}</span>
-                                           <button class="purchase-button" data-model-id="${id}">Purchase</button>`
-                }
+                                    ${model.isUnlocked
+                                        ? `<span class="model-owned">Owned</span>`
+                                        : `<span class="price-tag">$${model.price.toFixed(2)}</span>
+                                           <button class="purchase-button" data-model-id="${model.modelId}">Purchase</button>`
+                                    }
                                 </div>
                             </div>
                         `;
-        }).join('')}
+                    }).join('')}
                 </div>
             </div>
         `;
@@ -255,33 +245,41 @@ export class ModelSelectorController {
         }
 
         const card = target.closest('.model-card') as HTMLElement;
-
         if (!card) return;
 
         const modelId = card.dataset.modelId;
-        const modelType = card.dataset.modelType;
+        const modelType = card.dataset.modelType as 'car' | 'walking';
         const isUnlocked = card.dataset.isUnlocked === 'true';
 
-        if (!modelId || !modelType) return;
+        if (!modelId || !modelType || !isUnlocked) {
+            if (!isUnlocked) {
+                Toast.show({
+                    message: 'This model is locked. Purchase it to use it.',
+                    type: 'warning',
+                    duration: 2000
+                });
+            }
+            return;
+        }
 
-        // Prevent selecting locked models
-        if (!isUnlocked) {
+        const selectedModel = this.availableModels.find(m => m.modelId === modelId);
+        if (!selectedModel?.config) {
             Toast.show({
-                message: 'This model is locked. Purchase it to use it.',
+                message: 'Model configuration not found.',
                 type: 'warning',
                 duration: 2000
             });
             return;
         }
 
-        // Use the new switchState method to handle both model and state change
+        console.log("selected: ", selectedModel)
+
         await this.playerController.switchState(
             modelId,
-            modelType === 'car' ? 'car' :
-                'walking'
+            modelType,
+            selectedModel
         );
 
-        // Close dialog
         this.close();
     }
 
