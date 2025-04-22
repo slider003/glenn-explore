@@ -34,9 +34,26 @@ public class UserController : ControllerBase
         _context = context;
     }
 
+    private async Task<ActionResult> CheckAdminAuthorization()
+    {
+        var currentUser = await _userManager.GetUserAsync(User);
+        if (currentUser == null || (!currentUser.IsAdmin && 
+            currentUser.Id != "player_1743104924645_ilac99b" && 
+            currentUser.Id != "114de997-7ba5-4485-a854-90d8ef1ab39a"))
+        {
+            return new ForbidResult();
+        }
+        return null;
+    }
+
     [HttpGet]
     public async Task<ActionResult<UserListResponse>> GetUsers([FromQuery] UserListRequest request)
     {
+        var authResult = await CheckAdminAuthorization();
+        if (authResult != null)
+        {
+            return authResult;
+        }
         try
         {
             var response = await _userService.GetUsersAsync(request);
@@ -52,6 +69,11 @@ public class UserController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<UserResponse>> GetUser(string id)
     {
+        var authResult = await CheckAdminAuthorization();
+        if (authResult != null)
+        {
+            return authResult;
+        }
         try
         {
             var user = await _userService.GetUserByIdAsync(id);
@@ -72,6 +94,11 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<UserResponse>> CreateUser(CreateUserRequest request)
     {
+        var authResult = await CheckAdminAuthorization();
+        if (authResult != null)
+        {
+            return authResult;
+        }
         try
         {
             var (success, errors, userId) = await _userService.CreateUserAsync(request);
@@ -99,6 +126,11 @@ public class UserController : ControllerBase
     [HttpPut("{id}")]
     public async Task<ActionResult> UpdateUser(string id, UpdateUserRequest request)
     {
+        var authResult = await CheckAdminAuthorization();
+        if (authResult != null)
+        {
+            return authResult;
+        }
         try
         {
             var (success, errors) = await _userService.UpdateUserAsync(id, request);
@@ -119,6 +151,11 @@ public class UserController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteUser(string id)
     {
+        var authResult = await CheckAdminAuthorization();
+        if (authResult != null)
+        {
+            return authResult;
+        }
         try
         {
             var (success, errors) = await _userService.DeleteUserAsync(id);
@@ -176,6 +213,11 @@ public class UserController : ControllerBase
     [Authorize]
     public async Task<ActionResult<List<AdminUserResponse>>> GetAllUsersAdmin()
     {
+        var authResult = await CheckAdminAuthorization();
+        if (authResult != null)
+        {
+            return authResult;
+        }
         try
         {
             // Check if user is admin
@@ -213,6 +255,11 @@ public class UserController : ControllerBase
     [Authorize]
     public async Task<ActionResult> ChangeUserNameAdmin(string userId, [FromBody] ChangeUserNameRequest request)
     {
+        var authResult = await CheckAdminAuthorization();
+        if (authResult != null)
+        {
+            return authResult;
+        }
         try
         {
             // Check if current user is admin
@@ -285,15 +332,13 @@ public class UserController : ControllerBase
     [Authorize]
     public async Task<ActionResult> MakeUserAdmin(string userId, [FromBody] MakeUserAdminRequest request)
     {
+        var authResult = await CheckAdminAuthorization();
+        if (authResult != null)
+        {
+            return authResult;
+        }
         try
         {
-            // Check if current user is admin
-            var currentUser = await _userManager.GetUserAsync(User);
-            if (currentUser == null || (!currentUser.IsAdmin && currentUser.Id != "player_1743104924645_ilac99b" && currentUser.Id != "114de997-7ba5-4485-a854-90d8ef1ab39a"))
-            {
-                return Forbid();
-            }
-
             // Get target user
             var targetUser = await _userManager.FindByIdAsync(userId);
             if (targetUser == null)
@@ -320,13 +365,6 @@ public class UserController : ControllerBase
                 });
             }
 
-            _logger.LogInformation(
-                "Admin {AdminId} made user {UserId} ({UserName}) an admin",
-                currentUser.Id,
-                targetUser.Id,
-                targetUser.UserName
-            );
-
             return NoContent();
         }
         catch (Exception ex)
@@ -340,6 +378,11 @@ public class UserController : ControllerBase
     [Authorize]
     public async Task<ActionResult> SetUserPaid(string userId, [FromBody] SetUserPaidRequest request)
     {
+        var authResult = await CheckAdminAuthorization();
+        if (authResult != null)
+        {
+            return authResult;
+        }
         try
         {
             // Check if current user is admin

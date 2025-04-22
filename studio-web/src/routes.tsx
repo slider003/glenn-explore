@@ -1,6 +1,7 @@
 import { Bot, Users, FolderOpen, Box } from 'lucide-react';
 import { CreateUserPage } from './features/users/pages/create-user-page';
 import { UsersPage } from './features/users/pages/users-page';
+import { UserDetailsPage } from './features/users/pages/user-details-page';
 import { FilesPage } from './features/files/pages/files-page';
 import { Card, CardDescription, CardHeader, CardTitle } from './shared/components/ui/card';
 import { ModelsPage } from './features/models/pages/models-page';
@@ -50,6 +51,12 @@ export const routes: RouteConfig[] = [
   {
     path: '/studio/users/create',
     element: <CreateUserPage />,
+    isHeaderItem: false,
+    requiresAuth: true
+  },
+  {
+    path: '/studio/users/:userId',
+    element: <UserDetailsPage />,
     isHeaderItem: false,
     requiresAuth: true
   },

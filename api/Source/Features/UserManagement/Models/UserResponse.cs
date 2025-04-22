@@ -6,6 +6,10 @@ public record UserResponse(
     string FirstName,
     string LastName,
     bool IsActive,
+    bool HasPaid,
+    bool IsLowPerformanceDevice,
     DateTime CreatedAt,
-    DateTime? LastLoginAt
+    DateTime? LastLoginAt,
+    DateTime LastSeen,
+    TimeSpan TotalTimeOnline
 ); 

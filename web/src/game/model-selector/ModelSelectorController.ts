@@ -112,7 +112,6 @@ export class ModelSelectorController {
                 <h2>Choose your model</h2>
                 <div class="model-selector-subtitle">Premium models can be purchased with real money</div>
             </div>
-            <button class="model-selector-close">×</button>
         `;
 
         // Add promo text

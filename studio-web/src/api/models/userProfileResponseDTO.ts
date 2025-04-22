@@ -16,6 +16,7 @@ export interface UserProfileResponseDTO {
   lastName?: string | null;
   isActive?: boolean;
   isGuest?: boolean;
+  isAdmin?: boolean;
   createdAt?: string;
   /** @nullable */
   lastLoginAt?: string | null;

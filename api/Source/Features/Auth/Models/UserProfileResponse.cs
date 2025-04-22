@@ -7,6 +7,7 @@ public record UserProfileResponse(
     string LastName,
     bool IsActive,
     bool IsGuest,
+    bool IsAdmin,
     DateTime CreatedAt,
     DateTime? LastLoginAt
 ); 

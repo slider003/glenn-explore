@@ -7,7 +7,7 @@ interface AuthGuardProps {
 }
 
 export function AuthGuard({ children }: AuthGuardProps) {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
   const location = useLocation();
   const { toast } = useToast();
 
@@ -26,9 +26,15 @@ export function AuthGuard({ children }: AuthGuardProps) {
       description: "Please sign in to access this page",
       variant: "destructive",
     });
-    
+
+
+
     // Save the attempted URL for redirecting after login
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to="/studio/login" state={{ from: location }} replace />;
+  }
+
+  if (!user?.isAdmin) {
+    return <Navigate to="/studio/" state={{ from: location }} replace />;
   }
 
   return <>{children}</>;

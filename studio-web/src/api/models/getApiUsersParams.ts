@@ -9,4 +9,12 @@ export type GetApiUsersParams = {
 Page?: number;
 PageSize?: number;
 SearchTerm?: string;
+SortBy?: string;
+SortDescending?: boolean;
+IsActive?: boolean;
+HasPaid?: boolean;
+LastLoginFrom?: string;
+LastLoginTo?: string;
+CreatedFrom?: string;
+CreatedTo?: string;
 };

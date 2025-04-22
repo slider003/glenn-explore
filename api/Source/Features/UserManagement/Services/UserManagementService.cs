@@ -24,33 +24,97 @@ public class UserManagementService
 
     public async Task<UserListResponse> GetUsersAsync(UserListRequest request)
     {
-        var query = _context.Users.AsQueryable();
+        var query = _context.Users
+            .GroupJoin(
+                _context.Players,
+                user => user.Id,
+                player => player.PlayerId,
+                (user, players) => new { user, player = players.FirstOrDefault() }
+            );
 
         // Apply search if provided
         if (!string.IsNullOrWhiteSpace(request.SearchTerm))
         {
             var searchTerm = request.SearchTerm.ToLower();
-            query = query.Where(u => 
-                u.Email.ToLower().Contains(searchTerm) ||
-                u.FirstName.ToLower().Contains(searchTerm) ||
-                u.LastName.ToLower().Contains(searchTerm));
+            query = query.Where(x => 
+                x.user.Email.ToLower().Contains(searchTerm) ||
+                x.user.FirstName.ToLower().Contains(searchTerm) ||
+                x.user.LastName.ToLower().Contains(searchTerm));
         }
+
+        // Apply filters
+        if (request.IsActive.HasValue)
+        {
+            query = query.Where(x => x.user.IsActive == request.IsActive.Value);
+        }
+
+        if (request.HasPaid.HasValue)
+        {
+            query = query.Where(x => x.user.HasPaid == request.HasPaid.Value);
+        }
+
+        if (request.LastLoginFrom.HasValue)
+        {
+            query = query.Where(x => x.user.LastLoginAt >= request.LastLoginFrom.Value);
+        }
+
+        if (request.LastLoginTo.HasValue)
+        {
+            query = query.Where(x => x.user.LastLoginAt <= request.LastLoginTo.Value);
+        }
+
+        if (request.CreatedFrom.HasValue)
+        {
+            query = query.Where(x => x.user.CreatedAt >= request.CreatedFrom.Value);
+        }
+
+        if (request.CreatedTo.HasValue)
+        {
+            query = query.Where(x => x.user.CreatedAt <= request.CreatedTo.Value);
+        }
+
+        // Apply sorting
+        query = request.SortBy?.ToLower() switch
+        {
+            "name" => request.SortDescending
+                ? query.OrderByDescending(x => x.user.FirstName).ThenByDescending(x => x.user.LastName)
+                : query.OrderBy(x => x.user.FirstName).ThenBy(x => x.user.LastName),
+            "email" => request.SortDescending
+                ? query.OrderByDescending(x => x.user.Email)
+                : query.OrderBy(x => x.user.Email),
+            "lastlogin" => request.SortDescending
+                ? query.OrderByDescending(x => x.user.LastLoginAt)
+                : query.OrderBy(x => x.user.LastLoginAt),
+            "created" => request.SortDescending
+                ? query.OrderByDescending(x => x.user.CreatedAt)
+                : query.OrderBy(x => x.user.CreatedAt),
+            "status" => request.SortDescending
+                ? query.OrderByDescending(x => x.user.IsActive)
+                : query.OrderBy(x => x.user.IsActive),
+            "payment" => request.SortDescending
+                ? query.OrderByDescending(x => x.user.HasPaid)
+                : query.OrderBy(x => x.user.HasPaid),
+            _ => query.OrderByDescending(x => x.user.CreatedAt) // default sort
+        };
 
         var totalCount = await query.CountAsync();
         var totalPages = (int)Math.Ceiling(totalCount / (double)request.PageSize);
 
         var users = await query
-            .OrderByDescending(u => u.CreatedAt)
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
-            .Select(u => new UserResponse(
-                u.Id,
-                u.Email!,
-                u.FirstName,
-                u.LastName,
-                u.IsActive,
-                u.CreatedAt,
-                u.LastLoginAt))
+            .Select(x => new UserResponse(
+                x.user.Id,
+                x.user.Email!,
+                x.user.FirstName,
+                x.user.LastName,
+                x.user.IsActive,
+                x.user.HasPaid,
+                x.user.IsLowPerformanceDevice,
+                x.user.CreatedAt,
+                x.user.LastLoginAt,
+                x.user.LastSeen,
+                x.player != null ? x.player.TotalTimeOnline : TimeSpan.Zero))
             .ToListAsync();
 
         return new UserListResponse(
@@ -63,17 +127,36 @@ public class UserManagementService
 
     public async Task<UserResponse?> GetUserByIdAsync(string id)
     {
-        var user = await _userManager.FindByIdAsync(id);
-        if (user == null) return null;
+        var result = await _context.Users
+            .GroupJoin(
+                _context.Players,
+                user => user.Id,
+                player => player.PlayerId,
+                (user, players) => new { user, player = players.FirstOrDefault() }
+            )
+            .FirstOrDefaultAsync(x => x.user.Id == id);
+
+        if (result?.user == null) return null;
 
         return new UserResponse(
-            user.Id,
-            user.Email!,
-            user.FirstName,
-            user.LastName,
-            user.IsActive,
-            user.CreatedAt,
-            user.LastLoginAt);
+            result.user.Id,
+            result.user.Email!,
+            result.user.FirstName,
+            result.user.LastName,
+            result.user.IsActive,
+            result.user.HasPaid,
+            result.user.IsLowPerformanceDevice,
+            result.user.CreatedAt,
+            result.user.LastLoginAt,
+            result.user.LastSeen,
+            result.player != null ? result.player.TotalTimeOnline : TimeSpan.Zero);
+    }
+
+    private TimeSpan GetTotalTimeOnline(User user)
+    {
+        // Get associated player if exists
+        var player = _context.Players.FirstOrDefault(p => p.PlayerId == user.Id);
+        return player?.TotalTimeOnline ?? TimeSpan.Zero;
     }
 
     public async Task<(bool success, IEnumerable<string> errors, string userId)> CreateUserAsync(CreateUserRequest request)

@@ -4,7 +4,7 @@ import { UserListItem } from "./user-list-item";
 import { UserSearch } from "./user-search";
 import { Button } from "@/shared/components/ui/button";
 import { Link } from "react-router-dom";
-import { Plus, Users } from "lucide-react";
+import { Plus, Users, ArrowUpDown } from "lucide-react";
 import {
     Table,
     TableBody,
@@ -13,16 +13,40 @@ import {
     TableRow,
 } from "@/shared/components/ui/table";
 import { useToast } from "@/shared/components/ui/use-toast";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/shared/components/ui/select";
+
+type SortField = "name" | "email" | "status" | "payment" | "lastlogin" | "created" | null;
+
+interface FilterState {
+    isActive: boolean | null;
+    hasPaid: boolean | null;
+}
 
 export function UserList() {
     const [page, setPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState("");
+    const [sortBy, setSortBy] = useState<SortField>(null);
+    const [sortDescending, setSortDescending] = useState(false);
+    const [filters, setFilters] = useState<FilterState>({
+        isActive: null,
+        hasPaid: null,
+    });
     const { toast } = useToast();
 
     const { data: userList, isLoading, error, refetch } = useUsers({
         Page: page,
         PageSize: 10,
-        SearchTerm: searchTerm || undefined
+        SearchTerm: searchTerm || undefined,
+        SortBy: sortBy || undefined,
+        SortDescending: sortDescending,
+        IsActive: filters.isActive || undefined,
+        HasPaid: filters.hasPaid || undefined
     });
 
     const deleteUser = useDeleteUser({
@@ -82,7 +106,7 @@ export function UserList() {
             <div className="flex justify-between items-center">
                 <UserSearch onSearch={handleSearch} initialValue={searchTerm} />
                 <Button asChild>
-                    <Link to="/users/create" className="flex items-center gap-2">
+                    <Link to="/studio/users/create" className="flex items-center gap-2">
                         <Plus className="w-4 h-4" />
                         <span>Create User</span>
                     </Link>
@@ -93,11 +117,79 @@ export function UserList() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="font-medium">Name</TableHead>
-                            <TableHead className="font-medium">Email</TableHead>
-                            <TableHead className="font-medium">Status</TableHead>
-                            <TableHead className="font-medium">Created</TableHead>
-                            <TableHead className="font-medium">Last Login</TableHead>
+                            <TableHead className="font-medium cursor-pointer" onClick={() => {
+                                if (sortBy === 'name') {
+                                    setSortDescending(!sortDescending);
+                                } else {
+                                    setSortBy('name');
+                                    setSortDescending(false);
+                                }
+                            }}>
+                                <div className="flex items-center gap-2">
+                                    Name
+                                    {sortBy === 'name' && <ArrowUpDown className="h-4 w-4" />}
+                                </div>
+                            </TableHead>
+                            <TableHead className="font-medium cursor-pointer" onClick={() => {
+                                if (sortBy === 'email') {
+                                    setSortDescending(!sortDescending);
+                                } else {
+                                    setSortBy('email');
+                                    setSortDescending(false);
+                                }
+                            }}>
+                                <div className="flex items-center gap-2">
+                                    Email
+                                    {sortBy === 'email' && <ArrowUpDown className="h-4 w-4" />}
+                                </div>
+                            </TableHead>
+                            <TableHead className="font-medium">
+                                <div className="flex items-center gap-2">
+                                    Status
+                                    <Select
+                                        value={filters.isActive === null ? 'all' : filters.isActive.toString()}
+                                        onValueChange={(value) => setFilters(prev => ({
+                                            ...prev,
+                                            isActive: value === 'all' ? null : value === 'true'
+                                        }))}
+                                    >
+                                        <SelectTrigger className="w-[100px]">
+                                            <SelectValue placeholder="All" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="all">All</SelectItem>
+                                            <SelectItem value="true">Active</SelectItem>
+                                            <SelectItem value="false">Inactive</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </TableHead>
+                            <TableHead className="font-medium cursor-pointer" onClick={() => {
+                                if (sortBy === 'lastlogin') {
+                                    setSortDescending(!sortDescending);
+                                } else {
+                                    setSortBy('lastlogin');
+                                    setSortDescending(false);
+                                }
+                            }}>
+                                <div className="flex items-center gap-2">
+                                    Activity
+                                    {sortBy === 'lastlogin' && <ArrowUpDown className="h-4 w-4" />}
+                                </div>
+                            </TableHead>
+                            <TableHead className="font-medium cursor-pointer" onClick={() => {
+                                if (sortBy === 'created') {
+                                    setSortDescending(!sortDescending);
+                                } else {
+                                    setSortBy('created');
+                                    setSortDescending(false);
+                                }
+                            }}>
+                                <div className="flex items-center gap-2">
+                                    Info
+                                    {sortBy === 'created' && <ArrowUpDown className="h-4 w-4" />}
+                                </div>
+                            </TableHead>
                             <TableHead className="font-medium text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>

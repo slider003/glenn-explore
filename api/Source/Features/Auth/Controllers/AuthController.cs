@@ -340,6 +340,7 @@ public class AuthController : ControllerBase
                 user.LastName,
                 user.IsActive,
                 user.IsGuest,
+                user.IsAdmin,
                 user.CreatedAt,
                 user.LastLoginAt
             );

@@ -31,4 +31,5 @@ export interface ModelDetailsDtoDTO {
   updatedAt?: string;
   /** @nullable */
   screenshot?: string | null;
+  isUnlocked?: boolean;
 }

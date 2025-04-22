@@ -15,7 +15,11 @@ export interface UserResponseDTO {
   /** @nullable */
   lastName?: string | null;
   isActive?: boolean;
+  hasPaid?: boolean;
+  isLowPerformanceDevice?: boolean;
   createdAt?: string;
   /** @nullable */
   lastLoginAt?: string | null;
+  lastSeen?: string;
+  totalTimeOnline?: string;
 }

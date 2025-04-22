@@ -76,7 +76,7 @@ public class ModelsController : ControllerBase
         }
 
         // Check if model is premium
-        if (!_modelService.IsModelPremium(modelId))
+        if (!await _modelService.IsModelPremium(modelId))
         {
             return BadRequest("This model is not available for purchase");
         }
@@ -89,14 +89,14 @@ public class ModelsController : ControllerBase
         }
 
         // Get model details
-        var model = await _modelService.GetModelByIdAsync(modelId);
+        var model = await _modelService.GetModelByIdWithDetailsAsync(modelId);
         if (model == null)
         {
             return NotFound("Model not found");
         }
 
         // Create checkout session
-        var options = CreateCheckoutSessionOptions(user, model);
+        var options = await CreateCheckoutSessionOptions(user, model);
         var service = new SessionService();
         var session = await service.CreateAsync(options);
 
@@ -193,7 +193,7 @@ public class ModelsController : ControllerBase
         }
 
         // Validate model exists and is premium
-        if (!_modelService.IsModelPremium(request.ModelId))
+        if (!await _modelService.IsModelPremium(request.ModelId))
         {
             return BadRequest($"Model {request.ModelId} is not a premium model or does not exist");
         }
@@ -350,7 +350,7 @@ public class ModelsController : ControllerBase
         }
     }
 
-    private SessionCreateOptions CreateCheckoutSessionOptions(User user, Model model)
+    private async Task<SessionCreateOptions> CreateCheckoutSessionOptions(User user, ModelDetailsDto model)
     {
         var domain = _configuration["App:Domain"] ?? "https://playglenn.com";
         var priceInCents = (long)(model.Price * 100);
