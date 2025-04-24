@@ -154,16 +154,16 @@ function initializeGame(
 
   map = new mapboxgl.Map(mapOptions);
 
-  map.scrollZoom.enable({ around: 'center' });
-
-  // Ensure touch zoom only affects zoom level, not rotation
-  map.touchZoomRotate.disableRotation();
 
   map.setConfigProperty('basemap', 'lightPreset', PlayerStore.getTimeOfDay());
   // Add terrain source and layer
   map.on('style.load', () => {
 
+
     if (!window.isLowPerformanceDevice) {
+      try{
+
+      
       map?.addSource('mapbox-dem', {
         'type': 'raster-dem',
         'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
@@ -176,6 +176,9 @@ function initializeGame(
         'source': 'mapbox-dem',
         'exaggeration': 0.7,
       });
+      } catch (error) {
+        console.error('Failed to add terrain:', error);
+      }
     }
 
     // Add custom layer for Threebox

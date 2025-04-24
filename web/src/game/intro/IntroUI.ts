@@ -37,7 +37,7 @@ export class IntroUI {
             🏆 Your progress saved forever
           </p>
 
-          <a style="text-align:center;display:block;margin-bottom:10px;" href="https://discord.gg/4dgtFKQP " target="_blank">Join our amazing Discord community! 🚀</a>
+          <a style="text-align:center;display:block;margin-bottom:10px;" href="https://discord.gg/ZaWdh6g4DU " target="_blank">Join our amazing Discord community! 🚀</a>
           <p class="consent-message">
             By providing your email, you'll get your access key and occasional exciting updates about new features. 
             Unsubscribe anytime with one click.

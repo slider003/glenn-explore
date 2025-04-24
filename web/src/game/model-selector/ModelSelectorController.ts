@@ -120,8 +120,8 @@ export class ModelSelectorController {
         promoText.innerHTML = `
             Want your own model or car in the game? Send me an image of what you want!<br>
             <a href="mailto:mail@playglenn.com">mail@playglenn.com</a> - I'll turn it into a 3D model for you <span class="price">2USD/model</span><br>
-            <a href="https://discord.gg/4dgtFKQP " target="_blank">Join our Discord community!</a>
-            <p>https://discord.gg/4dgtFKQP </p>
+            <a href="https://discord.gg/ZaWdh6g4DU " target="_blank">Join our Discord community!</a>
+            <p>https://discord.gg/ZaWdh6g4DU </p>
         `;
 
         // Create content with loading indicator

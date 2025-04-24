@@ -252,10 +252,11 @@ export class PlayerController implements IFollowable {
                         this.lastBearing = bearing;
                     }
 
-                    //if(zoom !== this.lastZoom) {
-                    CameraController.getMap().setZoom(zoom);
-                    this.lastZoom = zoom;
-                    //}
+                    if (CameraController.getMap().getZoom() !== zoom) {
+                        CameraController.getMap().setZoom(zoom);
+                        console.log("zoom", zoom, CameraController.getMap().getZoom());
+                        this.lastZoom = zoom;
+                    }
 
                     // CameraController.getMap().jumpTo({
                     //     center: [this._coordinates[0], this._coordinates[1]],
@@ -427,49 +428,49 @@ export class PlayerController implements IFollowable {
 
     private async loadModel(): Promise<void> {
         console.log("Loading model", this.model);
-        if(this.model) {
-        try {
-            this.currentState!.model = await new Promise((resolve, reject) => {
-                if (!this.model) {
-                    reject(new Error('No model found'));
-                    return;
-                }
-                const modelConfig: ThreeboxModelConfig = {
-                    obj: this.model.modelUrl || this.model.config.model.obj,
-                    type: 'glb',
-                    scale: this.model.config.model.scale,
-                    units: this.model.config.model.units as 'meters',
-                    rotation: this.model.config.model.rotation,
-                    anchor: this.model.config.model.anchor as 'center',
-                    elevationOffset: this.model.config.model.elevationOffset
-                };
-                
-                this.tb!.loadObj(modelConfig, (model: any) => {
-                    if (!model) {
-                        reject(new Error('No model returned'));
+        if (this.model) {
+            try {
+                this.currentState!.model = await new Promise((resolve, reject) => {
+                    if (!this.model) {
+                        reject(new Error('No model found'));
                         return;
                     }
-                    console.log("Model loaded", model.animations);
-                    if (model.animations && model.animations.length > 0) {
-                        this.currentState!.mixer = new THREE.AnimationMixer(model);
-                    }
+                    const modelConfig: ThreeboxModelConfig = {
+                        obj: this.model.modelUrl || this.model.config.model.obj,
+                        type: 'glb',
+                        scale: this.model.config.model.scale,
+                        units: this.model.config.model.units as 'meters',
+                        rotation: this.model.config.model.rotation,
+                        anchor: this.model.config.model.anchor as 'center',
+                        elevationOffset: this.model.config.model.elevationOffset
+                    };
 
-                    resolve(model);
-                    model.setCoords(this._coordinates, this.getElevation());
-                    model.setRotation({
-                        x: 0,
-                        y: 0,
-                        z: this._rotation.z // Start facing north
+                    this.tb!.loadObj(modelConfig, (model: any) => {
+                        if (!model) {
+                            reject(new Error('No model returned'));
+                            return;
+                        }
+                        console.log("Model loaded", model.animations);
+                        if (model.animations && model.animations.length > 0) {
+                            this.currentState!.mixer = new THREE.AnimationMixer(model);
+                        }
+
+                        resolve(model);
+                        model.setCoords(this._coordinates, this.getElevation());
+                        model.setRotation({
+                            x: 0,
+                            y: 0,
+                            z: this._rotation.z // Start facing north
+                        });
                     });
                 });
-            });
 
-            this.tb!.add(this.currentState!.model);
-        } catch (error) {
-            console.error('Failed to load model:', error);
-            throw error;
+                this.tb!.add(this.currentState!.model);
+            } catch (error) {
+                console.error('Failed to load model:', error);
+                throw error;
+            }
         }
-    }
     }
 
     // New method to toggle flying mode
