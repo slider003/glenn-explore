@@ -99,37 +99,20 @@ export const CreateModelPage: React.FC = () => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] overflow-hidden">
-      {/* Left side - Form */}
-      <div className="w-1/2 overflow-y-auto px-8 py-6 border-r border-border/10">
-        <div className="max-w-2xl mx-auto">
-          <div className="space-y-2 mb-8">
-            <h1 className="text-4xl font-bold tracking-tight">Create New Model</h1>
-            <p className="text-muted-foreground text-lg">
-              Add a new 3D model to your collection
-            </p>
-          </div>
-
-          <ModelForm 
-            initialData={initialData}
-            onSubmit={handleSubmit as (data: CreateModelRequestDTO | UpdateModelRequestDTO) => Promise<void>} 
-            isLoading={isPending} 
-          />
+    <div className="container max-w-5xl py-8">
+      <div className="flex flex-col gap-6">
+        <div>
+          <h1 className="text-4xl font-bold tracking-tight">Create New Model</h1>
+          <p className="text-muted-foreground text-lg">
+            Add a new 3D model to your collection
+          </p>
         </div>
-      </div>
 
-      {/* Right side - Preview */}
-      <div className="w-1/2 bg-muted/30">
-        <div className="h-full flex items-center justify-center">
-          <div className="text-center space-y-4">
-            <div className="w-64 h-64 rounded-lg bg-muted/50 mx-auto flex items-center justify-center">
-              <span className="text-muted-foreground">Model Preview</span>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Your 3D model will be previewed here
-            </p>
-          </div>
-        </div>
+        <ModelForm 
+          initialData={initialData}
+          onSubmit={handleSubmit as (data: CreateModelRequestDTO | UpdateModelRequestDTO) => Promise<void>} 
+          isLoading={isPending} 
+        />
       </div>
     </div>
   );

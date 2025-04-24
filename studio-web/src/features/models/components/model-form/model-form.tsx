@@ -1,4 +1,5 @@
 import React from 'react';
+import { ModelPreview } from '../model-preview/model-preview';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -70,7 +71,7 @@ const PriceInput: React.FC<{
 
     // Parse the number, handling both comma and dot as decimal separators
     const parsedValue = parseFloat(newValue.replace(',', '.'));
-    
+
     // Only update if it's a valid number and non-negative
     if (!isNaN(parsedValue) && parsedValue >= 0) {
       onChange(parsedValue);
@@ -129,147 +130,158 @@ export const ModelForm: React.FC<ModelFormProps> = ({
 
   const isPremium = form.watch('isPremium');
   const modelType = form.watch('type');
-
+  const config = JSON.parse(form.watch('configJson') as any)
+  console.log(config)
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-12">
-        {/* Basic Info Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="space-y-8"
-        >
-          <MotionFormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input
-                    placeholder="Enter model name"
-                    className="text-3xl font-light border-none bg-transparent px-0 h-auto placeholder:text-muted-foreground/50"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <MotionFormField
-            control={form.control}
-            name="type"
-            render={({ field }) => (
-              <FormItem>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="w-full text-xl border-none bg-muted/30 h-12">
-                      <SelectValue placeholder="Select model type" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="car">🚗 Car</SelectItem>
-                    <SelectItem value="walking">🚶 Character</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <MotionFormField
-            control={form.control}
-            name="isPremium"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border border-border/10 p-4 bg-muted/30">
-                <div className="space-y-1">
-                  <FormLabel className="text-lg">Premium Model</FormLabel>
-                  <FormDescription className="text-base">
-                    Make this model available for purchase
-                  </FormDescription>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    className="scale-125"
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-
-          {isPremium && (
+      <div className="grid grid-cols-2 gap-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-12">
+          {/* Basic Info Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="space-y-8"
+          >
             <MotionFormField
               control={form.control}
-              name="price"
+              name="name"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <PriceInput
-                      value={field.value ?? 0}
-                      onChange={field.onChange}
+                    <Input
+                      placeholder="Enter model name"
+                      className="text-3xl font-light border-none bg-transparent px-0 h-auto placeholder:text-muted-foreground/50"
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-          )}
-        </motion.div>
 
-        {/* Model Configuration */}
-        {modelType && (
+            <MotionFormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full text-xl border-none bg-muted/30 h-12">
+                        <SelectValue placeholder="Select model type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="car">🚗 Car</SelectItem>
+                      <SelectItem value="walking">🚶 Character</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <MotionFormField
+              control={form.control}
+              name="isPremium"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border border-border/10 p-4 bg-muted/30">
+                  <div className="space-y-1">
+                    <FormLabel className="text-lg">Premium Model</FormLabel>
+                    <FormDescription className="text-base">
+                      Make this model available for purchase
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      className="scale-125"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {isPremium && (
+              <MotionFormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <PriceInput
+                        value={field.value ?? 0}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+          </motion.div>
+
+          {/* Model Configuration */}
+          {modelType && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <ModelConfig
+                type={modelType}
+                value={form.watch('configJson')}
+                onChange={(value) => form.setValue('configJson', value)}
+              />
+            </motion.div>
+          )}
+
+          {/* File Upload Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <ModelUpload
+              thumbnailUrl={form.watch('thumbnailUrl')}
+              modelUrl={form.watch('modelUrl')}
+              onThumbnailChange={({ id, url }) => {
+                form.setValue('thumbnailUrl', url);
+                form.setValue('thumbnailFileId', id);
+              }}
+              onModelChange={({ id, url }) => {
+                form.setValue('modelUrl', url);
+                form.setValue('modelFileId', id);
+              }}
+            />
+          </motion.div>
+
+          {/* Submit Button */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="sticky bottom-0 bg-background/80 backdrop-blur-sm py-4 -mx-8 px-8"
           >
-            <ModelConfig
-              type={modelType}
-              value={form.watch('configJson')}
-              onChange={(value) => form.setValue('configJson', value)}
-            />
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full h-12 text-lg"
+            >
+              {isLoading ? 'Creating...' : 'Create Model'}
+            </Button>
           </motion.div>
-        )}
-
-        {/* File Upload Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <ModelUpload
-            thumbnailUrl={form.watch('thumbnailUrl')}
-            modelUrl={form.watch('modelUrl')}
-            onThumbnailChange={({id, url}) => {
-              form.setValue('thumbnailUrl', url);
-              form.setValue('thumbnailFileId', id);
-            }}
-            onModelChange={({id, url}) => {
-              form.setValue('modelUrl', url);
-              form.setValue('modelFileId', id);
-            }}
+        </form>
+        <div className="sticky top-4 h-[calc(100vh-6rem)]">
+          <ModelPreview
+            url={form.watch('modelUrl') || ''}
+            scale={config.model.scale}
+            rotation={config.model.rotation}
+            position={config.model.position}
           />
-        </motion.div>
-
-        {/* Submit Button */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="sticky bottom-0 bg-background/80 backdrop-blur-sm py-4 -mx-8 px-8"
-        >
-          <Button
-            type="submit"
-            disabled={isLoading}
-            className="w-full h-12 text-lg"
-          >
-            {isLoading ? 'Creating...' : 'Create Model'}
-          </Button>
-        </motion.div>
-      </form>
+        </div>
+      </div>
     </Form>
   );
 }; 

@@ -110,8 +110,14 @@ export class SettingsPanel extends BasePanelUI {
 
           <h4>Time of Day</h4>
           <div class="mode-toggle">
+          <button class="mode-btn ${PlayerStore.getTimeOfDay() === 'dawn' ? 'active' : ''}" data-time-mode="dawn">
+            🌅 Dawn
+          </button>
             <button class="mode-btn ${PlayerStore.getTimeOfDay() === 'day' ? 'active' : ''}" data-time-mode="day">
               ☀️ Day
+            </button>
+            <button class="mode-btn ${PlayerStore.getTimeOfDay() === 'dusk' ? 'active' : ''}" data-time-mode="dusk">
+              🌅 Dusk
             </button>
             <button class="mode-btn ${PlayerStore.getTimeOfDay() === 'night' ? 'active' : ''}" data-time-mode="night">
               🌙 Night

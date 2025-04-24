@@ -91,17 +91,17 @@ export class PlayerStore {
         return PlayerStore.followCar;
     }
 
-    public static getTimeOfDay(): 'day' | 'night' {
+    public static getTimeOfDay(): 'day' | 'dawn' | 'dusk' | 'night' {
         const timeOfDayKey = 'timeOfDay';
         if (PlayerStore.timeOfDay) {
             return PlayerStore.timeOfDay;
         }
         let timeOfDay = localStorage.getItem(timeOfDayKey);
         if (!timeOfDay) {
-            timeOfDay = 'day';
+            timeOfDay = 'dusk';
             localStorage.setItem(timeOfDayKey, timeOfDay);
         }
-        return timeOfDay as 'day' | 'night';
+        return timeOfDay as 'day' | 'dawn' | 'dusk' | 'night';
     }
 
     public static getMap(): 'satellite' | 'standard' {
@@ -267,8 +267,8 @@ export class PlayerStore {
             PlayerStore.isGuest = state.isGuest ?? true;
             PlayerStore.isOnline = state.isOnline ?? false;
             PlayerStore.followCar = state.followCar ?? false;
-            PlayerStore.timeOfDay = state.timeOfDay || 'day';
-            PlayerStore.map = state.map || 'standard';
+            PlayerStore.timeOfDay = state.timeOfDay || 'dusk';
+            PlayerStore.map = state.map || 'satellite';
             PlayerStore.kilometersDriven = state.kilometersDriven || 0;
             PlayerStore.collisionEnabled = state.collisionEnabled ?? false;
             PlayerStore.coordinates = state.coordinates || [0, 0, 0];
@@ -371,7 +371,7 @@ export class PlayerStore {
         PlayerStore.kilometersDriven = 0;
         PlayerStore.followCar = false;
         PlayerStore.timeOfDay = 'day';
-        PlayerStore.map = 'standard';
+        PlayerStore.map = 'satellite';
         PlayerStore.collisionEnabled = false;
         PlayerStore.coordinates = [0, 0, 0];
         PlayerStore.rotation = { x: 0, y: 0, z: 0 };

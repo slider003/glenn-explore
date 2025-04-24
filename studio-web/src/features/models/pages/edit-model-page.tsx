@@ -51,11 +51,11 @@ export const EditModelPage: React.FC = () => {
   }
 
   return (
-    <div className="container py-8 max-w-4xl">
+    <div className="container max-w-5xl py-8">
       <div className="flex flex-col gap-6">
         <div>
-          <h1 className="text-2xl font-bold">Edit Model</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-4xl font-bold tracking-tight">Edit Model</h1>
+          <p className="text-muted-foreground text-lg">
             Update your 3D model details
           </p>
         </div>
