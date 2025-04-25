@@ -7,6 +7,7 @@ public record LoginResponse(
     string LastName,
     string Email,
     bool IsGuest,
+    bool IsAdmin,
     LastPosition? LastPosition = null,
     string? GuestKey = null,
     bool HasPaid = false

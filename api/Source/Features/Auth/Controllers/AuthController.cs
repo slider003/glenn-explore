@@ -76,6 +76,7 @@ public class AuthController : ControllerBase
                 user.LastName,
                 user.Email,
                 user.IsGuest,
+                user.IsAdmin,
                 null,
                 null,
                 user.HasPaid
@@ -126,6 +127,7 @@ public class AuthController : ControllerBase
                         existingUser.LastName,
                         existingUser.Email,
                         existingUser.IsGuest,
+                        existingUser.IsAdmin,
                         existingPlayer != null ? new LastPosition
                         {
                             X = existingPlayer.X,
@@ -162,6 +164,7 @@ public class AuthController : ControllerBase
                     existingUser.LastName,
                     existingUser.Email,
                     existingUser.IsGuest,
+                    existingUser.IsAdmin,
                     existingPlayer != null ? new LastPosition
                     {
                         X = existingPlayer.X,
@@ -216,6 +219,7 @@ public class AuthController : ControllerBase
                 user.LastName,
                 user.Email,
                 user.IsGuest,
+                user.IsAdmin,
                 existingPlayer != null ? new LastPosition
                 {
                     X = existingPlayer.X,
@@ -294,6 +298,7 @@ public class AuthController : ControllerBase
                 user.LastName,
                 user.Email,
                 user.IsGuest,
+                user.IsAdmin,
                 null,
                 null,
                 user.HasPaid
@@ -530,6 +535,7 @@ public class AuthController : ControllerBase
                 user.LastName,
                 user.Email,
                 user.IsGuest,
+                user.IsAdmin,
                 existingPlayer != null ? new LastPosition
                 {
                     X = existingPlayer.X,
@@ -649,6 +655,7 @@ public class AuthController : ControllerBase
                 user.LastName,
                 user.Email,
                 user.IsGuest,
+                user.IsAdmin,
                 existingPlayer != null ? new LastPosition
                 {
                     X = existingPlayer.X,
