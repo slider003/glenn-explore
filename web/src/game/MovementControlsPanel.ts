@@ -399,12 +399,12 @@ export class MovementControlsPanel {
         /* Zoom buttons styles */
         .zoom-buttons {
             display: flex;
+            flex-direction:column;
             justify-content: center;
             gap: 20px;
             position: fixed;
             bottom: 90px; /* Position above the control panel */
-            left: 0;
-            right: 0;
+            right: 10px;
             z-index: 20;
             pointer-events: none;
         }

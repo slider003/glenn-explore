@@ -32,4 +32,7 @@ export interface ModelDetailsDtoDTO {
   /** @nullable */
   screenshot?: string | null;
   isUnlocked?: boolean;
+  isFeatured?: boolean;
+  /** @nullable */
+  createdById?: string | null;
 }

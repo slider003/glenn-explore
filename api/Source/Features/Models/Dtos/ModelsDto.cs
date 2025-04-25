@@ -189,6 +189,12 @@ public class ModelInfoDto
 
     [JsonPropertyName("screenshot")]
     public string Screenshot { get; set; }
+
+    [JsonPropertyName("isFeatured")]
+    public bool IsFeatured { get; set; }
+
+    [JsonPropertyName("createdById")]
+    public string CreatedById { get; set; }
 }
 
 public class PurchaseModelRequest
@@ -273,6 +279,12 @@ public class ModelDetailsDto
 
     [JsonPropertyName("isUnlocked")]
     public bool IsUnlocked { get; set; } = false;
+
+    [JsonPropertyName("isFeatured")]
+    public bool IsFeatured { get; set; }
+
+    [JsonPropertyName("createdById")]
+    public string CreatedById { get; set; }
 }
 
 // Request DTOs for model management
@@ -316,6 +328,9 @@ public class UpdateModelRequest
     
     [JsonPropertyName("price")]
     public decimal? Price { get; set; }
+
+    [JsonPropertyName("isFeatured")]
+    public bool? IsFeatured { get; set; }
 
     [JsonPropertyName("thumbnailFileId")]
     public string ThumbnailFileId { get; set; }

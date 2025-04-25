@@ -80,7 +80,7 @@ function Model({ url, scale = defaultScale, rotation = defaultRotation, position
     <group>
       <primitive
         object={scene}
-        scale={[scale, scale, scale]}
+        scale={[scale?.x ?? 1, scale?.y ?? 1, scale?.z ?? 1]}
         rotation={[rotationInRadians.x, rotationInRadians.y, rotationInRadians.z]}
         position={[position?.x ?? 0, position?.y ?? 0, position?.z ?? 0]}
         castShadow
@@ -108,7 +108,7 @@ function Model({ url, scale = defaultScale, rotation = defaultRotation, position
 
 export function ModelPreview({ url, scale, rotation, position }: ModelPreviewProps) {
   if (!url) return null;
-  console.log(rotation, position, scale)
+  console.log(url, rotation, position, scale)
   return (
     <div className="w-full h-[600px] bg-background border rounded-md">
       <Canvas

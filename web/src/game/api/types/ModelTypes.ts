@@ -7,6 +7,7 @@ export interface ModelResponse {
   isPremium: boolean;
   isUnlocked: boolean;
   isActive: boolean;
+  isFeatured: boolean;
   thumbnailUrl: string | null;
   modelUrl: string | null;
   config: ModelConfig;

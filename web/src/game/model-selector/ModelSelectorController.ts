@@ -163,9 +163,9 @@ export class ModelSelectorController {
         const currentModel = PlayerStore.getState().modelType;
         const movementMode = PlayerStore.getMovementMode();
 
-        const carModels = this.availableModels.filter(m => m.type.toLowerCase() === 'car');
-        const characterModels = this.availableModels.filter(m => m.type.toLowerCase() === 'walking');
-
+        const carModels = this.availableModels.filter(m => m.type.toLowerCase() === 'car' && m.isFeatured);
+        const characterModels = this.availableModels.filter(m => m.type.toLowerCase() === 'walking' && m.isFeatured);
+        console.log(carModels)
         return `
             <div class="model-selector-section">
                 <h3>🚗 Cars</h3>

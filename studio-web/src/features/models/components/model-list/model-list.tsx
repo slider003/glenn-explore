@@ -20,7 +20,7 @@ import {
 } from '@/shared/components/ui/select';
 import { Plus, Loader2, Search } from 'lucide-react';
 import { useToast } from '@/shared/components/ui/use-toast';
-import { useGetApiModelsAdminAll, usePostApiModelsAdminModelIdToggleActive } from '@/api/hooks/api';
+import { useGetApiModelsAdminAll, usePostApiModelsAdminModelIdToggleActive, usePostApiModelsAdminModelIdToggleFeatured } from '@/api/hooks/api';
 import { ModelItem } from './model-item';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/shared/utils/utils';
@@ -47,9 +47,28 @@ export const ModelList: React.FC = () => {
   } = useGetApiModelsAdminAll({});
 
   const { mutateAsync: toggleActive } = usePostApiModelsAdminModelIdToggleActive();
+  const { mutateAsync: toggleFeatured } = usePostApiModelsAdminModelIdToggleFeatured();
 
   const handleDelete = async (id: string) => {
     setModelToToggle(id);
+  };
+
+  const handleToggleFeatured = async (id: string) => {
+    try {
+      await toggleFeatured({ modelId: id });
+      const model = models?.find(m => m.modelId === id);
+      toast({
+        title: 'Success',
+        description: `Model ${model?.name} ${model?.isFeatured ? 'removed from' : 'added to'} featured`,
+      });
+      refetch();
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to toggle featured status',
+        variant: 'destructive',
+      });
+    }
   };
 
   const confirmDelete = async () => {
@@ -218,6 +237,7 @@ export const ModelList: React.FC = () => {
               model={model}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              onToggleFeatured={handleToggleFeatured}
             />
           ))}
         </div>

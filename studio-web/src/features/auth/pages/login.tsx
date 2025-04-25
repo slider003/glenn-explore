@@ -1,29 +1,29 @@
-import { LoginForm } from '../components/login-form';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Music } from 'lucide-react';
-import { Button } from '../../../shared/components/ui/button';
-import { usePostApiUsersSeed } from '@/api/hooks/api';
+import { LoginForm } from '../components/login-form';
 import { ToastProvider } from '@/shared/components/ui/toast';
-import { toast } from '@/shared/components/ui/use-toast';
+import { useAuth } from '../hooks/use-auth';
 
 export const LoginPage = () => {
-  const seedUser = usePostApiUsersSeed();
+  const navigate = useNavigate();
+  const { user, checkAuth } = useAuth();
 
-  const handleSeed = async () => {
-    try {
-      await seedUser.mutateAsync();
-      toast({
-        title: 'Default user created successfully',
-        description: 'Default user created successfully',
-        variant: 'default',
-      });
-    } catch {
-      toast({
-        variant: 'destructive',
-        title: 'Failed to create default user, maybe it already exists?',
-        description: 'Failed to create default user, maybe it already exists?',
-      });
+  useEffect(() => {
+    // Check if user is already authenticated
+    checkAuth().then((isAuthenticated) => {
+      if (isAuthenticated) {
+        navigate('/studio/');
+      }
+    });
+  }, [checkAuth, navigate]);
+
+  // If we already have a user in state, redirect immediately
+  useEffect(() => {
+    if (user) {
+      navigate('/studio/');
     }
-  };
+  }, [user, navigate]);
 
   return (
     <ToastProvider>
@@ -36,27 +36,8 @@ export const LoginPage = () => {
               </div>
             </div>
             <div className="space-y-2">
-              <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
-              <p className="text-gray-500">Enter your credentials to continue</p>
-            </div>
-          </div>
-
-          <div className="bg-blue-50/80 backdrop-blur-lg rounded-xl p-4 border border-blue-100 shadow-sm">
-            <div className="space-y-3">
-              <div className="text-sm text-blue-800">
-                <p className="font-medium mb-1">Workshop Credentials:</p>
-                <p>Username: <span className="font-mono">test@example.com</span></p>
-                <p>Password: <span className="font-mono">Test123!</span></p>
-              </div>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={handleSeed}
-                disabled={seedUser.isPending}
-                className="w-full"
-              >
-                {seedUser.isPending ? 'Creating user...' : 'Create Default User'}
-              </Button>
+              <h1 className="text-2xl font-semibold tracking-tight">Welcome to Glenn Studio</h1>
+              <p className="text-gray-500">Enter your email to continue</p>
             </div>
           </div>
 
@@ -67,4 +48,4 @@ export const LoginPage = () => {
       </div>
     </ToastProvider>
   );
-}; 
+};

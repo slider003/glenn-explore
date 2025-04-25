@@ -1908,6 +1908,151 @@ const {mutation: mutationOptions} = options ?
       return useMutation(mutationOptions , queryClient);
     }
     
+export const getApiModelsMyModels = (
+    
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<ModelDetailsDtoDTO[]>(
+      {url: `/api/models/my-models`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getGetApiModelsMyModelsQueryKey = () => {
+    return [`/api/models/my-models`] as const;
+    }
+
+    
+export const getGetApiModelsMyModelsInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiModelsMyModels>>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiModelsMyModels>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiModelsMyModelsQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiModelsMyModels>>> = ({ signal }) => getApiModelsMyModels(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn,   staleTime: 10000,  ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiModelsMyModels>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiModelsMyModelsInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiModelsMyModels>>>
+export type GetApiModelsMyModelsInfiniteQueryError = ErrorType<unknown>
+
+
+export function useGetApiModelsMyModelsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiModelsMyModels>>>, TError = ErrorType<unknown>>(
+  options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiModelsMyModels>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiModelsMyModels>>,
+          TError,
+          Awaited<ReturnType<typeof getApiModelsMyModels>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiModelsMyModelsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiModelsMyModels>>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiModelsMyModels>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiModelsMyModels>>,
+          TError,
+          Awaited<ReturnType<typeof getApiModelsMyModels>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiModelsMyModelsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiModelsMyModels>>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiModelsMyModels>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiModelsMyModelsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiModelsMyModels>>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiModelsMyModels>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiModelsMyModelsInfiniteQueryOptions(options)
+
+  const query = useInfiniteQuery(queryOptions , queryClient) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetApiModelsMyModelsQueryOptions = <TData = Awaited<ReturnType<typeof getApiModelsMyModels>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiModelsMyModels>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiModelsMyModelsQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiModelsMyModels>>> = ({ signal }) => getApiModelsMyModels(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn,   staleTime: 10000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiModelsMyModels>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiModelsMyModelsQueryResult = NonNullable<Awaited<ReturnType<typeof getApiModelsMyModels>>>
+export type GetApiModelsMyModelsQueryError = ErrorType<unknown>
+
+
+export function useGetApiModelsMyModels<TData = Awaited<ReturnType<typeof getApiModelsMyModels>>, TError = ErrorType<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiModelsMyModels>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiModelsMyModels>>,
+          TError,
+          Awaited<ReturnType<typeof getApiModelsMyModels>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiModelsMyModels<TData = Awaited<ReturnType<typeof getApiModelsMyModels>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiModelsMyModels>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiModelsMyModels>>,
+          TError,
+          Awaited<ReturnType<typeof getApiModelsMyModels>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiModelsMyModels<TData = Awaited<ReturnType<typeof getApiModelsMyModels>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiModelsMyModels>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiModelsMyModels<TData = Awaited<ReturnType<typeof getApiModelsMyModels>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiModelsMyModels>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiModelsMyModelsQueryOptions(options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
 export const getApiModelsAdminAll = (
     
  signal?: AbortSignal
@@ -2251,6 +2396,63 @@ const {mutation: mutationOptions} = options ?
       > => {
 
       const mutationOptions = getPostApiModelsAdminModelIdToggleActiveMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+export const postApiModelsAdminModelIdToggleFeatured = (
+    modelId: string,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<ModelDetailsDtoDTO>(
+      {url: `/api/models/admin/${modelId}/toggle-featured`, method: 'POST', signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiModelsAdminModelIdToggleFeaturedMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiModelsAdminModelIdToggleFeatured>>, TError,{modelId: string}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiModelsAdminModelIdToggleFeatured>>, TError,{modelId: string}, TContext> => {
+    
+const mutationKey = ['postApiModelsAdminModelIdToggleFeatured'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiModelsAdminModelIdToggleFeatured>>, {modelId: string}> = (props) => {
+          const {modelId} = props ?? {};
+
+          return  postApiModelsAdminModelIdToggleFeatured(modelId,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiModelsAdminModelIdToggleFeaturedMutationResult = NonNullable<Awaited<ReturnType<typeof postApiModelsAdminModelIdToggleFeatured>>>
+    
+    export type PostApiModelsAdminModelIdToggleFeaturedMutationError = ErrorType<unknown>
+
+    export const usePostApiModelsAdminModelIdToggleFeatured = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiModelsAdminModelIdToggleFeatured>>, TError,{modelId: string}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiModelsAdminModelIdToggleFeatured>>,
+        TError,
+        {modelId: string},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiModelsAdminModelIdToggleFeaturedMutationOptions(options);
 
       return useMutation(mutationOptions , queryClient);
     }

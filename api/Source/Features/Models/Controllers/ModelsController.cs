@@ -57,12 +57,18 @@ public class ModelsController : ControllerBase
 
         var models = await _modelService.GetAllModelsWithDetailsAsync();
         
-        // Set unlocked status for each model
+        // Set unlocked status and handle featured status for each model
         foreach (var model in models)
         {
             model.IsUnlocked = await _modelService.IsModelUnlockedAsync(user.Id, model.ModelId);
+            // Only show featured status for models created by the user
+            if (model.CreatedById == user.Id)
+            {
+                model.IsFeatured = true;
+            }
         }
         
+        // Return active models that are either created by the user or are featured
         return Ok(models.Where(m => m.IsActive).ToList());
     }
 
@@ -220,18 +226,17 @@ public class ModelsController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ModelDetailsDto>> CreateModel([FromBody] CreateModelRequest request)
     {
         var user = await _userManager.GetUserAsync(User);
-        if (user == null || !user.IsAdmin)
+        if (user == null || !user.HasPaid)
         {
             return Unauthorized("Admin access required");
         }
 
         try
         {
-            var model = await _modelService.CreateModelAsync(request);
+            var model = await _modelService.CreateModelAsync(request, user.Id);
             return Ok(model);
         }
         catch (ArgumentException ex)
@@ -241,13 +246,12 @@ public class ModelsController : ControllerBase
     }
 
     [HttpPut("{modelId}")]
-    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ModelDetailsDto>> UpdateModel(string modelId, [FromBody] UpdateModelRequest request)
     {
         var user = await _userManager.GetUserAsync(User);
-        if (user == null || !user.IsAdmin)
+        if (user == null || !user.HasPaid)
         {
-            return Unauthorized("Admin access required");
+            return Unauthorized("Paid access required");
         }
 
         try
@@ -265,6 +269,19 @@ public class ModelsController : ControllerBase
         }
     }
 
+    [HttpGet("my-models")]
+    public async Task<ActionResult<List<ModelDetailsDto>>> GetMyModels()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return Unauthorized();
+        }
+
+        var models = await _modelService.GetModelsByCreatorAsync(user.Id);
+        return Ok(models);
+    }
+
     [HttpGet("admin/all")]
     [Authorize(Roles = "Admin")]
     public async Task<ActionResult<List<ModelDetailsDto>>> GetAllModels()
@@ -280,13 +297,12 @@ public class ModelsController : ControllerBase
     }
 
     [HttpGet("admin/{modelId}")]
-    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ModelDetailsDto>> GetModelById(string modelId)
     {
         var user = await _userManager.GetUserAsync(User);
-        if (user == null || !user.IsAdmin)
+        if (user == null || !user.HasPaid)
         {
-            return Unauthorized("Admin access required");
+            return Unauthorized("Paid access required");
         }
 
         var model = await _modelService.GetModelByIdWithDetailsAsync(modelId);
@@ -316,6 +332,33 @@ public class ModelsController : ControllerBase
                 user.Id,
                 modelId,
                 model.IsActive
+            );
+            return Ok(model);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound($"Model with ID {modelId} not found");
+        }
+    }
+
+    [HttpPost("admin/{modelId}/toggle-featured")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<ModelDetailsDto>> ToggleModelFeatured(string modelId)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null || !user.IsAdmin)
+        {
+            return Unauthorized("Admin access required");
+        }
+
+        try
+        {
+            var model = await _modelService.ToggleModelFeaturedAsync(modelId);
+            _logger.LogInformation(
+                "Admin {AdminId} toggled model {ModelId} featured status to {IsFeatured}",
+                user.Id,
+                modelId,
+                model.IsFeatured
             );
             return Ok(model);
         }

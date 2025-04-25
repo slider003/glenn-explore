@@ -4,9 +4,10 @@ import { useToast } from '../../../shared/components/ui/use-toast';
 
 interface AuthGuardProps {
   children: React.ReactNode;
+  requireAdmin?: boolean;
 }
 
-export function AuthGuard({ children }: AuthGuardProps) {
+export function AuthGuard({ children, requireAdmin }: AuthGuardProps) {
   const { isAuthenticated, isLoading, user } = useAuth();
   const location = useLocation();
   const { toast } = useToast();
@@ -33,7 +34,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
     return <Navigate to="/studio/login" state={{ from: location }} replace />;
   }
 
-  if (!user?.isAdmin) {
+  if (requireAdmin && !user?.isAdmin) {
     return <Navigate to="/studio/" state={{ from: location }} replace />;
   }
 

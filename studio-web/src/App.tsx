@@ -8,13 +8,16 @@ import { LoginPage } from './features/auth/pages/login';
 
 function renderRoutes(routes: RouteConfig[]) {
   return routes.map(route => {
-    const element = route.requiresAuth ? (
-      <AuthGuard>{route.element}</AuthGuard>
-    ) : (
-      route.element
-    );
 
-    return <Route key={route.path} path={route.path} element={element} />;
+    if(route.requiresAdmin) {
+      return <Route key={route.path} path={route.path} element={<AuthGuard requireAdmin>{route.element}</AuthGuard>} />;
+    }
+
+    if(route.requiresAuth) {
+      return <Route key={route.path} path={route.path} element={<AuthGuard>{route.element}</AuthGuard>} />;
+    }
+
+    return <Route key={route.path} path={route.path} element={route.element} />;
   });
 }
 
@@ -26,7 +29,7 @@ export function App() {
           <Route element={<RootLayout />}>
             {renderRoutes(routes)}
           </Route>
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/studio/login" element={<LoginPage />} />
         </Routes>
         <Toaster />
       </AuthProvider>

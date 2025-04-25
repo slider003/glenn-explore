@@ -191,14 +191,11 @@
 
 /* Mobile Responsive Adjustments */
 @media (max-width: 768px) {
-    .minimap-wrapper {
-        display: none;
-    }
     .minimap-container {
         flex-direction: row;
         align-items: center;
         gap: 10px;
-        left: 40px;
+        left: 10px;
         top: unset; /* Remove top positioning */
         bottom: 80px; /* Add some padding from bottom */
     }

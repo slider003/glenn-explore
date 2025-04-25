@@ -19,6 +19,10 @@ public class Model
     public decimal Price { get; set; }
     
     public bool IsActive { get; set; } = true;
+
+    public bool IsFeatured { get; set; } = false;
+    
+    public string CreatedById { get; set; } = string.Empty;
     
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     

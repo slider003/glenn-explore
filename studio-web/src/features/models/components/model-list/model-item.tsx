@@ -14,7 +14,8 @@ import {
   Eye,
   DollarSign,
   Power,
-  PowerOff
+  PowerOff,
+  Star
 } from 'lucide-react';
 import { cn } from '@/shared/utils/utils';
 
@@ -22,9 +23,10 @@ interface ModelItemProps {
   model: ModelDetailsDtoDTO;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
+  onToggleFeatured: (id: string) => void;
 }
 
-export const ModelItem: React.FC<ModelItemProps> = ({ model, onEdit, onDelete }) => {
+export const ModelItem: React.FC<ModelItemProps> = ({ model, onEdit, onDelete, onToggleFeatured }) => {
   const hasThumbnail = !!model.thumbnailUrl;
   const hasModelFile = !!model.modelUrl;
 
@@ -68,6 +70,12 @@ export const ModelItem: React.FC<ModelItemProps> = ({ model, onEdit, onDelete })
         
         {/* Status badges */}
         <div className="absolute top-2 right-2 flex gap-2">
+          {model.isFeatured && (
+            <Badge variant="default" className="bg-yellow-500/90 text-primary-foreground">
+              <Star className="h-3 w-3 mr-1" />
+              Featured
+            </Badge>
+          )}
           {model.isPremium && (
             <Badge variant="default" className="bg-primary/90 text-primary-foreground">
               <DollarSign className="h-3 w-3 mr-1" />
@@ -133,6 +141,19 @@ export const ModelItem: React.FC<ModelItemProps> = ({ model, onEdit, onDelete })
                 Activate
               </>
             )}
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            className={cn(
+              "text-white",
+              model.isFeatured
+                ? "bg-yellow-500/70 hover:bg-yellow-500"
+                : "bg-white/20 hover:bg-white/30"
+            )}
+            onClick={() => onToggleFeatured(model.modelId!)}
+          >
+            <Star className="h-4 w-4" />
           </Button>
         </div>
       </div>

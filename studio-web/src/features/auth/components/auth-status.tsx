@@ -10,7 +10,7 @@ export const AuthStatus = () => {
   if (user) {
     return (
       <div className="flex items-center gap-4">
-        <span className="text-sm text-gray-700">{user.email}</span>
+        <span className="text-sm text-gray-700">{user.username}</span>
         <Button 
           variant="ghost" 
           onClick={logout}
@@ -24,7 +24,7 @@ export const AuthStatus = () => {
 
   // Otherwise show login button (during loading or when not authenticated)
   return (
-    <Button variant="ghost" onClick={() => navigate('/login')}>
+    <Button variant="ghost" onClick={() => navigate('/studio/login')}>
       Sign In
     </Button>
   );

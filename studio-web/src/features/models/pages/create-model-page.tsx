@@ -13,7 +13,7 @@ const defaultCarConfig = {
     units: 'meters',
     rotation: { x: 90, y: 0, z: 0 },
     anchor: 'center',
-    elevationOffset: 0.7
+    elevationOffset: 0
   },
   physics: {
     maxSpeed: 0.1,

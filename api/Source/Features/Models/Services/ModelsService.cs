@@ -208,7 +208,7 @@ public class ModelsService
         return model?.Name ?? modelId;
     }
 
-    public async Task<ModelDetailsDto> CreateModelAsync(CreateModelRequest request)
+    public async Task<ModelDetailsDto> CreateModelAsync(CreateModelRequest request, string userId)
     {
         // Validate JSON and type match
         try
@@ -259,7 +259,9 @@ public class ModelsService
             Price = request.Price,
             ThumbnailFileId = request.ThumbnailFileId,
             ModelFileId = request.ModelFileId,
-            IsActive = true // New models are active by default
+            IsActive = true, // New models are active by default
+            IsFeatured = false, // New models are not featured by default
+            CreatedById = userId // Set the creator ID
         };
 
         _dbContext.Models.Add(model);
@@ -342,9 +344,15 @@ public class ModelsService
         }
         
         if (request.IsPremium.HasValue) model.IsPremium = request.IsPremium.Value;
-        if (request.Price.HasValue) model.Price = request.Price.Value;
+        if (request.Price.HasValue)
+        {
+            model.Price = request.Price.Value;
+        }
 
-        // Update file references and reload file entities
+        if (request.IsFeatured.HasValue)
+        {
+            model.IsFeatured = request.IsFeatured.Value;
+        } // Update file references and reload file entities
         if (!string.IsNullOrEmpty(request.ThumbnailFileId))
         {
             model.ThumbnailFileId = request.ThumbnailFileId;
@@ -425,6 +433,43 @@ public class ModelsService
         return await GetModelDetailsDtoAsync(model);
     }
 
+    public async Task<List<ModelDetailsDto>> GetModelsByCreatorAsync(string creatorId)
+    {
+        var models = await _dbContext.Models
+            .Include(m => m.ThumbnailFile)
+            .Include(m => m.ModelFile)
+            .Where(m => m.CreatedById == creatorId)
+            .ToListAsync();
+
+        var dtos = new List<ModelDetailsDto>();
+        foreach (var model in models)
+        {
+            dtos.Add(await GetModelDetailsDtoAsync(model));
+        }
+
+        return dtos;
+    }
+
+    public async Task<ModelDetailsDto> ToggleModelFeaturedAsync(string modelId)
+    {
+        var model = await _dbContext.Models
+            .Include(m => m.ThumbnailFile)
+            .Include(m => m.ModelFile)
+            .FirstOrDefaultAsync(m => m.ModelId == modelId);
+
+        if (model == null)
+        {
+            throw new KeyNotFoundException($"Model with ID {modelId} not found");
+        }
+
+        model.IsFeatured = !model.IsFeatured;
+        model.UpdatedAt = DateTime.UtcNow;
+
+        await _dbContext.SaveChangesAsync();
+
+        return await GetModelDetailsDtoAsync(model);
+    }
+
     private async Task<ModelDetailsDto> GetModelDetailsDtoAsync(Model model)
     {
         // Ensure file entities are loaded
@@ -455,7 +500,9 @@ public class ModelsService
             ModelUrl = model.ModelFile != null ? $"/uploads/files/{model.ModelFile.Id}{Path.GetExtension(model.ModelFile.Name)}" : null,
             ThumbnailFileId = model.ThumbnailFileId,
             ModelFileId = model.ModelFileId,
-            Screenshot = GetScreenshotFromConfig(model.Type, model.ConfigJson)
+            Screenshot = GetScreenshotFromConfig(model.Type, model.ConfigJson),
+            IsFeatured = model.IsFeatured,
+            CreatedById = model.CreatedById
         };
     }
 } 

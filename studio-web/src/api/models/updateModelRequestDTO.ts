@@ -17,6 +17,8 @@ export interface UpdateModelRequestDTO {
   /** @nullable */
   price?: number | null;
   /** @nullable */
+  isFeatured?: boolean | null;
+  /** @nullable */
   thumbnailFileId?: string | null;
   /** @nullable */
   modelFileId?: string | null;
