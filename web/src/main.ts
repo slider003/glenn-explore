@@ -15,6 +15,7 @@ import { PlayerController } from './game/player/PlayerController'
 import { AuthClient } from './game/realtime/AuthClient'
 import { TeleportOptions } from './types/teleport'
 import { ModelClient } from './game/api/ModelClient'
+import { initializeQuests } from './game/quests/engine/initializeQuests'
 
 // Initialize input focus tracking
 InputUtils.initialize();
@@ -223,6 +224,9 @@ function initializeGame(
 
         // Initialize model client
         const modelClient = new ModelClient();
+
+        // Initialize quests first
+        initializeQuests();
 
         // Connect to websocket
         realtimeController.connect(map, window.tb!).then(async () => {

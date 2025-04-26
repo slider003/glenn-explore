@@ -1,4 +1,5 @@
 import { BasePanelUI } from './BasePanelUI';
+import { trackQuestEvent } from '../../quests/engine/trackQuestEvent';
 import { PlayerStore } from '../../stores/PlayerStore';
 import { ZoomController } from '../../ZoomController';
 import { PitchController } from '../../PitchController';
@@ -171,6 +172,7 @@ export class SettingsPanel extends BasePanelUI {
     const modelChangeBtn = content.querySelector('.change-model');
     modelChangeBtn?.addEventListener('click', () => {
         window.showModelSelector();
+        trackQuestEvent('MODEL_SELECTOR_OPEN');
     });
 
     // Movement Mode toggle (NEW)
@@ -246,6 +248,7 @@ export class SettingsPanel extends BasePanelUI {
         const mode = (e.currentTarget as HTMLElement).dataset.mapMode;
         PlayerStore.setMap(mode as 'satellite' | 'standard');
         PlayerStore._saveStateToLocalStorage();
+        trackQuestEvent('MAP_SWITCH_SATELLITE_MODE');
         setTimeout(() => {
           // Refresh the page to apply the map style change
           window.location.reload();
@@ -268,6 +271,7 @@ export class SettingsPanel extends BasePanelUI {
 
         // Update map light preset
         this.map.setConfigProperty('basemap', 'lightPreset', mode);
+        trackQuestEvent('MAP_SWITCH_DAY_MODE');
       });
     });
 
@@ -275,13 +279,17 @@ export class SettingsPanel extends BasePanelUI {
     const zoomInBtn = content.querySelector('.zoom-in');
     zoomInBtn?.addEventListener('click', () => {
       const currentZoom = ZoomController.getZoom();
-      ZoomController.setZoom(currentZoom + 0.5);
+      const newZoom = currentZoom + 0.5;
+      ZoomController.setZoom(newZoom);
+      trackQuestEvent('MAP_ZOOM');
     });
 
     const zoomOutBtn = content.querySelector('.zoom-out');
     zoomOutBtn?.addEventListener('click', () => {
       const currentZoom = ZoomController.getZoom();
-      ZoomController.setZoom(currentZoom - 0.5);
+      const newZoom = currentZoom - 0.5;
+      ZoomController.setZoom(newZoom);
+      trackQuestEvent('MAP_ZOOM');
     });
 
     const cameraUpBtn = content.querySelector('.camera-up');

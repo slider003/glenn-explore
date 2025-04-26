@@ -2938,7 +2938,7 @@ export function useGetApiOpenrouterToolsChatStreamInfinite<TData = InfiniteData<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiOpenrouterToolsChatStream>>,
           TError,
-          Awaited<ReturnType<typeof getApiOpenrouterToolsChatStream>>
+          Awaited<ReturnType<typeof getApiOpenrouterToolsChatStream>>, QueryKey
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
@@ -2948,7 +2948,7 @@ export function useGetApiOpenrouterToolsChatStreamInfinite<TData = InfiniteData<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiOpenrouterToolsChatStream>>,
           TError,
-          Awaited<ReturnType<typeof getApiOpenrouterToolsChatStream>>
+          Awaited<ReturnType<typeof getApiOpenrouterToolsChatStream>>, QueryKey
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
@@ -4041,7 +4041,7 @@ export function useGetApiUsersInfinite<TData = InfiniteData<Awaited<ReturnType<t
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiUsers>>,
           TError,
-          Awaited<ReturnType<typeof getApiUsers>>
+          Awaited<ReturnType<typeof getApiUsers>>, QueryKey
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
@@ -4051,7 +4051,7 @@ export function useGetApiUsersInfinite<TData = InfiniteData<Awaited<ReturnType<t
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiUsers>>,
           TError,
-          Awaited<ReturnType<typeof getApiUsers>>
+          Awaited<ReturnType<typeof getApiUsers>>, QueryKey
         > , 'initialData'
       >, }
  , queryClient?: QueryClient

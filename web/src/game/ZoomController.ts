@@ -1,4 +1,5 @@
 import { InputUtils } from './InputUtils';
+import { trackQuestEvent } from './quests/helpers/trackQuestEvent';
 
 /**
  * Class to control camera zoom with arrow keys
@@ -90,9 +91,16 @@ export class ZoomController {
    */
   public static setZoom(value: number): void {
     // Constrain zoom to min/max values
-    ZoomController.currentZoom = Math.max(ZoomController.minZoom, Math.min(ZoomController.maxZoom, value));
-    // Save to localStorage
-    localStorage.setItem('cameraZoom', ZoomController.currentZoom.toString());
+    const newZoom = Math.max(ZoomController.minZoom, Math.min(ZoomController.maxZoom, value));
+    
+    // Only trigger quest event and save if zoom actually changed
+    if (newZoom !== ZoomController.currentZoom) {
+      ZoomController.currentZoom = newZoom;
+      // Save to localStorage
+      localStorage.setItem('cameraZoom', ZoomController.currentZoom.toString());
+      // Track quest event
+      trackQuestEvent('MAP_ZOOM');
+    }
   }
 
   /**

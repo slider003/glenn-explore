@@ -18,6 +18,7 @@ export interface LoginResponseDTO {
   /** @nullable */
   email?: string | null;
   isGuest?: boolean;
+  isAdmin?: boolean;
   lastPosition?: LastPositionDTO;
   /** @nullable */
   guestKey?: string | null;

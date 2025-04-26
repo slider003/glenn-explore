@@ -2,6 +2,7 @@ import { PlayerStore } from '../stores/PlayerStore';
 import { PlayerController } from '../player/PlayerController';
 import { ModelClient } from '../api/ModelClient';
 import { ModelResponse, ModelConfig } from '../api/types/ModelTypes';
+import { trackQuestEvent } from '../quests/helpers/trackQuestEvent';
 import './model-selector-dialog.css';
 import { Toast } from '../toast/ToastController';
 
@@ -273,12 +274,11 @@ export class ModelSelectorController {
 
         console.log("selected: ", selectedModel)
 
-        await this.playerController.switchState(
-            modelId,
-            modelType,
-            selectedModel
-        );
-
+        // Switch to the selected model
+        await this.playerController.switchState(modelId, modelType, selectedModel);
+        // Track the model selection for quest
+        trackQuestEvent('MODEL_SELECTED');
+        // Close the dialog
         this.close();
     }
 

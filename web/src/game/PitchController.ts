@@ -1,4 +1,5 @@
 import { InputUtils } from './InputUtils';
+import { trackQuestEvent } from './quests/helpers/trackQuestEvent';
 
 /**
  * Class to control camera pitch with arrow keys
@@ -42,14 +43,12 @@ export class PitchController {
   private setupControls(): void {
     // Track key down events
     document.addEventListener('keydown', (e) => {
-      // Skip if an input element is focused
-      if (InputUtils.isInputElementFocused()) {
-        return;
-      }
+      if (InputUtils.isInputElementFocused()) return;
       
-      if (PitchController.keys.hasOwnProperty(e.key)) {
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
         PitchController.keys[e.key] = true;
         PitchController.updatePitch();
+        trackQuestEvent('MAP_PITCH_CHANGE');
       }
     });
 

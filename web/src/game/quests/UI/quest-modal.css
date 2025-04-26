@@ -1,0 +1,147 @@
+.quest-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10001;
+}
+
+.quest-modal .modal-content {
+    background: rgba(31, 41, 55, 0.95);
+    color: white;
+    padding: 30px;
+    border-radius: 16px;
+    max-width: 600px;
+    width: 90%;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transform: scale(0.9);
+    opacity: 0;
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+                opacity 0.3s ease;
+}
+
+.quest-modal.show .modal-content {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.quest-modal .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.quest-modal .modal-header h2 {
+    font-size: 2em;
+    margin: 0;
+    color: #FFD700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.quest-modal .close-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+}
+
+.quest-modal .close-button:hover {
+    opacity: 1;
+}
+
+.quest-modal .quest-description {
+    font-size: 1.1em;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+.quest-modal .quest-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.quest-modal .quest-step {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 8px;
+    transition: transform 0.3s;
+}
+
+.quest-modal .quest-step.completed {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(139, 195, 74, 0.2));
+}
+
+.quest-modal .step-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.quest-modal .step-title {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.quest-modal .step-status {
+    font-size: 0.9em;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.quest-modal .step-status.completed {
+    background: rgba(76, 175, 80, 0.3);
+    color: #4CAF50;
+}
+
+.quest-modal .step-description {
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+.quest-modal .quest-rewards {
+    margin-top: 30px;
+    text-align: center;
+    padding: 20px;
+    background: rgba(255, 215, 0, 0.1);
+    border-radius: 8px;
+}
+
+.quest-modal .reward-title {
+    color: #FFD700;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+.quest-modal .reward-xp {
+    font-size: 2em;
+    color: #4CAF50;
+    text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+    font-weight: bold;
+}
+
+.quest-modal .trophy-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+    animation: trophyBounce 1s ease infinite;
+}
+
+@keyframes trophyBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
