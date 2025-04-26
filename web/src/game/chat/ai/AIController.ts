@@ -4,6 +4,7 @@ import { AIStreamHandler } from './AIStreamHandler';
 import { ToolResponseRenderer } from './ToolResponseRenderer';
 import { PlayerStore } from '../../stores/PlayerStore';
 import { TeleportOptions } from '../../../types/teleport';
+import { trackQuestEvent } from '../../quests/engine/trackQuestEvent';
 
 // Interface for event callbacks from external components
 interface AIControllerCallbacks {
@@ -148,6 +149,7 @@ export class AIController {
       // Use teleport service if available
       this.callbacks.onTeleport(teleportOptions);
       this.callbacks.onAddSystemMessage(`Teleporting to ${name}...`);
+      trackQuestEvent('AI_TELEPORT_USED');
     });
   }
 

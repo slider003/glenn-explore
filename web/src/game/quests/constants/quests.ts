@@ -64,6 +64,16 @@ export const TUTORIAL_QUESTS: Quest[] = [
                     params: { event: 'MODEL_SELECTED' }
                 },
                 order: 2
+            },
+            {
+                id: 'master_acceleration',
+                title: 'Speed Demon',
+                description: 'Use the shift key to accelerate your vehicle.',
+                validation: {
+                    type: QuestValidationType.CLIENT_EVENT,
+                    params: { event: 'VEHICLE_ACCELERATE' }
+                },
+                order: 3
             }
         ]
     },
@@ -116,7 +126,35 @@ export const TUTORIAL_QUESTS: Quest[] = [
             }
         ],
         order: 1
-    }
+    },
+    {
+        id: 'ai_explorer',
+        title: 'AI Explorer',
+        description: 'Discover the power of AI Glenn, your personal travel companion.',
+        type: QuestType.TUTORIAL,
+        steps: [
+            {
+                id: 'ask_ai',
+                title: 'Ask AI Glenn',
+                description: 'Send your first message to AI Glenn.',
+                validation: {
+                    type: QuestValidationType.CLIENT_EVENT,
+                    params: { event: 'AI_MESSAGE_SENT' }
+                },
+                order: 1
+            },
+            {
+                id: 'teleport_with_ai',
+                title: 'Magic Teleport',
+                description: 'Use AI Glenn to teleport to an interesting location.',
+                validation: {
+                    type: QuestValidationType.CLIENT_EVENT,
+                    params: { event: 'AI_TELEPORT_USED' }
+                },
+                order: 2
+            }
+        ]
+    },
 ];
 
 export const ACHIEVEMENT_QUESTS: Quest[] = [

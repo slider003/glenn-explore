@@ -1,3 +1,5 @@
+import { Quest } from '../types/quest';
+
 export interface AchievementOptions {
     type: 'step-complete' | 'quest-complete';
     title: string;
@@ -9,6 +11,7 @@ export interface AchievementOptions {
         total: number;
     };
     xp?: number;
+    quest?: Quest;
 }
 
 export interface AchievementElements {

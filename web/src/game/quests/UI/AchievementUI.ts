@@ -1,12 +1,15 @@
 import { AchievementOptions, AchievementElements } from './AchievementTypes';
+import { QuestModal } from './QuestModal';
 import './achievement.css';
 
 export class AchievementUI {
     private static instance: AchievementUI;
     private elements: Partial<AchievementElements> = {};
     private soundEnabled = true;
+    private questModal: QuestModal;
 
     private constructor() {
+        this.questModal = new QuestModal();
         this.initializeUI();
     }
 
@@ -66,7 +69,16 @@ export class AchievementUI {
             <div class="achievement-message">${options.message}</div>
             ${this.createProgressBar(options)}
             ${options.xp ? `<div class="achievement-xp">+${options.xp} XP</div>` : ''}
+            ${options.quest ? `<button class="view-quest-btn">View Quest</button>` : ''}
         `;
+
+        // Add click handler for view quest button if quest is provided
+        if (options.quest) {
+            const viewQuestBtn = achievement.querySelector('.view-quest-btn');
+            viewQuestBtn?.addEventListener('click', () => {
+                this.questModal.show(options.quest!);
+            });
+        }
 
         return achievement;
     }

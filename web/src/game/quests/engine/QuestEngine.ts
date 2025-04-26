@@ -126,7 +126,8 @@ export class QuestEngine {
                         current: completedSteps,
                         total: quest.steps.length
                     },
-                    xp: 50 // Base XP for completing a step
+                    xp: 50, // Base XP for completing a step
+                    quest // Pass the quest object for the view button
                 });
 
                 // If this was the last step, show quest completion achievement and modal
@@ -136,7 +137,8 @@ export class QuestEngine {
                             type: 'quest-complete',
                             title: quest.title,
                             message: `Completed: ${quest.description}`,
-                            xp: 200 // Bonus XP for completing the entire quest
+                            xp: 200, // Bonus XP for completing the entire quest
+                            quest // Pass the quest object for the view button
                         });
                         
                         // Show quest completion modal after achievement

@@ -78,9 +78,31 @@
 
 .achievement-xp {
   font-size: 0.8em;
-  color: #4CAF50;
+  font-weight: bold;
+  color: #FFD700;
   margin-top: 8px;
   text-align: right;
+}
+
+.view-quest-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  margin-top: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.view-quest-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.view-quest-btn:active {
+  transform: scale(0.95);
 }
 
 @keyframes bounce {

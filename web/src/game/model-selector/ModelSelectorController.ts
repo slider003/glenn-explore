@@ -2,7 +2,7 @@ import { PlayerStore } from '../stores/PlayerStore';
 import { PlayerController } from '../player/PlayerController';
 import { ModelClient } from '../api/ModelClient';
 import { ModelResponse, ModelConfig } from '../api/types/ModelTypes';
-import { trackQuestEvent } from '../quests/helpers/trackQuestEvent';
+import { trackQuestEvent } from '../quests/engine/trackQuestEvent';
 import './model-selector-dialog.css';
 import { Toast } from '../toast/ToastController';
 

@@ -32,14 +32,14 @@ export const MENU_ITEMS: () => MenuItem[] = () => [
       emoji: '🎬',
       label: 'Theater',
       panel: TheaterPanel
-    }
+    },
+    {
+      id: 'cinematic',
+      emoji: '🎥',
+      label: 'Cinematic',
+      panel: CinematicPanel
+    },
   ]),
-  {
-    id: 'cinematic',
-    emoji: '🎥',
-    label: 'Cinematic',
-    panel: CinematicPanel
-  },
   {
     id: 'radio',
     emoji: '📻',

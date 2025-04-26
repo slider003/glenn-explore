@@ -1,5 +1,5 @@
 import { InputUtils } from './InputUtils';
-import { trackQuestEvent } from './quests/helpers/trackQuestEvent';
+import { trackQuestEvent } from './quests/engine/trackQuestEvent';
 
 /**
  * Class to control camera pitch with arrow keys

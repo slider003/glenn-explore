@@ -5,7 +5,7 @@ import './styles/chat-input.css';
 import './styles/chat-message.css';
 import { AIMessage } from './ai/AIMessageTypes';
 import { marked } from 'marked';
-import { trackQuestEvent } from '../quests/helpers/trackQuestEvent';
+import { trackQuestEvent } from '../quests/engine/trackQuestEvent';
 import './ai/styles/ai-tool-response.css';
 
 // Configure marked for safe rendering
@@ -625,6 +625,7 @@ export class ChatUI {
         
         // Route message based on current filter
         if (this.currentFilter === 'AI' && this.onSendAIMessage) {
+            trackQuestEvent('AI_MESSAGE_SENT');
             this.onSendAIMessage(message);
         } else {
             this.onSendMessage(message);

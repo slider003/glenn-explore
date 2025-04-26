@@ -9,6 +9,7 @@ import { VehicleStatsController } from '../VehicleStats/VehicleStatsController';
 import { PlayerStore } from '../stores/PlayerStore';
 import { MinimapController } from '../minimap/MinimapController';
 import { NavigationUI } from '../NavigationUI';
+import { trackQuestEvent } from '../quests/engine/trackQuestEvent';
 import { NavigationController } from '../NavigationController';
 import * as THREE from 'three';
 import { PitchController } from '../PitchController';
@@ -508,6 +509,11 @@ export class PlayerController implements IFollowable {
         // Check if this is a key we're tracking
         if (key in this.keyStates) {
             this.setKeyState(key, true);
+            
+            // Track shift key press for quest
+            if (key === 'shift') {
+                trackQuestEvent('VEHICLE_ACCELERATE');
+            }
         } else if (key === ' ') {
             // Handle space bar specifically
             this.setKeyState('space', true);
