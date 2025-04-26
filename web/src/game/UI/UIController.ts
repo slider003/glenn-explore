@@ -6,6 +6,7 @@ import { PlayersOnlineUI } from "../PlayersOnlineUI";
 import { TeleportOptions } from "../../types/teleport";
 import { ModelSelectorController } from "../model-selector/ModelSelectorController";
 import { PlayerController } from "../player/PlayerController";
+import { initializeQuests } from "../quests/engine/initializeQuests";
 
 declare global {
     interface Window {
@@ -44,5 +45,8 @@ export class UIController {
         // Initialize model selector with player controller
         this.modelSelectorController = new ModelSelectorController(map, playerController);
         window.showModelSelector = () => this.modelSelectorController.show();
+
+        // Initialize quests
+        initializeQuests();
     }
 }

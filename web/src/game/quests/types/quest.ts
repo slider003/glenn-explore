@@ -15,7 +15,10 @@ export type QuestEvent =
     | 'VEHICLE_CHANGE'
     | 'CHAT_SEND'
     | 'MODEL_SELECTOR_OPEN'
-    | 'MODEL_SELECTED';
+    | 'MODEL_SELECTED'
+    | 'CHAT_OPEN'
+    | 'CHAT_MESSAGE_SENT'
+    | 'NAME_CHANGED';
 
 export enum QuestValidationType {
     CLIENT_EVENT = 'CLIENT_EVENT',

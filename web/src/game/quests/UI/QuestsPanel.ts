@@ -21,15 +21,13 @@ export class QuestsPanel extends BasePanelUI {
         // Listen for quest updates
         this.questEngine.onQuestUpdated(this.handleQuestUpdate.bind(this));
 
-
+        // Initial render
+        this.render();
     }
 
-    private handleQuestUpdate(quest: Quest): void {
-        // Find and update the quest item in the UI
-        const questItem = this.questList?.querySelector(`[data-quest-id="${quest.id}"]`);
-        if (questItem) {
-            this.updateQuestItem(questItem as HTMLElement, quest);
-        }
+    private handleQuestUpdate(): void {
+        // Re-render the entire panel to show updated quest status
+        this.render();
     }
 
     private createQuestItem(quest: Quest): HTMLElement {
@@ -128,27 +126,7 @@ export class QuestsPanel extends BasePanelUI {
         this.questList.appendChild(section);
     }
 
-    private updateQuestItem(item: HTMLElement, quest: Quest): void {
-        // Update status class
-        item.className = 'quest-item';
-        const status = this.progressTracker.getQuestStatus(quest.id, quest.steps.length);
-        item.classList.add(status);
 
-        // Update progress text
-        const progress = this.progressTracker.getProgress(quest.id);
-        let completedStepsCount = progress === -1 ? quest.steps.length :
-            quest.steps.reduce((count, _, index) => 
-                count + (this.progressTracker.isStepCompleted(progress, index) ? 1 : 0), 0);
-
-        const progressText = status === 'in-progress'
-            ? `<span class="quest-progress">(${completedStepsCount}/${quest.steps.length})</span>`
-            : '';
-
-        item.innerHTML = `
-            <span class="status-icon"></span>
-            ${quest.title} ${progressText}
-        `;
-    }
 
     public destroy(): void {
         // Clean up any event listeners or resources

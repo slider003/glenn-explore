@@ -5,6 +5,7 @@ import './styles/chat-input.css';
 import './styles/chat-message.css';
 import { AIMessage } from './ai/AIMessageTypes';
 import { marked } from 'marked';
+import { trackQuestEvent } from '../quests/helpers/trackQuestEvent';
 import './ai/styles/ai-tool-response.css';
 
 // Configure marked for safe rendering
@@ -629,12 +630,19 @@ export class ChatUI {
             this.onSendMessage(message);
         }
         
+        // Track message sent for quest
+        trackQuestEvent('CHAT_MESSAGE_SENT');
+
         this.chatInput.focus();
     }
 
     public toggle(): void {
         this.isVisible = !this.isVisible;
         this.chatContainer.classList.toggle('visible', this.isVisible);
+        
+        if (this.isVisible) {
+            trackQuestEvent('CHAT_OPEN');
+        }
         this.chatBubble.style.display = this.isVisible ? 'none' : 'flex';
 
         if (this.isVisible) {
@@ -946,6 +954,7 @@ export class ChatUI {
 
             if (success) {
                 this.addSystemMessage(`You changed your name to ${newName}`);
+                trackQuestEvent('NAME_CHANGED');
                 closeModal();
             } else {
                 errorDiv.textContent = 'Failed to change name (might be taken)';

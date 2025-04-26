@@ -2,6 +2,44 @@ import { Quest, QuestType, QuestValidationType } from '../types/quest';
 
 export const TUTORIAL_QUESTS: Quest[] = [
     {
+        id: 'social_butterfly',
+        title: 'Social Butterfly',
+        description: 'Learn to communicate with other players in the world.',
+        type: QuestType.TUTORIAL,
+        steps: [
+            {
+                id: 'open_chat',
+                title: 'Chat Explorer',
+                description: 'Open the chat interface to connect with other players.',
+                validation: {
+                    type: QuestValidationType.CLIENT_EVENT,
+                    params: { event: 'CHAT_OPEN' }
+                },
+                order: 1
+            },
+            {
+                id: 'change_name',
+                title: 'Name Changer',
+                description: 'Choose a unique name for yourself.',
+                validation: {
+                    type: QuestValidationType.CLIENT_EVENT,
+                    params: { event: 'NAME_CHANGED' }
+                },
+                order: 2
+            },
+            {
+                id: 'send_message',
+                title: 'First Contact',
+                description: 'Send your first message to other players.',
+                validation: {
+                    type: QuestValidationType.CLIENT_EVENT,
+                    params: { event: 'CHAT_MESSAGE_SENT' }
+                },
+                order: 3
+            }
+        ]
+    },
+    {
         id: 'vehicle_customization',
         title: 'Vehicle Virtuoso',
         description: 'Learn how to personalize your ride with different models.',
