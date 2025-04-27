@@ -52,7 +52,7 @@ export class QuestEngine {
         questIds.forEach(questId => this.handleQuestEvent(questId, eventName));
     }
 
-    public handleQuestEvent(questId: string, eventName: string): void {
+    public handleQuestEvent(_questId: string, eventName: string): void {
         // Get quests listening to this event
         const affectedQuestIds = this.eventListeners.get(eventName);
         if (!affectedQuestIds) return;

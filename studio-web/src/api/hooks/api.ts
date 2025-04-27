@@ -38,9 +38,11 @@ import type {
   CreateGuestRequestDTO,
   CreateModelRequestDTO,
   CreateUserRequestDTO,
+  DashboardStatsDtoDTO,
   FileInfoDtoDTO,
   FileUploadDtoDTO,
   GameStatisticsDTO,
+  GetApiDashboardStatsParams,
   GetApiOpenrouterToolsChatStreamParams,
   GetApiUsersParams,
   GrantPremiumModelsResponseDTO,
@@ -762,6 +764,152 @@ export function useGetApiAuthCheck<TData = Awaited<ReturnType<typeof getApiAuthC
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetApiAuthCheckQueryOptions(options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+export const getApiDashboardStats = (
+    params?: GetApiDashboardStatsParams,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<DashboardStatsDtoDTO>(
+      {url: `/api/Dashboard/stats`, method: 'GET',
+        params, signal
+    },
+      );
+    }
+  
+
+export const getGetApiDashboardStatsQueryKey = (params?: GetApiDashboardStatsParams,) => {
+    return [`/api/Dashboard/stats`, ...(params ? [params]: [])] as const;
+    }
+
+    
+export const getGetApiDashboardStatsInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiDashboardStats>>, GetApiDashboardStatsParams['pageNumber']>, TError = ErrorType<unknown>>(params?: GetApiDashboardStatsParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiDashboardStats>>, TError, TData, Awaited<ReturnType<typeof getApiDashboardStats>>, QueryKey, GetApiDashboardStatsParams['pageNumber']>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiDashboardStatsQueryKey(params);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiDashboardStats>>, QueryKey, GetApiDashboardStatsParams['pageNumber']> = ({ signal, pageParam }) => getApiDashboardStats({...params, pageNumber: pageParam || params?.['pageNumber']}, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn,   staleTime: 10000,  ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiDashboardStats>>, TError, TData, Awaited<ReturnType<typeof getApiDashboardStats>>, QueryKey, GetApiDashboardStatsParams['pageNumber']> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiDashboardStatsInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiDashboardStats>>>
+export type GetApiDashboardStatsInfiniteQueryError = ErrorType<unknown>
+
+
+export function useGetApiDashboardStatsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiDashboardStats>>, GetApiDashboardStatsParams['pageNumber']>, TError = ErrorType<unknown>>(
+ params: undefined |  GetApiDashboardStatsParams, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiDashboardStats>>, TError, TData, Awaited<ReturnType<typeof getApiDashboardStats>>, QueryKey, GetApiDashboardStatsParams['pageNumber']>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiDashboardStats>>,
+          TError,
+          Awaited<ReturnType<typeof getApiDashboardStats>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiDashboardStatsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiDashboardStats>>, GetApiDashboardStatsParams['pageNumber']>, TError = ErrorType<unknown>>(
+ params?: GetApiDashboardStatsParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiDashboardStats>>, TError, TData, Awaited<ReturnType<typeof getApiDashboardStats>>, QueryKey, GetApiDashboardStatsParams['pageNumber']>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiDashboardStats>>,
+          TError,
+          Awaited<ReturnType<typeof getApiDashboardStats>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiDashboardStatsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiDashboardStats>>, GetApiDashboardStatsParams['pageNumber']>, TError = ErrorType<unknown>>(
+ params?: GetApiDashboardStatsParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiDashboardStats>>, TError, TData, Awaited<ReturnType<typeof getApiDashboardStats>>, QueryKey, GetApiDashboardStatsParams['pageNumber']>>, }
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiDashboardStatsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiDashboardStats>>, GetApiDashboardStatsParams['pageNumber']>, TError = ErrorType<unknown>>(
+ params?: GetApiDashboardStatsParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiDashboardStats>>, TError, TData, Awaited<ReturnType<typeof getApiDashboardStats>>, QueryKey, GetApiDashboardStatsParams['pageNumber']>>, }
+ , queryClient?: QueryClient 
+ ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiDashboardStatsInfiniteQueryOptions(params,options)
+
+  const query = useInfiniteQuery(queryOptions , queryClient) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetApiDashboardStatsQueryOptions = <TData = Awaited<ReturnType<typeof getApiDashboardStats>>, TError = ErrorType<unknown>>(params?: GetApiDashboardStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiDashboardStats>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiDashboardStatsQueryKey(params);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiDashboardStats>>> = ({ signal }) => getApiDashboardStats(params, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn,   staleTime: 10000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiDashboardStats>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiDashboardStatsQueryResult = NonNullable<Awaited<ReturnType<typeof getApiDashboardStats>>>
+export type GetApiDashboardStatsQueryError = ErrorType<unknown>
+
+
+export function useGetApiDashboardStats<TData = Awaited<ReturnType<typeof getApiDashboardStats>>, TError = ErrorType<unknown>>(
+ params: undefined |  GetApiDashboardStatsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiDashboardStats>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiDashboardStats>>,
+          TError,
+          Awaited<ReturnType<typeof getApiDashboardStats>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiDashboardStats<TData = Awaited<ReturnType<typeof getApiDashboardStats>>, TError = ErrorType<unknown>>(
+ params?: GetApiDashboardStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiDashboardStats>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiDashboardStats>>,
+          TError,
+          Awaited<ReturnType<typeof getApiDashboardStats>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiDashboardStats<TData = Awaited<ReturnType<typeof getApiDashboardStats>>, TError = ErrorType<unknown>>(
+ params?: GetApiDashboardStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiDashboardStats>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiDashboardStats<TData = Awaited<ReturnType<typeof getApiDashboardStats>>, TError = ErrorType<unknown>>(
+ params?: GetApiDashboardStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiDashboardStats>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiDashboardStatsQueryOptions(params,options)
 
   const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -2938,7 +3086,7 @@ export function useGetApiOpenrouterToolsChatStreamInfinite<TData = InfiniteData<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiOpenrouterToolsChatStream>>,
           TError,
-          Awaited<ReturnType<typeof getApiOpenrouterToolsChatStream>>, QueryKey
+          Awaited<ReturnType<typeof getApiOpenrouterToolsChatStream>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
@@ -2948,7 +3096,7 @@ export function useGetApiOpenrouterToolsChatStreamInfinite<TData = InfiniteData<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiOpenrouterToolsChatStream>>,
           TError,
-          Awaited<ReturnType<typeof getApiOpenrouterToolsChatStream>>, QueryKey
+          Awaited<ReturnType<typeof getApiOpenrouterToolsChatStream>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
@@ -4041,7 +4189,7 @@ export function useGetApiUsersInfinite<TData = InfiniteData<Awaited<ReturnType<t
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiUsers>>,
           TError,
-          Awaited<ReturnType<typeof getApiUsers>>, QueryKey
+          Awaited<ReturnType<typeof getApiUsers>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
@@ -4051,7 +4199,7 @@ export function useGetApiUsersInfinite<TData = InfiniteData<Awaited<ReturnType<t
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiUsers>>,
           TError,
-          Awaited<ReturnType<typeof getApiUsers>>, QueryKey
+          Awaited<ReturnType<typeof getApiUsers>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient

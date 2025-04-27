@@ -1,4 +1,4 @@
-import { Bot, Users, FolderOpen, Box } from 'lucide-react';
+import { Bot, Users, FolderOpen, Box, BarChart } from 'lucide-react';
 import { CreateUserPage } from './features/users/pages/create-user-page';
 import { UsersPage } from './features/users/pages/users-page';
 import { UserDetailsPage } from './features/users/pages/user-details-page';
@@ -11,6 +11,7 @@ import { CreatePublicModelPage } from './features/public-models/pages/create-pub
 import { PublicModelsPage } from './features/public-models/pages/public-models-page';
 import { Link } from 'react-router-dom';
 import { EditPublicModelPage } from './features/public-models/pages/edit-public-model-page';
+import { DashboardPage } from './features/dashboard/pages/dashboard-page';
 
 export interface RouteConfig {
   path: string;
@@ -39,6 +40,14 @@ function WelcomePage() {
 }
 
 export const routes: RouteConfig[] = [
+  {
+    path: '/studio/dashboard',
+    element: <DashboardPage />,
+    isHeaderItem: true,
+    requiresAdmin: true,
+    icon: <BarChart className="h-4 w-4" />,
+    label: 'Dashboard'
+  },
   {
     path: '/studio',
     element: <WelcomePage />,

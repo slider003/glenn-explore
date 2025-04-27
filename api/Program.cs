@@ -21,6 +21,7 @@ using Api.Features.Auth.Payment;
 using Api.Source.Features.Models.Services;
 using Api.Source.Features.Files.Services;
 using Microsoft.Extensions.FileProviders;
+using Api.Source.Features.Dashboard.Services;
 
 namespace Api.Shell;
 
@@ -353,6 +354,9 @@ public partial class Program
 
         // Add file services
         builder.Services.AddScoped<FileService>();
+
+        // Add dashboard services
+        builder.Services.AddScoped<DashboardService>();
 
         var app = builder.Build();
 
