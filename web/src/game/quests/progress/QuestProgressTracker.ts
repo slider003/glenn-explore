@@ -1,14 +1,15 @@
 import { UserQuestProgress, QuestProgressOperations } from './types';
 import { Quest, QuestStep } from '../types/quest';
 import { TUTORIAL_QUESTS, ACHIEVEMENT_QUESTS } from '../constants/quests';
+import * as ServerEvents from '../../realtime/types/ServerEvents';
 
 export class QuestProgressTracker implements QuestProgressOperations {
     private static instance: QuestProgressTracker;
-    private static STORAGE_KEY = 'glenn_quest_progress';
     private progress: UserQuestProgress;
 
     private constructor() {
-        this.progress = this.loadProgress();
+        this.progress = {};
+        this.setupEventListeners();
     }
 
     public static getInstance(): QuestProgressTracker {
@@ -18,13 +19,28 @@ export class QuestProgressTracker implements QuestProgressOperations {
         return QuestProgressTracker.instance;
     }
 
-    private loadProgress(): UserQuestProgress {
-        const stored = localStorage.getItem(QuestProgressTracker.STORAGE_KEY);
-        return stored ? JSON.parse(stored) : {};
+    private setupEventListeners() {
+        // Listen for initial state
+        window.addEventListener('initialState', ((event: CustomEvent<ServerEvents.InitialStateEvent>) => {
+            this.progress = event.detail.questProgress;
+        }) as EventListener);
+
+        // Listen for quest progress updates
+        window.addEventListener('questProgress', ((event: CustomEvent<ServerEvents.QuestProgressEvent>) => {
+            const { questId, progress } = event.detail;
+            this.progress[questId] = progress;
+        }) as EventListener);
+
+        // Listen for quest completions
+        window.addEventListener('questCompleted', ((event: CustomEvent<ServerEvents.QuestCompletedEvent>) => {
+            const { questId } = event.detail;
+            this.progress[questId] = -1; // Mark as fully completed
+        }) as EventListener);
     }
 
     private saveProgress(): void {
-        localStorage.setItem(QuestProgressTracker.STORAGE_KEY, JSON.stringify(this.progress));
+        // No need to save progress locally anymore as it's handled by the server
+        // The server will send updates via SignalR
     }
 
     public isStepCompleted(progress: number, stepIndex: number): boolean {
@@ -51,12 +67,11 @@ export class QuestProgressTracker implements QuestProgressOperations {
         return this.progress[questId] || 0;
     }
 
-    public async updateProgress(questId: string, progress: number): Promise<void> {
+    public updateProgress(questId: string, progress: number): void {
         this.progress[questId] = progress;
-        this.saveProgress();
-        
-        // Simulate API delay (remove this in production)
-        await new Promise(resolve => setTimeout(resolve, 100));
+        window.dispatchEvent(new CustomEvent('quest:update_progress', {
+            detail: { questId, progress }
+        }));
     }
 
     // Helper method to get step index from step ID
@@ -90,6 +105,8 @@ export class QuestProgressTracker implements QuestProgressOperations {
     // For debugging/development
     public resetProgress(): void {
         this.progress = {};
-        this.saveProgress();
+        window.dispatchEvent(new CustomEvent('quest:update_progress', {
+            detail: { questId: '', progress: 0 }
+        }));
     }
 }

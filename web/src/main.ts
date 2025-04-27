@@ -78,7 +78,6 @@ async function setupScene() {
   const authResult = await authClient.checkAuthentication();
 
   if (authResult) {
-    console.log("User authenticated:", authResult.username);
 
     // Update player store with user data
     PlayerStore.setPlayerName(authResult.username);
@@ -148,7 +147,7 @@ function initializeGame(
     touchZoomRotate: false,
     touchPitch: false,
     scrollZoom: false,
-    maxPitch: window.isLowPerformanceDevice ? 70 : 85, // Limit pitch on low-performance devices
+    maxPitch: window.isLowPerformanceDevice ? 85 : 85, // Limit pitch on low-performance devices
     fadeDuration: window.isLowPerformanceDevice ? 0 : 300, // Disable fade animations on low-performance devices
     preserveDrawingBuffer: false // Better performance when false
   };
@@ -175,8 +174,16 @@ function initializeGame(
 
       map?.setTerrain({
         'source': 'mapbox-dem',
-        'exaggeration': 0.7,
+        'exaggeration': PlayerStore.getTerrainExaggeration(),
       });
+
+      // Listen for terrain exaggeration changes
+      window.addEventListener('terrain:exaggeration_changed', ((event: CustomEvent) => {
+        map?.setTerrain({
+          'source': 'mapbox-dem',
+          'exaggeration': event.detail.value,
+        });
+      }) as EventListener);
       } catch (error) {
         console.error('Failed to add terrain:', error);
       }
@@ -237,7 +244,6 @@ function initializeGame(
           try {
             const unlockedModels = await modelClient.getUnlockedModels();
             PlayerStore.setUnlockedModels(unlockedModels);
-            console.log('Loaded unlocked models:', unlockedModels);
           } catch (error) {
             console.error('Failed to fetch unlocked models:', error);
           }

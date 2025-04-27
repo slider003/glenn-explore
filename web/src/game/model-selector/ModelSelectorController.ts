@@ -166,7 +166,6 @@ export class ModelSelectorController {
 
         const carModels = this.availableModels.filter(m => m.type.toLowerCase() === 'car' && m.isFeatured);
         const characterModels = this.availableModels.filter(m => m.type.toLowerCase() === 'walking' && m.isFeatured);
-        console.log(carModels)
         return `
             <div class="model-selector-section">
                 <h3>🚗 Cars</h3>
@@ -272,7 +271,6 @@ export class ModelSelectorController {
             return;
         }
 
-        console.log("selected: ", selectedModel)
 
         // Switch to the selected model
         await this.playerController.switchState(modelId, modelType, selectedModel);

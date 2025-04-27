@@ -255,7 +255,6 @@ export class PlayerController implements IFollowable {
 
                     if (CameraController.getMap().getZoom() !== zoom) {
                         CameraController.getMap().setZoom(zoom);
-                        console.log("zoom", zoom, CameraController.getMap().getZoom());
                         this.lastZoom = zoom;
                     }
 
@@ -428,7 +427,6 @@ export class PlayerController implements IFollowable {
     }
 
     private async loadModel(): Promise<void> {
-        console.log("Loading model", this.model);
         if (this.model) {
             try {
                 this.currentState!.model = await new Promise((resolve, reject) => {
@@ -451,7 +449,6 @@ export class PlayerController implements IFollowable {
                             reject(new Error('No model returned'));
                             return;
                         }
-                        console.log("Model loaded", model.animations);
                         if (model.animations && model.animations.length > 0) {
                             this.currentState!.mixer = new THREE.AnimationMixer(model);
                         }
@@ -489,7 +486,6 @@ export class PlayerController implements IFollowable {
         PlayerStore.setCarMode(!isCurrentlyFlying ? 'fly' : 'normal');
 
         const statusMessage = !isCurrentlyFlying ? 'ENABLED 🛸' : 'DISABLED';
-        console.log('🔄 Flying mode:', !isCurrentlyFlying ? 'ENABLED 🛸' : 'DISABLED');
         this.showMessage(`Flying mode ${statusMessage}`, 2000);
     }
 
@@ -519,7 +515,6 @@ export class PlayerController implements IFollowable {
             this.setKeyState('space', true);
 
             if (PlayerStore.isPlayerFlying()) {
-                console.log('🚀 SPACE pressed in flying mode!');
             }
         }
     };
@@ -539,7 +534,6 @@ export class PlayerController implements IFollowable {
             this.setKeyState('space', false);
 
             if (PlayerStore.isPlayerFlying()) {
-                console.log('🛬 SPACE released in flying mode!');
             }
         }
     };

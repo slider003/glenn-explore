@@ -13,6 +13,7 @@ public class PlayerState
     public string ModelType { get; set; } = "dino";
     public string AnimationState { get; set; } = "idle";
     public string StateType { get; set; } = "walking";
+    public List<QuestProgress> QuestProgress { get; set; } = new();
 }
 
 public class PositionUpdate
@@ -70,5 +71,20 @@ public record RaceRecordResponse(
     double? PersonalBest,
     double? TrackRecord,
     string? TrackRecordHolder
+);
+
+public record QuestProgressEvent(
+    string PlayerId,
+    string QuestId,
+    int Progress,
+    DateTime UpdatedAt
+);
+
+public record QuestCompletedEvent(
+    string PlayerId,
+    string QuestId,
+    string QuestTitle,
+    int XpGained,
+    DateTime CompletedAt
 );
 

@@ -28,7 +28,6 @@ export class QuestEngine {
     }
 
     public registerQuest(quest: Quest): void {
-        console.log(`Registering quest: ${quest.id}`);
         this.activeQuests.set(quest.id, quest);
         
         // Register event listeners for each step
@@ -55,11 +54,8 @@ export class QuestEngine {
 
     public handleQuestEvent(questId: string, eventName: string): void {
         // Get quests listening to this event
-        console.log(`Tracking event: ${eventName}`);
-        console.log(this.eventListeners, eventName)
         const affectedQuestIds = this.eventListeners.get(eventName);
         if (!affectedQuestIds) return;
-        console.log(`Event listeners: ${Array.from(affectedQuestIds)}`);
         // Check each affected quest
         affectedQuestIds.forEach(questId => {
             const quest = this.activeQuests.get(questId);

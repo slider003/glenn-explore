@@ -47,7 +47,6 @@ export class CarState implements PlayerState<CarModelConfig> {
     private distanceAccumulator: number = 0;
 
     constructor(private tb: Threebox, modelId: string, config: CarModelConfig) {
-        console.log('CarState: constructor', config);
         this.modelConfig = config;
         this.modelType = modelId;
         // Initialize kilometers from PlayerStore

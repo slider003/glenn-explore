@@ -101,7 +101,6 @@ export class PlayersController {
 
             this.playerMarkers.set(playerData.playerId, marker);
             
-            console.log(`Created new remote player: ${playerData.playerId}, ${playerData.name}, model: ${playerData.state.modelType}, animation: ${playerData.state.animationState}`);
         } else {
             // Update existing player
             player.updatePosition(playerData.position.coordinates, playerData.position.rotation);
@@ -122,7 +121,6 @@ export class PlayersController {
                 playerData.state.animationState !== player.getAnimationState() ||
                 playerData.state.stateType !== player.getStateType()
             )) {
-                console.log(`Updating remote player state: ${playerData.state.modelType}, ${playerData.state.animationState}, ${playerData.state.stateType}`);
                 player.updateState(playerData.state);
             }
         }

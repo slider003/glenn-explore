@@ -24,8 +24,7 @@ export class PlayerStore {
     private static flyingElevation: number = 0;
     private static movementMode: 'car' | 'walking' = 'car';
     private static carMode: 'normal' | 'fly' = 'normal';
-
-    
+    private static terrainExaggeration: number = 0.5;
     private static lockZoom: boolean = false;
     private static isLowPerformanceDevice: boolean | null = null;
     private static unlockedModels: UnlockedModel[] = [];
@@ -152,7 +151,6 @@ export class PlayerStore {
         return PlayerStore.currentSpeed;
     }
 
-
     public static getAllowedToDrive(): boolean {
         return PlayerStore.allowedToDrive;
     }
@@ -220,9 +218,21 @@ export class PlayerStore {
         PlayerStore.setIsFlying(mode === 'fly');
     }
 
+    public static getTerrainExaggeration(): number {
+        return PlayerStore.terrainExaggeration;
+    }
+
+    public static setTerrainExaggeration(value: number): void {
+        PlayerStore.terrainExaggeration = value;
+        PlayerStore._saveStateToLocalStorage();
+        // Notify map to update terrain
+        window.dispatchEvent(new CustomEvent('terrain:exaggeration_changed', {
+            detail: { value }
+        }));
+    }
+
     // Utility methods
     public static _saveStateToLocalStorage(): void {
-        console.log("Saving map:", PlayerStore.map)
         const state = {
             playerName: PlayerStore.playerName,
             isGuest: PlayerStore.isGuest,
@@ -231,6 +241,7 @@ export class PlayerStore {
             timeOfDay: PlayerStore.timeOfDay,
             map: PlayerStore.map,
             kilometersDriven: PlayerStore.kilometersDriven,
+            terrainExaggeration: PlayerStore.terrainExaggeration,
             collisionEnabled: PlayerStore.collisionEnabled,
             coordinates: PlayerStore.coordinates,
             rotation: PlayerStore.rotation,
@@ -259,17 +270,16 @@ export class PlayerStore {
         PlayerStore.playerId = id;
 
         const savedState = localStorage.getItem('playerState');
-        console.log("savedState", savedState);
         if (savedState) {
             const state = JSON.parse(savedState);
-            console.log("state", state, state.coordinates);
             PlayerStore.playerName = state.playerName || 'Guest';
             PlayerStore.isGuest = state.isGuest ?? true;
             PlayerStore.isOnline = state.isOnline ?? false;
             PlayerStore.followCar = state.followCar ?? false;
             PlayerStore.timeOfDay = state.timeOfDay || 'dusk';
-            PlayerStore.map = state.map || 'satellite';
+            PlayerStore.map = state.map;
             PlayerStore.kilometersDriven = state.kilometersDriven || 0;
+            PlayerStore.terrainExaggeration = state.terrainExaggeration ?? 0.5;
             PlayerStore.collisionEnabled = state.collisionEnabled ?? false;
             PlayerStore.coordinates = state.coordinates || [0, 0, 0];
             PlayerStore.rotation = state.rotation || { x: 0, y: 0, z: 0 };
@@ -371,7 +381,7 @@ export class PlayerStore {
         PlayerStore.kilometersDriven = 0;
         PlayerStore.followCar = false;
         PlayerStore.timeOfDay = 'day';
-        PlayerStore.map = 'satellite';
+        PlayerStore.map = 'standard';
         PlayerStore.collisionEnabled = false;
         PlayerStore.coordinates = [0, 0, 0];
         PlayerStore.rotation = { x: 0, y: 0, z: 0 };

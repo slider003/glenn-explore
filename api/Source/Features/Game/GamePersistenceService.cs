@@ -75,6 +75,28 @@ public class GamePersistenceService : BackgroundService
                 
                 var player = Player.FromPlayerState(playerState);
                 
+                // Get quest progress for this player
+                var questProgress = _gameState.GetPlayerQuestProgress(playerId);
+                if (questProgress != null)
+                {
+                    // Update quest progress
+                    var existingProgress = await dbContext.QuestProgress
+                        .Where(qp => qp.PlayerId == playerId)
+                        .ToDictionaryAsync(qp => qp.QuestId, cancellationToken);
+
+                    foreach (var (questId, progress) in questProgress)
+                    {
+                        if (existingProgress.TryGetValue(questId, out var existing))
+                        {
+                            existing.UpdateProgress(progress);
+                        }
+                        else
+                        {
+                            dbContext.QuestProgress.Add(QuestProgress.Create(playerId, questId, progress));
+                        }
+                    }
+                }
+                
                 if (existingPlayers.TryGetValue(playerId, out var existingPlayer))
                 {
                     // Update existing

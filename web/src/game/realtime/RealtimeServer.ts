@@ -53,11 +53,30 @@ export class RealtimeServer {
             .build()
 
         this.setupConnectionHandlers()
+        this.setupQuestEventHandlers()
     }
 
     /**
      * Set up handlers for connection state changes
      */
+    private setupQuestEventHandlers() {
+        // Handle quest progress load requests
+        // Quest progress is now handled through initialState event
+
+        // Handle quest progress update requests
+        window.addEventListener('quest:update_progress', ((async (event: Event) => {
+            const customEvent = event as CustomEvent<{questId: string, progress: number}>;
+            if (this.connection?.state === "Connected") {
+                try {
+                    const { questId, progress } = customEvent.detail;
+                    await this.connection.invoke("UpdateQuestProgress", questId, progress);
+                } catch (error) {
+                    console.error('Failed to update quest progress:', error);
+                }
+            }
+        }) as EventListener));
+    }
+
     private setupConnectionHandlers() {
         if (!this.connection) return
 
@@ -184,6 +203,11 @@ export class RealtimeServer {
 
             // Update player count
             this.onPlayersChange?.(data.players.length)
+
+            // Dispatch initial state event
+            window.dispatchEvent(new CustomEvent('initialState', {
+                detail: data
+            }))
         })
 
         // Batch position updates
@@ -254,6 +278,26 @@ export class RealtimeServer {
             // Dispatch event for UI to handle
             window.dispatchEvent(new CustomEvent('raceResult', {
                 detail: data
+            }))
+        })
+
+        // Handle quest progress updates
+        this.connection.on('QuestProgress', (event: ServerEvents.QuestProgressEvent) => {
+            window.dispatchEvent(new CustomEvent('questProgressUpdated', {
+                detail: event
+            }))
+        })
+
+        // Handle quest completions
+        this.connection.on('QuestCompleted', (event: ServerEvents.QuestCompletedEvent) => {
+            window.dispatchEvent(new CustomEvent('questCompleted', {
+                detail: event
+            }))
+            // Show achievement message
+            window.dispatchEvent(new CustomEvent(CHAT_EVENTS.SYSTEM_MESSAGE, {
+                detail: {
+                    message: `🏆 ${PlayerStore.getPlayerName()} completed ${event.questTitle} (+${event.xpGained} XP)`
+                }
             }))
         })
     }

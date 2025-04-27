@@ -64,11 +64,17 @@ public class GameHub : Hub
         // Get recent messages
         var recentMessages = await _messagePersistence.GetRecentMessages();
 
+        // Get quest progress
+        var questProgress = await dbContext.QuestProgress
+            .Where(qp => qp.PlayerId == user.Id)
+            .ToDictionaryAsync(qp => qp.QuestId, qp => qp.Progress);
+
         // Send current state to the connecting client
         await Clients.Caller.SendAsync("InitialState", new
         {
             Players = _gameState.GetAllPlayers(),
-            RecentMessages = recentMessages
+            RecentMessages = recentMessages,
+            QuestProgress = questProgress
         });
 
         // Notify others
@@ -280,6 +286,69 @@ public class GameHub : Hub
         {
             _logger.LogError(ex, "Error changing player name");
             return false;
+        }
+    }
+
+    public async Task<Dictionary<string, int>> GetQuestProgress()
+    {
+        var user = await _userManager.GetUserAsync(Context.User);
+        if (user == null) throw new HubException("User not found");
+
+        using var scope = _serviceProvider.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        var progress = await dbContext.QuestProgress
+            .Where(qp => qp.PlayerId == user.Id)
+            .ToDictionaryAsync(qp => qp.QuestId, qp => qp.Progress);
+
+        return progress;
+    }
+
+    public async Task UpdateQuestProgress(string questId, int progress)
+    {
+        var user = await _userManager.GetUserAsync(Context.User);
+        if (user == null) throw new HubException("User not found");
+
+        using var scope = _serviceProvider.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        var questProgress = await dbContext.QuestProgress
+            .FirstOrDefaultAsync(qp => qp.PlayerId == user.Id && qp.QuestId == questId);
+
+        if (questProgress == null)
+        {
+            questProgress = QuestProgress.Create(user.Id, questId, progress);
+            dbContext.QuestProgress.Add(questProgress);
+        }
+        else
+        {
+            questProgress.UpdateProgress(progress);
+        }
+
+        await dbContext.SaveChangesAsync();
+
+        // Broadcast progress update
+        var progressEvent = new QuestProgressEvent(
+            user.Id,
+            questId,
+            progress,
+            questProgress.UpdatedAt
+        );
+
+        await Clients.All.SendAsync("QuestProgress", progressEvent);
+
+        // If quest is completed (progress == -1), send completion event
+        if (progress == -1)
+        {
+            var completedEvent = new QuestCompletedEvent(
+                user.Id,
+                questId,
+                "Quest Title", // TODO: Get actual quest title
+                100, // TODO: Calculate actual XP gained
+                questProgress.UpdatedAt
+            );
+
+            await Clients.All.SendAsync("QuestCompleted", completedEvent);
         }
     }
 

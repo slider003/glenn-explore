@@ -40,6 +40,7 @@ export interface Message {
 export interface InitialStateEvent {
   players: PlayerState[]
   recentMessages: Message[]
+  questProgress: Record<string, number>
 }
 
 export interface PlayerJoinedEvent {
@@ -117,4 +118,17 @@ export interface RaceRecordResponse {
     personalBest: number | null;
     trackRecord: number | null;
     trackRecordHolder: string | null;
-} 
+}
+
+// Quest Events
+export interface QuestProgressEvent {
+    playerId: string;
+    questId: string;
+    progress: number;
+    timestamp: string;
+}
+
+export interface QuestCompletedEvent extends QuestProgressEvent {
+    questTitle: string;
+    xpGained: number;
+}

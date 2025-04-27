@@ -32,6 +32,9 @@ public class Player
 
     // Time tracking
     public DateTime? CurrentSessionStart { get; set; }
+    
+    // Quest progress
+    public virtual ICollection<QuestProgress> QuestProgress { get; set; } = new List<QuestProgress>();
 
     // Conversion methods
     public static Player FromPlayerState(PlayerState state)
@@ -54,6 +57,14 @@ public class Player
             StateType = state.StateType,
             CurrentSessionStart = state.CurrentSessionStart,
             TotalTimeOnline = state.TotalTimeOnline,
+            QuestProgress = state.QuestProgress?.Select(qp => new QuestProgress
+            {
+                Id = qp.Id,
+                PlayerId = state.PlayerId,
+                QuestId = qp.QuestId,
+                Progress = qp.Progress,
+                UpdatedAt = qp.UpdatedAt
+            }).ToList() ?? new List<QuestProgress>()
         };
     }
 
@@ -81,7 +92,15 @@ public class Player
             AnimationState = AnimationState,
             StateType = StateType,
             CurrentSessionStart = CurrentSessionStart,
-            TotalTimeOnline = TotalTimeOnline
+            TotalTimeOnline = TotalTimeOnline,
+            QuestProgress = QuestProgress.Select(qp => new QuestProgress
+            {
+                Id = qp.Id,
+                PlayerId = PlayerId,
+                QuestId = qp.QuestId,
+                Progress = qp.Progress,
+                UpdatedAt = qp.UpdatedAt
+            }).ToList()
         };
     }
 }

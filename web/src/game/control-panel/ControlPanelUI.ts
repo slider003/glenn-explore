@@ -14,7 +14,6 @@ export class ControlPanelUI {
     private onTeleport: (teleportOptions: TeleportOptions) => void;
     constructor(map: mapboxgl.Map, onTeleport: (teleportOptions: TeleportOptions) => void) {
         this.menuItems = MENU_ITEMS();
-        console.log("onTeleport", onTeleport)
         this.onTeleport = onTeleport;
         this.map = map;
         this.container = this.createContainer();

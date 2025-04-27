@@ -148,6 +148,22 @@ export class SettingsPanel extends BasePanelUI {
             </button>
           </div>
         </div>
+
+        <div class="settings-section terrain-settings ${PlayerStore.getIsLowPerformanceDevice() ? 'hidden' : ''}">
+          <h4>🗻 Terrain</h4>
+          <div class="slider-container">
+            <label for="terrain-exaggeration">Terrain Height</label>
+            <input 
+              type="range" 
+              id="terrain-exaggeration" 
+              min="0" 
+              max="1.5" 
+              step="0.1" 
+              value="${PlayerStore.getTerrainExaggeration()}"
+            />
+            <small>Adjust how pronounced the terrain features appear on the map</small>
+          </div>
+        </div>
       </div>
     `;
 
@@ -329,6 +345,14 @@ export class SettingsPanel extends BasePanelUI {
       });
     });
 
+    // Add terrain exaggeration slider listener
+    const terrainSlider = content.querySelector('#terrain-exaggeration') as HTMLInputElement;
+    const terrainSection = content.querySelector('.terrain-settings');
+    terrainSlider?.addEventListener('input', (e) => {
+      const value = parseFloat((e.target as HTMLInputElement).value);
+      PlayerStore.setTerrainExaggeration(value);
+    });
+
     // Add Performance Mode toggle
     const performanceButtons = content.querySelectorAll('.map-settings .mode-btn[data-performance]');
     performanceButtons.forEach(btn => {
@@ -343,6 +367,11 @@ export class SettingsPanel extends BasePanelUI {
         // Update state
         PlayerStore.setIsLowPerformanceDevice(isEnabled);
         PlayerStore._saveStateToLocalStorage();
+        
+        // Update terrain section visibility
+        if (terrainSection) {
+          terrainSection.classList.toggle('hidden', isEnabled);
+        }
         
         // Reload the page to apply changes (like map style)
         setTimeout(() => {

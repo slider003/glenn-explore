@@ -19,6 +19,77 @@ export interface Cinematic extends CinematicMetadata {
 // This will be replaced by API calls in the future
 export const DEMO_CINEMATICS: Cinematic[] = [
   {
+    id: 'rio-wonders',
+    title: 'Rio de Janeiro Wonders',
+    description: 'A breathtaking tour of Rio\'s most iconic landmarks and beaches',
+    author: 'William',
+    createdAt: new Date('2025-04-26'),
+    likes: 0,
+    duration: 25000,
+    tags: ['official', 'city-tour', 'beaches', 'landmarks'],
+    waypoints: [
+      // Start with global view
+      {
+        position: [-43.2, -22.9],
+        zoom: 4,
+        pitch: 40,
+        bearing: 0,
+        duration: 2000,
+        message: 'Target acquired: Brazil! Land of samba and endless beaches!'
+      },
+
+      // Christ the Redeemer
+      {
+        position: [-43.2105, -22.9519],
+        zoom: 17,
+        pitch: 75,
+        bearing: 30,
+        duration: 3000,
+        message: 'Christ the Redeemer - The iconic statue blessing Rio with open arms!'
+      },
+
+      // Copacabana Beach
+      {
+        position: [-43.1856, -22.9714],
+        zoom: 17,
+        pitch: 75,
+        bearing: 120,
+        duration: 3000,
+        message: 'Copacabana Beach - World-famous stretch of golden sand and endless fun!'
+      },
+
+      // Sugarloaf Mountain
+      {
+        position: [-43.1566, -22.9492],
+        zoom: 15.5,
+        pitch: 70,
+        bearing: 200,
+        duration: 3000,
+        message: 'Sugarloaf Mountain - Rising dramatically from Guanabara Bay!'
+      },
+
+      // Ipanema Beach
+      {
+        position: [-43.2096, -22.9866],
+        zoom: 17,
+        pitch: 75,
+        bearing: 90,
+        duration: 3000,
+        message: 'Ipanema Beach - Where beauty and rhythm meet the sea!'
+      },
+
+      // Downtown Rio
+      {
+        position: [-43.1729, -22.9068],
+        zoom: 16,
+        pitch: 55,
+        bearing: 150,
+        duration: 3000,
+        message: 'Downtown Rio - Where modern skyscrapers dance with historic architecture!'
+      }
+    ]
+  },
+  {
     id: 'gothenburg-highlights',
     title: 'Gothenburg Highlights',
     description: 'A scenic tour through the most iconic locations in Gothenburg',

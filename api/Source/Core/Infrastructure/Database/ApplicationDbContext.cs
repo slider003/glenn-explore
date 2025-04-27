@@ -17,6 +17,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public DbSet<UnlockedModel> UnlockedModels => Set<UnlockedModel>();
     public DbSet<FileEntity> Files => Set<FileEntity>();
     public DbSet<Model> Models => Set<Model>();
+    public DbSet<QuestProgress> QuestProgress => Set<QuestProgress>();
     
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -165,6 +166,31 @@ public class ApplicationDbContext : IdentityDbContext<User>
                 
             // Set max length for ModelId to match Model table
             b.Property(u => u.ModelId)
+                .HasMaxLength(100);
+        });
+
+        // Quest Progress configuration and indexes
+        builder.Entity<QuestProgress>(b =>
+        {
+            // Primary key
+            b.HasKey(qp => qp.Id);
+            
+            // Relationship with Player
+            b.HasOne(qp => qp.Player)
+                .WithMany()
+                .HasForeignKey(qp => qp.PlayerId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            // Indexes for common queries
+            b.HasIndex(qp => qp.PlayerId)
+                .HasDatabaseName("IX_QuestProgress_PlayerId");
+            b.HasIndex(qp => new { qp.PlayerId, qp.QuestId })
+                .HasDatabaseName("IX_QuestProgress_PlayerId_QuestId");
+            b.HasIndex(qp => qp.UpdatedAt)
+                .HasDatabaseName("IX_QuestProgress_UpdatedAt");
+            
+            // Set reasonable max lengths for string fields
+            b.Property(qp => qp.QuestId)
                 .HasMaxLength(100);
         });
 

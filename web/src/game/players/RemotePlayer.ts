@@ -53,12 +53,9 @@ export class RemotePlayer {
     private async loadModel(): Promise<void> {
         this.modelType = this.data.state.modelType;
         this.animationState = this.data.state.animationState;
-        console.log(`Loading model: ${this.modelType}`);
-        console.log(`State type: ${this.data.state.stateType}`);
 
         // If models aren't loaded yet, implement a backoff retry mechanism
         if (Object.keys(ModelClient.AVAILABLE_MODELS).length === 0) {
-            console.log('Models not yet loaded, implementing backoff retry...');
             
             // Define a backoff retry function with exponential delay
             const retryWithBackoff = async (maxRetries: number = 5, initialDelay: number = 500): Promise<void> => {
@@ -66,15 +63,12 @@ export class RemotePlayer {
                 let delay = initialDelay;
                 
                 while (retryCount < maxRetries) {
-                    console.log(`Retry attempt ${retryCount + 1}/${maxRetries} for loading models...`);
-                    
                     // Wait for the current delay
                     await new Promise(resolve => setTimeout(resolve, delay));
                     
                     // Check if models are now available
                     if (Object.keys(ModelClient.AVAILABLE_MODELS).length > 0 && 
                         ModelClient.AVAILABLE_MODELS[this.data.state.modelType]) {
-                        console.log('Models loaded successfully after retry');
                         return;
                     }
                     

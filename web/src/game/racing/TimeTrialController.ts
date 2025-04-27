@@ -114,7 +114,6 @@ export class TimeTrialController {
 
     setTimeout(() => {
       // Teleport vehicle to start position
-      console.log("teleporting to", track.startPosition, track.startCamera?.bearing, this.dependencies.onTeleport)
       if (track) {
         // Pass the bearing from startCamera if available
         this.dependencies.onTeleport({
