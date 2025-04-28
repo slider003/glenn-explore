@@ -1,10 +1,12 @@
 import { Threebox } from 'threebox-plugin';
 import { RemotePlayerData, RemotePlayerState } from './types/RemotePlayerTypes';
-import { PlayerController, ThreeboxModelConfig } from '../player/PlayerController';
+import { ThreeboxModelConfig } from '../player/PlayerController';
 import mapboxgl from 'mapbox-gl';
 import './styles/remote-player.css';
 import * as THREE from 'three';
 import { ModelClient } from '../api/ModelClient';
+import { ZoomController } from '../ZoomController';
+import { PlayerStore } from '../stores/PlayerStore';
 
 export class RemotePlayer {
     private model: any = null;
@@ -12,15 +14,18 @@ export class RemotePlayer {
     private currentAnimation: THREE.AnimationAction | null = null;
     private marker!: mapboxgl.Marker;
     private nameElement!: HTMLElement;
+    private floatingNameElement: HTMLElement | null = null;
     private messageElement: HTMLElement | null = null;
     private currentElevation: number = 0;
     private lastUpdateTime: number = Date.now();
     private messageTimeout: number | null = null;
     private messageUpdateInterval: number | null = null;
+    private floatingNameUpdateInterval: number | null = null;
     private modelType: string = 'dino';
     private animationState: string = 'idle';
     private animationFrameId: number | null = null;
     private lastAnimationTime: number = 0;
+    private readonly NAME_VISIBILITY_DISTANCE = 1; // Distance in kilometers
 
     constructor(
         private map: mapboxgl.Map,
@@ -28,6 +33,7 @@ export class RemotePlayer {
         private data: RemotePlayerData
     ) {
         this.createMarker();
+        this.createFloatingNameElement();
         this.createMessageElement();
         this.loadModel();
     }
@@ -322,6 +328,116 @@ export class RemotePlayer {
         document.body.appendChild(this.messageElement);
     }
 
+    private createFloatingNameElement(): void {
+        this.floatingNameElement = document.createElement('div');
+        this.floatingNameElement.className = 'remote-player-floating-name';
+        this.floatingNameElement.textContent = this.data.name;
+        document.body.appendChild(this.floatingNameElement);
+        
+        // Add styles if they don't exist yet
+        if (!document.querySelector('#remote-player-floating-name-style')) {
+            const style = document.createElement('style');
+            style.id = 'remote-player-floating-name-style';
+            style.textContent = `
+                .remote-player-floating-name {
+                    position: absolute;
+                    padding: 2px 8px;
+                    background-color: rgba(31, 41, 55, 0.95);
+                    color: white;
+                    border-radius: 4px;
+                    font-size: 14px;
+                    pointer-events: none;
+                    white-space: nowrap;
+                    text-align: center;
+                    transform: translate(-50%, 0);
+                    z-index: 10;
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Start the update loop for the floating name
+        this.startFloatingNameUpdateLoop();
+    }
+    
+    private startFloatingNameUpdateLoop(): void {
+        if (this.floatingNameUpdateInterval) {
+            window.cancelAnimationFrame(this.floatingNameUpdateInterval);
+        }
+        
+        const updateLoop = () => {
+            if (this.floatingNameElement) {
+                this.updateFloatingNamePosition();
+                this.floatingNameUpdateInterval = window.requestAnimationFrame(updateLoop);
+            } else {
+                this.floatingNameUpdateInterval = null;
+            }
+        };
+        
+        this.floatingNameUpdateInterval = window.requestAnimationFrame(updateLoop);
+        
+        // Show the name after a small delay to ensure positioning is correct
+        setTimeout(() => {
+            if (this.floatingNameElement) {
+                this.floatingNameElement.style.opacity = '1';
+            }
+        }, 100);
+    }
+    
+    private updateFloatingNamePosition(): void {
+        if (!this.floatingNameElement || !this.data.position.coordinates) return;
+
+        // Get current player position
+        const currentPlayerCoords = PlayerStore.getCoordinates();
+        let isVisible = ZoomController.getZoom() >= 15;
+
+        // Check distance if we have current player coordinates
+        if (currentPlayerCoords && isVisible) {
+            const distance = this.calculateDistance(
+                currentPlayerCoords[1], currentPlayerCoords[0],
+                this.data.position.coordinates[1], this.data.position.coordinates[0]
+            );
+            isVisible = isVisible && distance <= this.NAME_VISIBILITY_DISTANCE;
+        }
+
+        // Update visibility based on zoom level
+        if (isVisible) {
+            if (this.floatingNameElement.style.display === 'none') {
+                this.floatingNameElement.style.display = 'block';
+                // Fade in when becoming visible
+                setTimeout(() => {
+                    if (this.floatingNameElement) {
+                        this.floatingNameElement.style.opacity = '1';
+                    }
+                }, 10);
+            }
+            
+            const screenCoords = this.map.project([
+                this.data.position.coordinates[0],
+                this.data.position.coordinates[1]
+            ]);
+            
+            // Position above the vehicle (40px higher than message position)
+            this.floatingNameElement.style.transform = `translate(-50%, 0) translate(0, ${screenCoords.y - 50}px)`;
+            this.floatingNameElement.style.top = '0';
+            this.floatingNameElement.style.left = `${screenCoords.x}px`;
+        } else if (this.floatingNameElement.style.display !== 'none') {
+            // Hide when zoom is too low
+            this.floatingNameElement.style.opacity = '0';
+            
+            // Remove from DOM flow after fade out animation completes
+            setTimeout(() => {
+                if (this.floatingNameElement && ZoomController.getZoom() < 15) {
+                    this.floatingNameElement.style.display = 'none';
+                }
+            }, 300);
+        }
+    }
+
     private updateMessagePosition(): void {
         if (!this.messageElement || !this.data.position.coordinates) return;
 
@@ -345,6 +461,11 @@ export class RemotePlayer {
             window.cancelAnimationFrame(this.messageUpdateInterval);
             this.messageUpdateInterval = null;
         }
+        
+        if (this.floatingNameUpdateInterval) {
+            window.cancelAnimationFrame(this.floatingNameUpdateInterval);
+            this.floatingNameUpdateInterval = null;
+        }
 
         if (this.animationFrameId) {
             cancelAnimationFrame(this.animationFrameId);
@@ -365,6 +486,11 @@ export class RemotePlayer {
         if (this.messageElement) {
             document.body.removeChild(this.messageElement);
             this.messageElement = null;
+        }
+        
+        if (this.floatingNameElement) {
+            document.body.removeChild(this.floatingNameElement);
+            this.floatingNameElement = null;
         }
     }
 
@@ -401,8 +527,28 @@ export class RemotePlayer {
         return this.data.state.stateType;
     }
 
+    private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+        const R = 6371; // Earth's radius in kilometers
+        const dLat = this.toRad(lat2 - lat1);
+        const dLon = this.toRad(lon2 - lon1);
+        const a = 
+            Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(this.toRad(lat1)) * Math.cos(this.toRad(lat2)) * 
+            Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+    }
+
+    private toRad(degrees: number): number {
+        return degrees * (Math.PI/180);
+    }
+
     public setName(name: string): void {
         this.data.name = name;
         this.nameElement.textContent = name;
+        
+        if (this.floatingNameElement) {
+            this.floatingNameElement.textContent = name;
+        }
     }
 } 

@@ -59,7 +59,8 @@ public class GameHub : Hub
             LastSeen = DateTime.UtcNow,
             TotalTimeOnline = totalTime,
             CurrentSessionStart = DateTime.UtcNow
-        });
+        },
+        user.IsAdmin, user.HasPaid);
 
         // Get recent messages
         var recentMessages = await _messagePersistence.GetRecentMessages();
@@ -170,7 +171,7 @@ public class GameHub : Hub
         var player = _gameState.GetPlayer(user.Id);
 
         // Queue chat message for persistence
-        var chatMessage = Message.FromGameHub(user.Id, user.UserName ?? "Unknown", message, player);
+        var chatMessage = Message.FromGameHub(user.Id, player?.Name ?? "Unknown", message, player);
         _messagePersistence.QueueMessage(chatMessage);
 
         // Broadcast chat message

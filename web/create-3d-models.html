@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-09DQDSPML1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'G-09DQDSPML1');
+    </script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5289070304089253"
+    crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Own 3D Models - Glenn Explore</title>
+    <meta name="description" content="Learn how to create and import your own 3D models into Glenn Explore using photos and Meshy AI. Transform real objects into virtual game assets easily!">
+    <link rel="icon" type="image/x-icon" href="/public/favicon.ico" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://playglenn.com/create-3d-models">
+    <meta property="og:title" content="Create Your Own 3D Models for Glenn Explore">
+    <meta property="og:description" content="Learn how to create and import your own 3D models into Glenn Explore using photos and Meshy AI. Transform real objects into virtual game assets easily!">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://playglenn.com/create-3d-models">
+    <meta property="twitter:title" content="Create Your Own 3D Models for Glenn Explore">
+    <meta property="twitter:description" content="Learn how to create and import your own 3D models into Glenn Explore using photos and Meshy AI. Transform real objects into virtual game assets easily!">
+
+    <!-- Schema.org markup for Google -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": "Create Your Own 3D Models for Glenn Explore",
+      "description": "Step-by-step guide to creating and importing 3D models into Glenn Explore using photos and Meshy AI",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "name": "Take Photos",
+          "text": "Take multiple photos of your object from different angles"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Generate 3D Model",
+          "text": "Use Meshy AI to convert your photos into a 3D model"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Import to Game",
+          "text": "Import your created 3D model into Glenn Explore"
+        }
+      ]
+    }
+    </script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-gradient: linear-gradient(135deg, #3b82f6, #9333ea);
+            --text: #e5e7eb;
+            --border: rgba(255, 255, 255, 0.1);
+            --bg-dark: rgba(31, 41, 55, 0.95);
+            --bg-panel: rgba(31, 41, 55, 0.85);
+            --accent-gold: #fbbf24;
+            --stone-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;
+            background: #1a1c20;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header styles */
+        .site-header {
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--stone-border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .site-logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .site-logo h2 {
+            color: white;
+            margin: 0;
+            font-size: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .header-nav a {
+            color: var(--text);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .header-nav a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .header-nav .play-now {
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 500;
+        }
+
+        .header-nav .play-now:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Main content */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: var(--text);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .section {
+            background: var(--bg-panel);
+            border: 1px solid var(--stone-border);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .section h2 {
+            color: var(--accent-gold);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .section p {
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--primary-gradient);
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .cta-note {
+            color: var(--accent-gold);
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .showcase {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .showcase img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .showcase-caption {
+            color: var(--text);
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .step-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--stone-border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: transform 0.2s ease;
+        }
+
+        .step-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .step-card h3 {
+            color: var(--accent-gold);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .step-card img {
+            width: 100%;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .tips-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .tips-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .tips-list li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--accent-gold);
+        }
+
+        @media (max-width: 768px) {
+            .site-header {
+                padding: 1rem;
+            }
+
+            .header-nav {
+                gap: 1rem;
+            }
+
+            .site-logo h2 {
+                font-size: 1.2rem;
+            }
+
+            .section {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-container">
+            <a href="/" class="site-logo">
+                <h2>GLENN EXPLORE</h2>
+            </a>
+            <nav class="header-nav">
+                <a href="/">Home</a>
+                <a href="/how-to-play">How to Play</a>
+                <a href="https://discord.gg/ZaWdh6g4DU" target="_blank">Discord</a>
+                <a href="/play" class="play-now">Play Now</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="header">
+            <h1>Create Your Own 3D Models for Glenn Explore</h1>
+            <p>Transform real-world objects into virtual game assets using just your phone camera and AI technology. Learn how to create, customize, and import your own 3D models into Glenn Explore.</p>
+        </div>
+
+        <div class="section">
+            <h2>Overview</h2>
+            <p>Glenn Explore now supports custom 3D models, allowing you to bring your real-world objects into the game. Using Meshy AI technology, you can easily convert photos of objects into high-quality 3D models that you can use in the game. This guide will walk you through the entire process.</p>
+        </div>
+
+        <div class="section">
+            <h2>Step-by-Step Guide</h2>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <h3>📸 1. Taking Photos</h3>
+                    <p>Capture multiple photos of your object from different angles:</p>
+                    <ul class="tips-list">
+                        <li>Take a clear, front-view photo of your object</li>
+                        <li>Use a plain or simple background</li>
+                        <li>Ensure high resolution (at least 1040x1040px)</li>
+                        <li>Make sure the object is well-lit and sharp</li>
+                        <li>Focus on a single object per image</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <h3>🤖 2. Using Meshy AI</h3>
+                    <p>Convert your photo into a stunning 3D model in seconds:</p>
+                    <div class="cta-box">
+                        <a href="https://www.meshy.ai?via=playglenn" target="_blank" class="cta-button">Try Meshy AI Now</a>
+                    </div>
+                    <ul class="tips-list">
+                        <li>Upload your image to Meshy's workspace</li>
+                        <li>Click Generate to create 4 draft models</li>
+                        <li>Pick your favorite version</li>
+                        <li>Customize textures if needed</li>
+                        <li>Download in GLB format for Glenn Explore</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <h3>🎮 3. Importing to Glenn Explore</h3>
+                    <p>Add your 3D model to the game:</p>
+                    <ul class="tips-list">
+                        <li>Ensure your model is in GLB format</li>
+                        <li>Check the model size and scale</li>
+                        <li>Upload through the game's model import interface</li>
+                        <li>Position and adjust your model in-game</li>
+                        <li>Save and share with other players</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Featured Model</h2>
+            <div class="showcase">
+                <img src="/images/explore/meshy.jpg" alt="3D model of a lego creation created with Meshy AI" loading="lazy">
+                <p class="showcase-caption">A detailed 3D lego creation model created from a single photo using Meshy AI</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Best Practices</h2>
+            <p>To get the best results when creating 3D models for Glenn Explore:</p>
+            <ul class="tips-list">
+                <li>Choose objects with interesting visual details</li>
+                <li>Avoid objects that are too small or too large</li>
+                <li>Test your model in different lighting conditions</li>
+                <li>Consider the polygon count for better performance</li>
+                <li>Share your creations with the community for feedback</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Technical Requirements</h2>
+            <ul class="tips-list">
+                <li>Camera or smartphone for high-res photos (1040x1040px+)</li>
+                <li>Good lighting for clear, sharp images</li>
+                <li>Plain background (or use Meshy's background remover)</li>
+                <li>Meshy AI account</li>
+                <li>Stable internet connection</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Community and Support</h2>
+            <p>Join our community to share your creations and get help:</p>
+            <ul class="tips-list">
+                <li>Share your models on our Discord server</li>
+                <li>Get feedback from experienced creators</li>
+                <li>Find inspiration from other players' creations</li>
+                <li>Access tutorials and additional resources</li>
+                <li>Report issues and suggest improvements</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

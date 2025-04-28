@@ -9,8 +9,12 @@ export default defineConfig({
                 main: resolve(__dirname, 'index.html'),
                 howToPlay: resolve(__dirname, 'how-to-play.html'),
                 play: resolve(__dirname, 'play.html'),
-                //contact: resolve(__dirname, 'contact.html'),
-                // Add other pages here as you create them
+                create3dModels: resolve(__dirname, 'create-3d-models.html'),
+                exploreWorld: resolve(__dirname, 'explore-the-world.html'),
+                eiffelTower: resolve(__dirname, 'explore-the-world/destinations/eiffel-tower-paris.html'),
+                grandCanyon: resolve(__dirname, 'explore-the-world/destinations/grand-canyon-usa.html'),
+                bali: resolve(__dirname, 'explore-the-world/destinations/bali-indonesia.html'),
+                santorini: resolve(__dirname, 'explore-the-world/destinations/santorini-greece.html')
             }
         }
     },

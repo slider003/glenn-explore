@@ -1,15 +1,19 @@
 import { IFollowable } from '../../types/IFollowable';
+import { PlayerStore } from '../../stores/PlayerStore';
 
 export class PlayerUI {
     private messageElement: HTMLDivElement | null = null;
     private messageTimeout: number | null = null;
     private animationFrameId: number | null = null;
+    private floatingNameElement: HTMLDivElement | null = null;
+    private floatingNameUpdateInterval: number | null = null;
 
     constructor(
         private map: mapboxgl.Map,
         private player: IFollowable
     ) {
         this.createMessageElement();
+        this.createFloatingNameElement();
     }
 
     private createMessageElement(): void {
@@ -116,6 +120,68 @@ export class PlayerUI {
         this.messageElement.style.left = `${screenCoords.x}px`;
     }
 
+    private createFloatingNameElement(): void {
+        this.floatingNameElement = document.createElement('div');
+        this.floatingNameElement.className = 'player-floating-name';
+        this.floatingNameElement.textContent = PlayerStore.getPlayerName();
+        document.body.appendChild(this.floatingNameElement);
+        
+        // Add styles if they don't exist yet
+        if (!document.querySelector('#player-floating-name-style')) {
+            const style = document.createElement('style');
+            style.id = 'player-floating-name-style';
+            style.textContent = `
+                .player-floating-name {
+                    position: absolute;
+                    padding: 2px 8px;
+                    background-color: rgba(31, 41, 55, 0.95);
+                    color: white;
+                    border-radius: 4px;
+                    font-size: 14px;
+                    pointer-events: none;
+                    white-space: nowrap;
+                    text-align: center;
+                    transform: translate(-50%, 0);
+                    z-index: 10;
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        this.startFloatingNameUpdateLoop();
+    }
+
+    private startFloatingNameUpdateLoop(): void {
+        const updateLoop = () => {
+            if (this.floatingNameElement) {
+                this.updateFloatingNamePosition();
+                this.floatingNameUpdateInterval = window.requestAnimationFrame(updateLoop);
+            } else {
+                this.floatingNameUpdateInterval = null;
+            }
+        };
+        
+        this.floatingNameUpdateInterval = window.requestAnimationFrame(updateLoop);
+    }
+
+    private updateFloatingNamePosition(): void {
+        if (!this.floatingNameElement) return;
+
+        const position = {
+            lng: this.player.coordinates[0],
+            lat: this.player.coordinates[1]
+        };
+
+        const screenCoords = this.map.project([position.lng, position.lat]);
+
+        // Position above the vehicle
+        this.floatingNameElement.style.transform = `translate(-50%, 0) translate(0, ${screenCoords.y - 50}px)`;
+        this.floatingNameElement.style.top = '0';
+        this.floatingNameElement.style.left = `${screenCoords.x}px`;
+    }
+
     public destroy(): void {
         if (this.messageTimeout !== null) {
             clearTimeout(this.messageTimeout);
@@ -128,6 +194,16 @@ export class PlayerUI {
         if (this.messageElement) {
             document.body.removeChild(this.messageElement);
             this.messageElement = null;
+        }
+
+        if (this.floatingNameUpdateInterval) {
+            cancelAnimationFrame(this.floatingNameUpdateInterval);
+            this.floatingNameUpdateInterval = null;
+        }
+
+        if (this.floatingNameElement) {
+            document.body.removeChild(this.floatingNameElement);
+            this.floatingNameElement = null;
         }
     }
 } 

@@ -9,17 +9,33 @@ public class GameStateManager
     private readonly ConcurrentBag<string> _dirtyEntities = new();
     private readonly ILogger<GameStateManager> _logger;
 
+    private static string GetPlayerBadge(bool isAdmin, bool hasPaid, double kilometersDriven)
+    {
+        if (isAdmin) return "👑"; // Creator
+        if (hasPaid) return "⭐"; // Founder
+        
+        return kilometersDriven switch
+        {
+            >= 10000 => "🏆", // Driving Legend
+            >= 100 => "🚗", // Drifter
+            >= 10 => "🗺️", // Explorer
+            _ => "🌱" // Rookie
+        };
+    }
+
     public GameStateManager(ILogger<GameStateManager> logger)
     {
         _logger = logger;
     }
 
-    public void AddPlayer(string playerId, PlayerState state)
+    public void AddPlayer(string playerId, PlayerState state, bool isAdmin = false, bool hasPaid = false)
     {
         _questProgress.TryAdd(playerId, new Dictionary<string, int>());
+        state.Badge = GetPlayerBadge(isAdmin, hasPaid, state.KilometersDriven);
+        state.Name = $"{state.Badge} {state.Name}";
         _players.TryAdd(playerId, state);
         _dirtyEntities.Add(playerId);
-        _logger.LogDebug("Added player {PlayerId}", playerId);
+        _logger.LogDebug("Added player {PlayerId} with badge {Badge}", playerId, state.Badge);
     }
 
     public void RemovePlayer(string playerId)
@@ -39,6 +55,8 @@ public class GameStateManager
     {
         if (_players.TryGetValue(playerId, out var player))
         {
+            var oldKilometers = player.KilometersDriven;
+            
             player.Position = positionUpdate.Position;
             player.LastSeen = DateTime.UtcNow;
             player.CurrentSpeed = positionUpdate.CurrentSpeed;

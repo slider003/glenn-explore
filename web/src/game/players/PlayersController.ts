@@ -10,6 +10,7 @@ export class PlayersController {
     private playerMarkers: Map<string, mapboxgl.Marker> = new Map();
     private readonly CLEANUP_INTERVAL = 30000; // 30 seconds
     private readonly INACTIVE_TIMEOUT = 50000; // 50 seconds
+    private readonly MARKER_VISIBILITY_DISTANCE = 5; // Distance in kilometers
 
     private constructor(
         private map: mapboxgl.Map,

@@ -891,6 +891,11 @@ export class ChatUI {
         }
     }
 
+    private cleanName(name: string): string {
+        // Remove any emoji or special characters, only allow letters, numbers, spaces and basic punctuation
+        return name.replace(/[^\w\s\-\.,']/g, '').trim();
+    }
+
     private showNameChangeModal(): void {
         if (!this.onChangeName || this.isModalOpen) {
             return;
@@ -905,7 +910,7 @@ export class ChatUI {
 
         modal.innerHTML = `
             <h3>Change Your Name</h3>
-            <input type="text" class="name-change-input" placeholder="Enter new name" value="${PlayerStore.getPlayerName()}" maxlength="20">
+            <input type="text" class="name-change-input" placeholder="Enter new name" value="${this.cleanName(PlayerStore.getPlayerName())}" maxlength="20">
             <div class="name-change-error"></div>
             <div class="name-change-buttons">
                 <button class="cancel">Cancel</button>

@@ -543,6 +543,28 @@
       padding: 0.75rem;
     }
 
+    .badge-list {
+      list-style: none;
+      padding: 0.5rem 0;
+      margin: 0.5rem 0;
+    }
+
+    .badge-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      margin: 0.25rem 0;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .badge-list li:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateX(2px);
+    }
+
     /* Social links */
     .social-links {
       display: flex;
@@ -659,7 +681,9 @@
         <h2>GLENN EXPLORE</h2>
       </a>
       <nav class="header-nav">
-        <a href="/how-to-play">How to Play</a>
+        <a href="/how-to-play">🎮 How to Play</a>
+        <a href="/explore-the-world">🌎 Explore the World</a>
+        <a href="/create-3d-models">🎨 3D Models</a>
         <a href="https://discord.gg/ZaWdh6g4DU " target="_blank">Discord</a>
         <a href="/play" class="play-now">Play Now</a>
       </nav>
@@ -731,8 +755,24 @@
     <div class="main-column">
       <!-- Latest News -->
       <div class="panel">
-        <div class="panel-title">📰 Recent News</div>
+        <div class="panel-title">📰 Latest News</div>
         <div class="panel-content">
+          <div class="news-item">
+            <div class="news-date">April 27, 2025</div>
+            <div class="news-title">🎉 Introducing Player Badges!</div>
+            <div class="news-content">
+              We're excited to introduce our new badge system! Your badge appears next to your name and shows your status:
+              <ul class="badge-list">
+                <li>👑 Creator - Game administrators</li>
+                <li>⭐ Founder - Our amazing supporters that kept the game alive</li>
+                <li>🏆 Driving Legend - 10,000+ km driven</li>
+                <li>🚗 Drifter - 100+ km driven</li>
+                <li>🗺️ Explorer - 10+ km driven</li>
+                <li>🌱 Rookie - New players</li>
+              </ul>
+              Keep driving to unlock new badges and show off your achievements!
+            </div>
+          </div>
           <div class="news-item">
             <div class="news-date">April 27, 2024</div>
             <h3>Quest System Improvements! 🎯</h3>
@@ -776,6 +816,7 @@
             <li>Global leaderboards</li>
             <li>Mobile-friendly controls</li>
             <li>Chat with AI-Glenn and let him suggest cool places to explore!</li>
+            <li>Create and import your own 3D models</li>
           </ul>
         </div>
       </div>

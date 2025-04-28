@@ -14,6 +14,7 @@ public class PlayerState
     public string AnimationState { get; set; } = "idle";
     public string StateType { get; set; } = "walking";
     public List<QuestProgress> QuestProgress { get; set; } = new();
+    public string Badge { get; set; } = "🌱"; // Default to Rookie badge
 }
 
 public class PositionUpdate
