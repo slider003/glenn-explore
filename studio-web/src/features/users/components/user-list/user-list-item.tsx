@@ -78,6 +78,13 @@ export function UserListItem({ user, onDelete }: UserListItemProps) {
                     </span>
                 </div>
             </td>
+            <td className="p-4 align-middle">
+                <div className="flex flex-col">
+                    <span className="text-sm">
+                        Subscribed: {user.isSubscribedToEmails ? "Yes" : "No"}
+                    </span>
+                </div>
+            </td>
             <td className="p-4 align-middle text-right">
                 <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <Button

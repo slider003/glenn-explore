@@ -8,6 +8,7 @@ public record UserResponse(
     bool IsActive,
     bool HasPaid,
     bool IsLowPerformanceDevice,
+    bool IsSubscribedToEmails,
     DateTime CreatedAt,
     DateTime? LastLoginAt,
     DateTime LastSeen,

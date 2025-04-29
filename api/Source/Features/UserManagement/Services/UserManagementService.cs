@@ -53,6 +53,11 @@ public class UserManagementService
             query = query.Where(x => x.user.HasPaid == request.HasPaid.Value);
         }
 
+        if (request.IsSubscribedToEmails.HasValue)
+        {
+            query = query.Where(x => x.user.IsSubscribedToEmails == request.IsSubscribedToEmails.Value);
+        }
+
         if (request.LastLoginFrom.HasValue)
         {
             query = query.Where(x => x.user.LastLoginAt >= request.LastLoginFrom.Value);
@@ -111,6 +116,7 @@ public class UserManagementService
                 x.user.IsActive,
                 x.user.HasPaid,
                 x.user.IsLowPerformanceDevice,
+                x.user.IsSubscribedToEmails,
                 x.user.CreatedAt,
                 x.user.LastLoginAt,
                 x.user.LastSeen,
@@ -146,6 +152,7 @@ public class UserManagementService
             result.user.IsActive,
             result.user.HasPaid,
             result.user.IsLowPerformanceDevice,
+            result.user.IsSubscribedToEmails,
             result.user.CreatedAt,
             result.user.LastLoginAt,
             result.user.LastSeen,

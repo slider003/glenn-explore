@@ -55,4 +55,5 @@ export interface UserDTO {
   readonly otpExpiration?: string | null;
   isEmailVerified?: boolean;
   isLowPerformanceDevice?: boolean;
+  readonly isSubscribedToEmails?: boolean;
 }

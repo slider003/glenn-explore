@@ -2525,6 +2525,151 @@ const {mutation: mutationOptions} = options ?
       return useMutation(mutationOptions , queryClient);
     }
     
+export const getApiMarketingUnsubscribeEncodedUserId = (
+    encodedUserId: string,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<void>(
+      {url: `/api/marketing/unsubscribe/${encodedUserId}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getGetApiMarketingUnsubscribeEncodedUserIdQueryKey = (encodedUserId: string,) => {
+    return [`/api/marketing/unsubscribe/${encodedUserId}`] as const;
+    }
+
+    
+export const getGetApiMarketingUnsubscribeEncodedUserIdInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>>, TError = ErrorType<unknown>>(encodedUserId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiMarketingUnsubscribeEncodedUserIdQueryKey(encodedUserId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>> = ({ signal }) => getApiMarketingUnsubscribeEncodedUserId(encodedUserId, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(encodedUserId),  staleTime: 10000,  ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiMarketingUnsubscribeEncodedUserIdInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>>
+export type GetApiMarketingUnsubscribeEncodedUserIdInfiniteQueryError = ErrorType<unknown>
+
+
+export function useGetApiMarketingUnsubscribeEncodedUserIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>>, TError = ErrorType<unknown>>(
+ encodedUserId: string, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingUnsubscribeEncodedUserIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>>, TError = ErrorType<unknown>>(
+ encodedUserId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingUnsubscribeEncodedUserIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>>, TError = ErrorType<unknown>>(
+ encodedUserId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiMarketingUnsubscribeEncodedUserIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>>, TError = ErrorType<unknown>>(
+ encodedUserId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiMarketingUnsubscribeEncodedUserIdInfiniteQueryOptions(encodedUserId,options)
+
+  const query = useInfiniteQuery(queryOptions , queryClient) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetApiMarketingUnsubscribeEncodedUserIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>, TError = ErrorType<unknown>>(encodedUserId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiMarketingUnsubscribeEncodedUserIdQueryKey(encodedUserId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>> = ({ signal }) => getApiMarketingUnsubscribeEncodedUserId(encodedUserId, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(encodedUserId),  staleTime: 10000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiMarketingUnsubscribeEncodedUserIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>>
+export type GetApiMarketingUnsubscribeEncodedUserIdQueryError = ErrorType<unknown>
+
+
+export function useGetApiMarketingUnsubscribeEncodedUserId<TData = Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>, TError = ErrorType<unknown>>(
+ encodedUserId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingUnsubscribeEncodedUserId<TData = Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>, TError = ErrorType<unknown>>(
+ encodedUserId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingUnsubscribeEncodedUserId<TData = Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>, TError = ErrorType<unknown>>(
+ encodedUserId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiMarketingUnsubscribeEncodedUserId<TData = Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>, TError = ErrorType<unknown>>(
+ encodedUserId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingUnsubscribeEncodedUserId>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiMarketingUnsubscribeEncodedUserIdQueryOptions(encodedUserId,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
 export const getApiModelsUnlocked = (
     
  signal?: AbortSignal

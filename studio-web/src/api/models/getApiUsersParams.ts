@@ -13,6 +13,7 @@ SortBy?: string;
 SortDescending?: boolean;
 IsActive?: boolean;
 HasPaid?: boolean;
+IsSubscribedToEmails?: boolean;
 LastLoginFrom?: string;
 LastLoginTo?: string;
 CreatedFrom?: string;

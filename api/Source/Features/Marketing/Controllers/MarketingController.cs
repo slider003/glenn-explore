@@ -178,6 +178,22 @@ public class MarketingController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+
+    [AllowAnonymous]
+    [HttpGet("unsubscribe/{encodedUserId}")]
+    public async Task<IActionResult> Unsubscribe(string encodedUserId)
+    {
+        try
+        {
+            var userId = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(encodedUserId));
+            await _marketingService.UnsubscribeUser(userId);
+            return Ok("You have been successfully unsubscribed from our emails.");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest("Invalid unsubscribe link");
+        }
+    }
 }
 
 public class CreateCampaignRequest

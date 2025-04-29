@@ -18,6 +18,7 @@ public record UserListRequest(
     // Filters
     bool? IsActive = null,
     bool? HasPaid = null,
+    bool? IsSubscribedToEmails = null,
     DateTime? LastLoginFrom = null,
     DateTime? LastLoginTo = null,
     DateTime? CreatedFrom = null,

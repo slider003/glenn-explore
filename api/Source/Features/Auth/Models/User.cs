@@ -24,6 +24,7 @@ public class User : IdentityUser
     public DateTime? OtpExpiration { get; private set; }
     public bool IsEmailVerified { get; set; }
     public bool IsLowPerformanceDevice { get; set; } = false;
+    public bool IsSubscribedToEmails { get; private set; } = true;
 
     public void UpdateLastLogin(bool? isLowPerformanceDevice = null)
     {
@@ -69,5 +70,10 @@ public class User : IdentityUser
         HasPaid = true;
         StripeCustomerId = stripeCustomerId;
         PaidAt = DateTime.UtcNow;
+    }
+
+    public void Unsubscribe()
+    {
+        IsSubscribedToEmails = false;
     }
 }

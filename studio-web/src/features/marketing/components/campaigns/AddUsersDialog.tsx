@@ -20,6 +20,7 @@ type SortField = "email" | "lastSeen" | null;
 interface FilterState {
   isActive: boolean | null;
   hasPaid: boolean | null;
+  isSubscribedToEmails: boolean | null;
   lastSeenAfter: string | null;
   lastSeenBefore: string | null;
   createdAfter: string | null;
@@ -41,6 +42,7 @@ export const AddUsersDialog = ({ campaignId, onUsersAdded }: AddUsersDialogProps
   const [filters, setFilters] = useState<FilterState>({
     isActive: null,
     hasPaid: null,
+    isSubscribedToEmails: null,
     lastSeenAfter: null,
     lastSeenBefore: null,
     createdAfter: null,
@@ -57,6 +59,7 @@ export const AddUsersDialog = ({ campaignId, onUsersAdded }: AddUsersDialogProps
     SortDescending: sortDescending,
     IsActive: filters.isActive || undefined,
     HasPaid: filters.hasPaid || undefined,
+    IsSubscribedToEmails: filters.isSubscribedToEmails || undefined,
     LastLoginFrom: filters.lastSeenAfter || undefined,
     LastLoginTo: filters.lastSeenBefore || undefined,
     CreatedFrom: filters.createdAfter || undefined,
@@ -119,7 +122,7 @@ export const AddUsersDialog = ({ campaignId, onUsersAdded }: AddUsersDialogProps
       <DialogTrigger asChild>
         <Button variant="outline">Add Recipients</Button>
       </DialogTrigger>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add Recipients to Campaign</DialogTitle>
         </DialogHeader>
@@ -134,28 +137,56 @@ export const AddUsersDialog = ({ campaignId, onUsersAdded }: AddUsersDialogProps
               />
               <Select
                 value={filters.isActive?.toString() ?? "all"}
-                onValueChange={(value) => setFilters(prev => ({ ...prev, isActive: value === "all" ? null : value === "true" }))}
+                onValueChange={(value) =>
+                  setFilters({
+                    ...filters,
+                    isActive: value === "all" ? null : value === "true",
+                  })
+                }
               >
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Activity Status" />
+                  <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="all">All statuses</SelectItem>
                   <SelectItem value="true">Active</SelectItem>
                   <SelectItem value="false">Inactive</SelectItem>
                 </SelectContent>
               </Select>
               <Select
                 value={filters.hasPaid?.toString() ?? "all"}
-                onValueChange={(value) => setFilters(prev => ({ ...prev, hasPaid: value === "all" ? null : value === "true" }))}
+                onValueChange={(value) =>
+                  setFilters({
+                    ...filters,
+                    hasPaid: value === "all" ? null : value === "true",
+                  })
+                }
               >
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Payment Status" />
+                  <SelectValue placeholder="Filter by payment" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Payment</SelectItem>
+                  <SelectItem value="all">All payments</SelectItem>
                   <SelectItem value="true">Paid</SelectItem>
-                  <SelectItem value="false">Not Paid</SelectItem>
+                  <SelectItem value="false">Not paid</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select
+                value={filters.isSubscribedToEmails?.toString() ?? "all"}
+                onValueChange={(value) =>
+                  setFilters({
+                    ...filters,
+                    isSubscribedToEmails: value === "all" ? null : value === "true",
+                  })
+                }
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Filter by subscription" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All subscriptions</SelectItem>
+                  <SelectItem value="true">Subscribed</SelectItem>
+                  <SelectItem value="false">Unsubscribed</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -207,6 +238,7 @@ export const AddUsersDialog = ({ campaignId, onUsersAdded }: AddUsersDialogProps
                 onClick={() => setFilters({
                   isActive: null,
                   hasPaid: null,
+                  isSubscribedToEmails: null,
                   lastSeenAfter: null,
                   lastSeenBefore: null,
                   createdAfter: null,
@@ -224,10 +256,14 @@ export const AddUsersDialog = ({ campaignId, onUsersAdded }: AddUsersDialogProps
                   <TableHead className="w-12"></TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Last Seen</TableHead>
+                  <TableHead>Subscribed</TableHead>
+                  <TableHead>Time Online</TableHead>
+                  <TableHead>Low Performance</TableHead>
+                  <TableHead>Paid</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {userList?.items?.map((user: UserDTO) => (
+                {userList?.items?.map((user) => (
                   <TableRow
                     key={user.id}
                     className="cursor-pointer"
@@ -243,6 +279,10 @@ export const AddUsersDialog = ({ campaignId, onUsersAdded }: AddUsersDialogProps
                     </TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>{user.lastSeen?.toString() || "Never"}</TableCell>
+                    <TableCell>{user.isSubscribedToEmails ? "Yes" : "No"}</TableCell>
+                    <TableCell>{user.totalTimeOnline}</TableCell>
+                    <TableCell>{user.isLowPerformanceDevice ? "Yes" : "No"}</TableCell>
+                    <TableCell>{user.hasPaid ? "Yes" : "No"}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

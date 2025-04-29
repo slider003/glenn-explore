@@ -187,14 +187,27 @@ public class MarketingService
             .FirstOrDefaultAsync(cr => cr.Id == id);
     }
 
+    private string GetUnsubscribeUrl(string userId)
+    {
+        var encodedUserId = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(userId));
+        return $"https://playglenn.com/api/marketing/unsubscribe/{encodedUserId}";
+    }
+
+    public async Task UnsubscribeUser(string userId)
+    {
+        var user = await _context.Users.FindAsync(userId)
+            ?? throw new KeyNotFoundException("User not found");
+
+        user.Unsubscribe();
+        await _context.SaveChangesAsync();
+    }
+
     public async Task<bool> SendEmailToRecipient(string recipientId)
     {
-        var recipient = await GetCampaignRecipient(recipientId)
-            ?? throw new KeyNotFoundException($"Recipient with ID {recipientId} not found");
-
-        if (recipient.Status != "pending")
+        var recipient = await GetCampaignRecipient(recipientId);
+        if (recipient == null || recipient.User == null)
         {
-            throw new InvalidOperationException($"Cannot send email to recipient with status {recipient.Status}");
+            throw new KeyNotFoundException("Recipient not found");
         }
 
         try
@@ -202,13 +215,18 @@ public class MarketingService
             var template = recipient.Campaign?.EmailTemplate
                 ?? throw new InvalidOperationException("Campaign or template not found");
 
+            // Add unsubscribe link to the bottom of the email
+            var unsubscribeUrl = GetUnsubscribeUrl(recipient.UserId);
+            var htmlContent = template.HtmlContent + $"\n\n<p style='margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; color: #666; font-size: 12px;'>Don't want to receive these emails? <a href=\"{unsubscribeUrl}\">Unsubscribe here</a></p>";
+            var textContent = template.TextContent + $"\n\nDon't want to receive these emails? Unsubscribe here: {unsubscribeUrl}";
+
             var result = await _emailService.SendEmailAsync(new EmailSendRequest
             {
                 From = "Glenn <glenn@playglenn.com>",
-                To = recipient.Email,
+                To = recipient.User.Email,
                 Subject = template.Subject,
-                HtmlBody = template.HtmlContent,
-                PlainTextBody = template.TextContent
+                HtmlBody = htmlContent,
+                PlainTextBody = textContent
             });
 
             if (result.Success)

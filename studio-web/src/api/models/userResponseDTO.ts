@@ -17,6 +17,7 @@ export interface UserResponseDTO {
   isActive?: boolean;
   hasPaid?: boolean;
   isLowPerformanceDevice?: boolean;
+  isSubscribedToEmails?: boolean;
   createdAt?: string;
   /** @nullable */
   lastLoginAt?: string | null;

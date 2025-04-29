@@ -31,6 +31,7 @@ interface FilterState {
     lastSeenBefore: string | null;
     createdAfter: string | null;
     createdBefore: string | null;
+    isSubscribedToEmails: boolean | null;
 }
 
 export function UserList() {
@@ -45,6 +46,7 @@ export function UserList() {
         lastSeenBefore: null,
         createdAfter: null,
         createdBefore: null,
+        isSubscribedToEmails: null,
     });
 
     const handleFilterChange = (key: keyof FilterState, value: any) => {
@@ -62,6 +64,7 @@ export function UserList() {
             lastSeenBefore: null,
             createdAfter: null,
             createdBefore: null,
+            isSubscribedToEmails: null,
         });
     };
     const { toast } = useToast();
@@ -72,6 +75,7 @@ export function UserList() {
         SortDescending: sortDescending,
         IsActive: filters.isActive || undefined,
         HasPaid: filters.hasPaid || undefined,
+        IsSubscribedToEmails: filters.isSubscribedToEmails || undefined,
         LastLoginFrom: filters.lastSeenAfter || undefined,
         LastLoginTo: filters.lastSeenBefore || undefined,
         CreatedFrom: filters.createdAfter || undefined,
@@ -157,6 +161,29 @@ export function UserList() {
                             onChange={(e) => handleFilterChange('lastSeenBefore', e.target.value || null)}
                         />
                     </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium">Subscribed to Emails</label>
+                        <Select
+                            value={filters.isSubscribedToEmails?.toString() ?? "all"}
+                            onValueChange={(value) =>
+                                setFilters({
+                                    ...filters,
+                                    isSubscribedToEmails: value === "all" ? null : value === "true",
+                                })
+                            }
+                        >
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Filter by subscription" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All subscriptions</SelectItem>
+                                <SelectItem value="true">Subscribed</SelectItem>
+                                <SelectItem value="false">Unsubscribed</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
 
                     <div className="space-y-2">
                         <label className="text-sm font-medium">Created After</label>
@@ -264,6 +291,7 @@ export function UserList() {
                                     {sortBy === 'created' && <ArrowUpDown className="h-4 w-4" />}
                                 </div>
                             </TableHead>
+                            <TableHead className="font-medium">Subscribed to Emails</TableHead>
                             <TableHead className="font-medium text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>

@@ -47,7 +47,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({
     resolver: zodResolver(schema),
     defaultValues: {
       name: initialData?.name || '',
-      emailTemplateId: initialData?.emailTemplateId ?? '',
+      emailTemplateId: initialData?.emailTemplateId ?? undefined,
       description: initialData?.description || '',
       userIds: initialData?.recipients?.map(r => r.userId) ?? [],
     },
