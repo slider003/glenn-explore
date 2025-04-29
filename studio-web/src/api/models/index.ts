@@ -6,18 +6,23 @@
  */
 
 export * from './addRaceResultRequestDTO';
+export * from './addRecipientsRequestDTO';
 export * from './adminCustomCheckoutRequestDTO';
 export * from './adminUnlockModelRequestDTO';
 export * from './adminUserResponseDTO';
+export * from './campaignDTO';
+export * from './campaignRecipientDTO';
 export * from './changeUserNameRequestDTO';
 export * from './claimAccountRequestDTO';
 export * from './claudeMessageRequestDTODTO';
 export * from './claudeStreamResponseDTODTO';
 export * from './claudeToolTypeDTO';
+export * from './createCampaignRequestDTO';
 export * from './createGuestRequestDTO';
 export * from './createModelRequestDTO';
 export * from './createUserRequestDTO';
 export * from './dashboardStatsDtoDTO';
+export * from './emailTemplateDTO';
 export * from './enhanceMessageRequestDTODTO';
 export * from './enhanceMessageResponseDTODTO';
 export * from './fileInfoDtoDTO';
@@ -68,6 +73,7 @@ export * from './toplistEntryDTO';
 export * from './unlockedModelDtoDTO';
 export * from './updateModelRequestDTO';
 export * from './updateUserRequestDTO';
+export * from './userDTO';
 export * from './userListResponseDTO';
 export * from './userProfileResponseDTO';
 export * from './userResponseDTO';

@@ -3,6 +3,7 @@ import { useUsers, useDeleteUser } from "../../api";
 import { UserListItem } from "./user-list-item";
 import { UserSearch } from "./user-search";
 import { Button } from "@/shared/components/ui/button";
+import { Input } from "@/shared/components/ui/input";
 import { Link } from "react-router-dom";
 import { Plus, Users, ArrowUpDown } from "lucide-react";
 import {
@@ -26,6 +27,10 @@ type SortField = "name" | "email" | "status" | "payment" | "lastlogin" | "create
 interface FilterState {
     isActive: boolean | null;
     hasPaid: boolean | null;
+    lastSeenAfter: string | null;
+    lastSeenBefore: string | null;
+    createdAfter: string | null;
+    createdBefore: string | null;
 }
 
 export function UserList() {
@@ -36,17 +41,41 @@ export function UserList() {
     const [filters, setFilters] = useState<FilterState>({
         isActive: null,
         hasPaid: null,
+        lastSeenAfter: null,
+        lastSeenBefore: null,
+        createdAfter: null,
+        createdBefore: null,
     });
+
+    const handleFilterChange = (key: keyof FilterState, value: any) => {
+        setFilters(prev => ({
+            ...prev,
+            [key]: value
+        }));
+    };
+
+    const clearFilters = () => {
+        setFilters({
+            isActive: null,
+            hasPaid: null,
+            lastSeenAfter: null,
+            lastSeenBefore: null,
+            createdAfter: null,
+            createdBefore: null,
+        });
+    };
     const { toast } = useToast();
 
     const { data: userList, isLoading, error, refetch } = useUsers({
-        Page: page,
-        PageSize: 10,
-        SearchTerm: searchTerm || undefined,
-        SortBy: sortBy || undefined,
+        SearchTerm: searchTerm,
+        SortBy: sortBy === null ? undefined : sortBy,
         SortDescending: sortDescending,
         IsActive: filters.isActive || undefined,
-        HasPaid: filters.hasPaid || undefined
+        HasPaid: filters.hasPaid || undefined,
+        LastLoginFrom: filters.lastSeenAfter || undefined,
+        LastLoginTo: filters.lastSeenBefore || undefined,
+        CreatedFrom: filters.createdAfter || undefined,
+        CreatedTo: filters.createdBefore || undefined
     });
 
     const deleteUser = useDeleteUser({
@@ -102,7 +131,52 @@ export function UserList() {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4">
+            <div className="bg-card rounded-lg p-4 space-y-4">
+                <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">Filters</h3>
+                    <Button variant="ghost" onClick={clearFilters} size="sm">
+                        Clear Filters
+                    </Button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium">Last Seen After</label>
+                        <Input
+                            type="datetime-local"
+                            value={filters.lastSeenAfter || ''}
+                            onChange={(e) => handleFilterChange('lastSeenAfter', e.target.value || null)}
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium">Last Seen Before</label>
+                        <Input
+                            type="datetime-local"
+                            value={filters.lastSeenBefore || ''}
+                            onChange={(e) => handleFilterChange('lastSeenBefore', e.target.value || null)}
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium">Created After</label>
+                        <Input
+                            type="datetime-local"
+                            value={filters.createdAfter || ''}
+                            onChange={(e) => handleFilterChange('createdAfter', e.target.value || null)}
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium">Created Before</label>
+                        <Input
+                            type="datetime-local"
+                            value={filters.createdBefore || ''}
+                            onChange={(e) => handleFilterChange('createdBefore', e.target.value || null)}
+                        />
+                    </div>
+                </div>
+            </div>
             <div className="flex justify-between items-center">
                 <UserSearch onSearch={handleSearch} initialValue={searchTerm} />
                 <Button asChild>

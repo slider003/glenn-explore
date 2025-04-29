@@ -1,4 +1,4 @@
-import { Bot, Users, FolderOpen, Box, BarChart } from 'lucide-react';
+import { Bot, Users, FolderOpen, Box, BarChart, Send } from 'lucide-react';
 import { CreateUserPage } from './features/users/pages/create-user-page';
 import { UsersPage } from './features/users/pages/users-page';
 import { UserDetailsPage } from './features/users/pages/user-details-page';
@@ -12,6 +12,10 @@ import { PublicModelsPage } from './features/public-models/pages/public-models-p
 import { Link } from 'react-router-dom';
 import { EditPublicModelPage } from './features/public-models/pages/edit-public-model-page';
 import { DashboardPage } from './features/dashboard/pages/dashboard-page';
+import { TemplatesPage } from './features/marketing/pages/TemplatesPage';
+import { CampaignsPage } from './features/marketing/pages/CampaignsPage';
+import { CampaignDetailPage } from './features/marketing/pages/CampaignDetailPage';
+import { NewCampaignPage } from './features/marketing/pages/NewCampaignPage';
 
 export interface RouteConfig {
   path: string;
@@ -124,6 +128,38 @@ export const routes: RouteConfig[] = [
     element: <EditPublicModelPage />,
     isHeaderItem: false,
     requiresAdmin: false,
+    requiresAuth: true
+  },
+  {
+    path: '/studio/marketing/templates',
+    element: <TemplatesPage />,
+    isHeaderItem: true,
+    requiresAdmin: true,
+    requiresAuth: true,
+    icon: <FolderOpen className="h-4 w-4" />,
+    label: 'Templates'
+  },
+  {
+    path: '/studio/marketing/campaigns',
+    element: <CampaignsPage />,
+    isHeaderItem: true,
+    requiresAdmin: true,
+    requiresAuth: true,
+    icon: <Send className="h-4 w-4" />,
+    label: 'Campaigns'
+  },
+  {
+    path: '/studio/marketing/campaigns/new',
+    element: <NewCampaignPage />,
+    isHeaderItem: false,
+    requiresAdmin: true,
+    requiresAuth: true
+  },
+  {
+    path: '/studio/marketing/campaigns/:id',
+    element: <CampaignDetailPage />,
+    isHeaderItem: false,
+    requiresAdmin: true,
     requiresAuth: true
   }
 ]; 

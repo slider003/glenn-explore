@@ -22,6 +22,7 @@ using Api.Source.Features.Models.Services;
 using Api.Source.Features.Files.Services;
 using Microsoft.Extensions.FileProviders;
 using Api.Source.Features.Dashboard.Services;
+using Api.Source.Features.Marketing.Services;
 
 namespace Api.Shell;
 
@@ -357,6 +358,9 @@ public partial class Program
 
         // Add dashboard services
         builder.Services.AddScoped<DashboardService>();
+
+        // Add marketing services
+        builder.Services.AddScoped<MarketingService>();
 
         var app = builder.Build();
 

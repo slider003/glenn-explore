@@ -30,15 +30,20 @@ import type {
 
 import type {
   AddRaceResultRequestDTO,
+  AddRecipientsRequestDTO,
   AdminCustomCheckoutRequestDTO,
   AdminUnlockModelRequestDTO,
   AdminUserResponseDTO,
+  CampaignDTO,
+  CampaignRecipientDTO,
   ChangeUserNameRequestDTO,
   ClaimAccountRequestDTO,
+  CreateCampaignRequestDTO,
   CreateGuestRequestDTO,
   CreateModelRequestDTO,
   CreateUserRequestDTO,
   DashboardStatsDtoDTO,
+  EmailTemplateDTO,
   FileInfoDtoDTO,
   FileUploadDtoDTO,
   GameStatisticsDTO,
@@ -1326,6 +1331,1196 @@ const {mutation: mutationOptions} = options ?
       > => {
 
       const mutationOptions = getDeleteApiFilesIdMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+export const getApiMarketingTemplates = (
+    
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<EmailTemplateDTO[]>(
+      {url: `/api/marketing/templates`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getGetApiMarketingTemplatesQueryKey = () => {
+    return [`/api/marketing/templates`] as const;
+    }
+
+    
+export const getGetApiMarketingTemplatesInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingTemplates>>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplates>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiMarketingTemplatesQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiMarketingTemplates>>> = ({ signal }) => getApiMarketingTemplates(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn,   staleTime: 10000,  ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplates>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiMarketingTemplatesInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiMarketingTemplates>>>
+export type GetApiMarketingTemplatesInfiniteQueryError = ErrorType<unknown>
+
+
+export function useGetApiMarketingTemplatesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingTemplates>>>, TError = ErrorType<unknown>>(
+  options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplates>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingTemplates>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingTemplates>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingTemplatesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingTemplates>>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplates>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingTemplates>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingTemplates>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingTemplatesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingTemplates>>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplates>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiMarketingTemplatesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingTemplates>>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplates>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiMarketingTemplatesInfiniteQueryOptions(options)
+
+  const query = useInfiniteQuery(queryOptions , queryClient) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetApiMarketingTemplatesQueryOptions = <TData = Awaited<ReturnType<typeof getApiMarketingTemplates>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplates>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiMarketingTemplatesQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiMarketingTemplates>>> = ({ signal }) => getApiMarketingTemplates(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn,   staleTime: 10000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplates>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiMarketingTemplatesQueryResult = NonNullable<Awaited<ReturnType<typeof getApiMarketingTemplates>>>
+export type GetApiMarketingTemplatesQueryError = ErrorType<unknown>
+
+
+export function useGetApiMarketingTemplates<TData = Awaited<ReturnType<typeof getApiMarketingTemplates>>, TError = ErrorType<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplates>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingTemplates>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingTemplates>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingTemplates<TData = Awaited<ReturnType<typeof getApiMarketingTemplates>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplates>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingTemplates>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingTemplates>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingTemplates<TData = Awaited<ReturnType<typeof getApiMarketingTemplates>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplates>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiMarketingTemplates<TData = Awaited<ReturnType<typeof getApiMarketingTemplates>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplates>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiMarketingTemplatesQueryOptions(options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+export const postApiMarketingTemplates = (
+    emailTemplateDTO: EmailTemplateDTO,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<EmailTemplateDTO>(
+      {url: `/api/marketing/templates`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: emailTemplateDTO, signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiMarketingTemplatesMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiMarketingTemplates>>, TError,{data: EmailTemplateDTO}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiMarketingTemplates>>, TError,{data: EmailTemplateDTO}, TContext> => {
+    
+const mutationKey = ['postApiMarketingTemplates'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiMarketingTemplates>>, {data: EmailTemplateDTO}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiMarketingTemplates(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiMarketingTemplatesMutationResult = NonNullable<Awaited<ReturnType<typeof postApiMarketingTemplates>>>
+    export type PostApiMarketingTemplatesMutationBody = EmailTemplateDTO
+    export type PostApiMarketingTemplatesMutationError = ErrorType<unknown>
+
+    export const usePostApiMarketingTemplates = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiMarketingTemplates>>, TError,{data: EmailTemplateDTO}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiMarketingTemplates>>,
+        TError,
+        {data: EmailTemplateDTO},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiMarketingTemplatesMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+export const getApiMarketingTemplatesId = (
+    id: string,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<EmailTemplateDTO>(
+      {url: `/api/marketing/templates/${id}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getGetApiMarketingTemplatesIdQueryKey = (id: string,) => {
+    return [`/api/marketing/templates/${id}`] as const;
+    }
+
+    
+export const getGetApiMarketingTemplatesIdInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingTemplatesId>>>, TError = ErrorType<unknown>>(id: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplatesId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiMarketingTemplatesIdQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiMarketingTemplatesId>>> = ({ signal }) => getApiMarketingTemplatesId(id, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id),  staleTime: 10000,  ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplatesId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiMarketingTemplatesIdInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiMarketingTemplatesId>>>
+export type GetApiMarketingTemplatesIdInfiniteQueryError = ErrorType<unknown>
+
+
+export function useGetApiMarketingTemplatesIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingTemplatesId>>>, TError = ErrorType<unknown>>(
+ id: string, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplatesId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingTemplatesId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingTemplatesId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingTemplatesIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingTemplatesId>>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplatesId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingTemplatesId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingTemplatesId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingTemplatesIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingTemplatesId>>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplatesId>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiMarketingTemplatesIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingTemplatesId>>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplatesId>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiMarketingTemplatesIdInfiniteQueryOptions(id,options)
+
+  const query = useInfiniteQuery(queryOptions , queryClient) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetApiMarketingTemplatesIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiMarketingTemplatesId>>, TError = ErrorType<unknown>>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplatesId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiMarketingTemplatesIdQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiMarketingTemplatesId>>> = ({ signal }) => getApiMarketingTemplatesId(id, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id),  staleTime: 10000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplatesId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiMarketingTemplatesIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiMarketingTemplatesId>>>
+export type GetApiMarketingTemplatesIdQueryError = ErrorType<unknown>
+
+
+export function useGetApiMarketingTemplatesId<TData = Awaited<ReturnType<typeof getApiMarketingTemplatesId>>, TError = ErrorType<unknown>>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplatesId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingTemplatesId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingTemplatesId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingTemplatesId<TData = Awaited<ReturnType<typeof getApiMarketingTemplatesId>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplatesId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingTemplatesId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingTemplatesId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingTemplatesId<TData = Awaited<ReturnType<typeof getApiMarketingTemplatesId>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplatesId>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiMarketingTemplatesId<TData = Awaited<ReturnType<typeof getApiMarketingTemplatesId>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingTemplatesId>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiMarketingTemplatesIdQueryOptions(id,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+export const putApiMarketingTemplatesId = (
+    id: string,
+    emailTemplateDTO: EmailTemplateDTO,
+ ) => {
+      
+      
+      return customClient<EmailTemplateDTO>(
+      {url: `/api/marketing/templates/${id}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: emailTemplateDTO
+    },
+      );
+    }
+  
+
+
+export const getPutApiMarketingTemplatesIdMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiMarketingTemplatesId>>, TError,{id: string;data: EmailTemplateDTO}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiMarketingTemplatesId>>, TError,{id: string;data: EmailTemplateDTO}, TContext> => {
+    
+const mutationKey = ['putApiMarketingTemplatesId'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiMarketingTemplatesId>>, {id: string;data: EmailTemplateDTO}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  putApiMarketingTemplatesId(id,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutApiMarketingTemplatesIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiMarketingTemplatesId>>>
+    export type PutApiMarketingTemplatesIdMutationBody = EmailTemplateDTO
+    export type PutApiMarketingTemplatesIdMutationError = ErrorType<unknown>
+
+    export const usePutApiMarketingTemplatesId = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiMarketingTemplatesId>>, TError,{id: string;data: EmailTemplateDTO}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof putApiMarketingTemplatesId>>,
+        TError,
+        {id: string;data: EmailTemplateDTO},
+        TContext
+      > => {
+
+      const mutationOptions = getPutApiMarketingTemplatesIdMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+export const deleteApiMarketingTemplatesId = (
+    id: string,
+ ) => {
+      
+      
+      return customClient<void>(
+      {url: `/api/marketing/templates/${id}`, method: 'DELETE'
+    },
+      );
+    }
+  
+
+
+export const getDeleteApiMarketingTemplatesIdMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiMarketingTemplatesId>>, TError,{id: string}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof deleteApiMarketingTemplatesId>>, TError,{id: string}, TContext> => {
+    
+const mutationKey = ['deleteApiMarketingTemplatesId'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiMarketingTemplatesId>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteApiMarketingTemplatesId(id,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteApiMarketingTemplatesIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApiMarketingTemplatesId>>>
+    
+    export type DeleteApiMarketingTemplatesIdMutationError = ErrorType<unknown>
+
+    export const useDeleteApiMarketingTemplatesId = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiMarketingTemplatesId>>, TError,{id: string}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteApiMarketingTemplatesId>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteApiMarketingTemplatesIdMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+export const getApiMarketingCampaigns = (
+    
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<CampaignDTO[]>(
+      {url: `/api/marketing/campaigns`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getGetApiMarketingCampaignsQueryKey = () => {
+    return [`/api/marketing/campaigns`] as const;
+    }
+
+    
+export const getGetApiMarketingCampaignsInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingCampaigns>>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaigns>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiMarketingCampaignsQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiMarketingCampaigns>>> = ({ signal }) => getApiMarketingCampaigns(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn,   staleTime: 10000,  ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaigns>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiMarketingCampaignsInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiMarketingCampaigns>>>
+export type GetApiMarketingCampaignsInfiniteQueryError = ErrorType<unknown>
+
+
+export function useGetApiMarketingCampaignsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingCampaigns>>>, TError = ErrorType<unknown>>(
+  options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaigns>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingCampaigns>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingCampaigns>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingCampaignsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingCampaigns>>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaigns>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingCampaigns>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingCampaigns>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingCampaignsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingCampaigns>>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaigns>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiMarketingCampaignsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingCampaigns>>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaigns>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiMarketingCampaignsInfiniteQueryOptions(options)
+
+  const query = useInfiniteQuery(queryOptions , queryClient) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetApiMarketingCampaignsQueryOptions = <TData = Awaited<ReturnType<typeof getApiMarketingCampaigns>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaigns>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiMarketingCampaignsQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiMarketingCampaigns>>> = ({ signal }) => getApiMarketingCampaigns(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn,   staleTime: 10000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaigns>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiMarketingCampaignsQueryResult = NonNullable<Awaited<ReturnType<typeof getApiMarketingCampaigns>>>
+export type GetApiMarketingCampaignsQueryError = ErrorType<unknown>
+
+
+export function useGetApiMarketingCampaigns<TData = Awaited<ReturnType<typeof getApiMarketingCampaigns>>, TError = ErrorType<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaigns>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingCampaigns>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingCampaigns>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingCampaigns<TData = Awaited<ReturnType<typeof getApiMarketingCampaigns>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaigns>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingCampaigns>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingCampaigns>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingCampaigns<TData = Awaited<ReturnType<typeof getApiMarketingCampaigns>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaigns>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiMarketingCampaigns<TData = Awaited<ReturnType<typeof getApiMarketingCampaigns>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaigns>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiMarketingCampaignsQueryOptions(options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+export const postApiMarketingCampaigns = (
+    createCampaignRequestDTO: CreateCampaignRequestDTO,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<CampaignDTO>(
+      {url: `/api/marketing/campaigns`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createCampaignRequestDTO, signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiMarketingCampaignsMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiMarketingCampaigns>>, TError,{data: CreateCampaignRequestDTO}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiMarketingCampaigns>>, TError,{data: CreateCampaignRequestDTO}, TContext> => {
+    
+const mutationKey = ['postApiMarketingCampaigns'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiMarketingCampaigns>>, {data: CreateCampaignRequestDTO}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiMarketingCampaigns(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiMarketingCampaignsMutationResult = NonNullable<Awaited<ReturnType<typeof postApiMarketingCampaigns>>>
+    export type PostApiMarketingCampaignsMutationBody = CreateCampaignRequestDTO
+    export type PostApiMarketingCampaignsMutationError = ErrorType<unknown>
+
+    export const usePostApiMarketingCampaigns = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiMarketingCampaigns>>, TError,{data: CreateCampaignRequestDTO}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiMarketingCampaigns>>,
+        TError,
+        {data: CreateCampaignRequestDTO},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiMarketingCampaignsMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+export const getApiMarketingCampaignsId = (
+    id: string,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<CampaignDTO>(
+      {url: `/api/marketing/campaigns/${id}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getGetApiMarketingCampaignsIdQueryKey = (id: string,) => {
+    return [`/api/marketing/campaigns/${id}`] as const;
+    }
+
+    
+export const getGetApiMarketingCampaignsIdInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingCampaignsId>>>, TError = ErrorType<unknown>>(id: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiMarketingCampaignsIdQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiMarketingCampaignsId>>> = ({ signal }) => getApiMarketingCampaignsId(id, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id),  staleTime: 10000,  ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiMarketingCampaignsIdInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiMarketingCampaignsId>>>
+export type GetApiMarketingCampaignsIdInfiniteQueryError = ErrorType<unknown>
+
+
+export function useGetApiMarketingCampaignsIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingCampaignsId>>>, TError = ErrorType<unknown>>(
+ id: string, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingCampaignsId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingCampaignsId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingCampaignsIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingCampaignsId>>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingCampaignsId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingCampaignsId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingCampaignsIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingCampaignsId>>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsId>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiMarketingCampaignsIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingCampaignsId>>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsId>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiMarketingCampaignsIdInfiniteQueryOptions(id,options)
+
+  const query = useInfiniteQuery(queryOptions , queryClient) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetApiMarketingCampaignsIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiMarketingCampaignsId>>, TError = ErrorType<unknown>>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiMarketingCampaignsIdQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiMarketingCampaignsId>>> = ({ signal }) => getApiMarketingCampaignsId(id, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id),  staleTime: 10000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiMarketingCampaignsIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiMarketingCampaignsId>>>
+export type GetApiMarketingCampaignsIdQueryError = ErrorType<unknown>
+
+
+export function useGetApiMarketingCampaignsId<TData = Awaited<ReturnType<typeof getApiMarketingCampaignsId>>, TError = ErrorType<unknown>>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingCampaignsId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingCampaignsId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingCampaignsId<TData = Awaited<ReturnType<typeof getApiMarketingCampaignsId>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingCampaignsId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingCampaignsId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingCampaignsId<TData = Awaited<ReturnType<typeof getApiMarketingCampaignsId>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsId>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiMarketingCampaignsId<TData = Awaited<ReturnType<typeof getApiMarketingCampaignsId>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsId>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiMarketingCampaignsIdQueryOptions(id,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+export const putApiMarketingCampaignsId = (
+    id: string,
+    campaignDTO: CampaignDTO,
+ ) => {
+      
+      
+      return customClient<CampaignDTO>(
+      {url: `/api/marketing/campaigns/${id}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: campaignDTO
+    },
+      );
+    }
+  
+
+
+export const getPutApiMarketingCampaignsIdMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiMarketingCampaignsId>>, TError,{id: string;data: CampaignDTO}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiMarketingCampaignsId>>, TError,{id: string;data: CampaignDTO}, TContext> => {
+    
+const mutationKey = ['putApiMarketingCampaignsId'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiMarketingCampaignsId>>, {id: string;data: CampaignDTO}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  putApiMarketingCampaignsId(id,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutApiMarketingCampaignsIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiMarketingCampaignsId>>>
+    export type PutApiMarketingCampaignsIdMutationBody = CampaignDTO
+    export type PutApiMarketingCampaignsIdMutationError = ErrorType<unknown>
+
+    export const usePutApiMarketingCampaignsId = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiMarketingCampaignsId>>, TError,{id: string;data: CampaignDTO}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof putApiMarketingCampaignsId>>,
+        TError,
+        {id: string;data: CampaignDTO},
+        TContext
+      > => {
+
+      const mutationOptions = getPutApiMarketingCampaignsIdMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+export const deleteApiMarketingCampaignsId = (
+    id: string,
+ ) => {
+      
+      
+      return customClient<void>(
+      {url: `/api/marketing/campaigns/${id}`, method: 'DELETE'
+    },
+      );
+    }
+  
+
+
+export const getDeleteApiMarketingCampaignsIdMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiMarketingCampaignsId>>, TError,{id: string}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof deleteApiMarketingCampaignsId>>, TError,{id: string}, TContext> => {
+    
+const mutationKey = ['deleteApiMarketingCampaignsId'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiMarketingCampaignsId>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteApiMarketingCampaignsId(id,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteApiMarketingCampaignsIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApiMarketingCampaignsId>>>
+    
+    export type DeleteApiMarketingCampaignsIdMutationError = ErrorType<unknown>
+
+    export const useDeleteApiMarketingCampaignsId = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiMarketingCampaignsId>>, TError,{id: string}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteApiMarketingCampaignsId>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteApiMarketingCampaignsIdMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+export const getApiMarketingCampaignsCampaignIdRecipients = (
+    campaignId: string,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<CampaignRecipientDTO[]>(
+      {url: `/api/marketing/campaigns/${campaignId}/recipients`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getGetApiMarketingCampaignsCampaignIdRecipientsQueryKey = (campaignId: string,) => {
+    return [`/api/marketing/campaigns/${campaignId}/recipients`] as const;
+    }
+
+    
+export const getGetApiMarketingCampaignsCampaignIdRecipientsInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>>, TError = ErrorType<unknown>>(campaignId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiMarketingCampaignsCampaignIdRecipientsQueryKey(campaignId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>> = ({ signal }) => getApiMarketingCampaignsCampaignIdRecipients(campaignId, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(campaignId),  staleTime: 10000,  ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiMarketingCampaignsCampaignIdRecipientsInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>>
+export type GetApiMarketingCampaignsCampaignIdRecipientsInfiniteQueryError = ErrorType<unknown>
+
+
+export function useGetApiMarketingCampaignsCampaignIdRecipientsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>>, TError = ErrorType<unknown>>(
+ campaignId: string, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingCampaignsCampaignIdRecipientsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>>, TError = ErrorType<unknown>>(
+ campaignId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingCampaignsCampaignIdRecipientsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>>, TError = ErrorType<unknown>>(
+ campaignId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiMarketingCampaignsCampaignIdRecipientsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>>, TError = ErrorType<unknown>>(
+ campaignId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiMarketingCampaignsCampaignIdRecipientsInfiniteQueryOptions(campaignId,options)
+
+  const query = useInfiniteQuery(queryOptions , queryClient) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetApiMarketingCampaignsCampaignIdRecipientsQueryOptions = <TData = Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>, TError = ErrorType<unknown>>(campaignId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiMarketingCampaignsCampaignIdRecipientsQueryKey(campaignId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>> = ({ signal }) => getApiMarketingCampaignsCampaignIdRecipients(campaignId, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(campaignId),  staleTime: 10000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiMarketingCampaignsCampaignIdRecipientsQueryResult = NonNullable<Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>>
+export type GetApiMarketingCampaignsCampaignIdRecipientsQueryError = ErrorType<unknown>
+
+
+export function useGetApiMarketingCampaignsCampaignIdRecipients<TData = Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>, TError = ErrorType<unknown>>(
+ campaignId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingCampaignsCampaignIdRecipients<TData = Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>, TError = ErrorType<unknown>>(
+ campaignId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>,
+          TError,
+          Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiMarketingCampaignsCampaignIdRecipients<TData = Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>, TError = ErrorType<unknown>>(
+ campaignId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiMarketingCampaignsCampaignIdRecipients<TData = Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>, TError = ErrorType<unknown>>(
+ campaignId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMarketingCampaignsCampaignIdRecipients>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiMarketingCampaignsCampaignIdRecipientsQueryOptions(campaignId,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+export const postApiMarketingCampaignsIdRecipients = (
+    id: string,
+    addRecipientsRequestDTO: AddRecipientsRequestDTO,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<CampaignDTO>(
+      {url: `/api/marketing/campaigns/${id}/recipients`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: addRecipientsRequestDTO, signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiMarketingCampaignsIdRecipientsMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiMarketingCampaignsIdRecipients>>, TError,{id: string;data: AddRecipientsRequestDTO}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiMarketingCampaignsIdRecipients>>, TError,{id: string;data: AddRecipientsRequestDTO}, TContext> => {
+    
+const mutationKey = ['postApiMarketingCampaignsIdRecipients'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiMarketingCampaignsIdRecipients>>, {id: string;data: AddRecipientsRequestDTO}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  postApiMarketingCampaignsIdRecipients(id,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiMarketingCampaignsIdRecipientsMutationResult = NonNullable<Awaited<ReturnType<typeof postApiMarketingCampaignsIdRecipients>>>
+    export type PostApiMarketingCampaignsIdRecipientsMutationBody = AddRecipientsRequestDTO
+    export type PostApiMarketingCampaignsIdRecipientsMutationError = ErrorType<unknown>
+
+    export const usePostApiMarketingCampaignsIdRecipients = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiMarketingCampaignsIdRecipients>>, TError,{id: string;data: AddRecipientsRequestDTO}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiMarketingCampaignsIdRecipients>>,
+        TError,
+        {id: string;data: AddRecipientsRequestDTO},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiMarketingCampaignsIdRecipientsMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+export const postApiMarketingRecipientsIdSend = (
+    id: string,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customClient<void>(
+      {url: `/api/marketing/recipients/${id}/send`, method: 'POST', signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiMarketingRecipientsIdSendMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiMarketingRecipientsIdSend>>, TError,{id: string}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiMarketingRecipientsIdSend>>, TError,{id: string}, TContext> => {
+    
+const mutationKey = ['postApiMarketingRecipientsIdSend'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiMarketingRecipientsIdSend>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  postApiMarketingRecipientsIdSend(id,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiMarketingRecipientsIdSendMutationResult = NonNullable<Awaited<ReturnType<typeof postApiMarketingRecipientsIdSend>>>
+    
+    export type PostApiMarketingRecipientsIdSendMutationError = ErrorType<unknown>
+
+    export const usePostApiMarketingRecipientsIdSend = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiMarketingRecipientsIdSend>>, TError,{id: string}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiMarketingRecipientsIdSend>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiMarketingRecipientsIdSendMutationOptions(options);
 
       return useMutation(mutationOptions , queryClient);
     }

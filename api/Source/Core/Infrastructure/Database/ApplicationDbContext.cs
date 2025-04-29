@@ -3,6 +3,7 @@ using Api.Features.OpenRouter.Models;
 using Api.Source.Features.Game;
 using Api.Source.Features.Models;
 using Api.Source.Features.Files.Models;
+using Api.Source.Features.Marketing.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,9 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public DbSet<FileEntity> Files => Set<FileEntity>();
     public DbSet<Model> Models => Set<Model>();
     public DbSet<QuestProgress> QuestProgress => Set<QuestProgress>();
+    public DbSet<EmailTemplate> EmailTemplates => Set<EmailTemplate>();
+    public DbSet<Campaign> Campaigns => Set<Campaign>();
+    public DbSet<CampaignRecipient> CampaignRecipients => Set<CampaignRecipient>();
     
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -223,6 +227,90 @@ public class ApplicationDbContext : IdentityDbContext<User>
                 .HasMaxLength(1024);
             b.Property(f => f.MimeType)
                 .HasMaxLength(100);
+        });
+
+        // Email Template configuration and indexes
+        builder.Entity<EmailTemplate>(b =>
+        {
+            // Primary key
+            b.HasKey(et => et.Id);
+
+            // Indexes for common queries
+            b.HasIndex(et => et.Name)
+                .HasDatabaseName("IX_EmailTemplates_Name");
+            b.HasIndex(et => et.CreatedAt)
+                .HasDatabaseName("IX_EmailTemplates_CreatedAt");
+
+            // Set reasonable max lengths for string fields
+            b.Property(et => et.Name)
+                .HasMaxLength(255);
+            b.Property(et => et.Subject)
+                .HasMaxLength(255);
+            b.Property(et => et.CreatedBy)
+                .HasMaxLength(450); // Match AspNetUsers Id length
+        });
+
+        // Campaign configuration and indexes
+        builder.Entity<Campaign>(b =>
+        {
+            // Primary key
+            b.HasKey(c => c.Id);
+
+            // Relationship with EmailTemplate
+            b.HasOne(c => c.EmailTemplate)
+                .WithMany()
+                .HasForeignKey(c => c.EmailTemplateId)
+                .OnDelete(DeleteBehavior.Restrict); // Don't delete campaign if template is deleted
+
+            // Indexes for common queries
+            b.HasIndex(c => c.Status)
+                .HasDatabaseName("IX_Campaigns_Status");
+            b.HasIndex(c => c.CreatedAt)
+                .HasDatabaseName("IX_Campaigns_CreatedAt");
+            b.HasIndex(c => c.StartedAt)
+                .HasDatabaseName("IX_Campaigns_StartedAt");
+
+            // Set reasonable max lengths for string fields
+            b.Property(c => c.Name)
+                .HasMaxLength(255);
+            b.Property(c => c.Status)
+                .HasMaxLength(50);
+            b.Property(c => c.CreatedBy)
+                .HasMaxLength(450); // Match AspNetUsers Id length
+        });
+
+        // Campaign Recipient configuration and indexes
+        builder.Entity<CampaignRecipient>(b =>
+        {
+            // Primary key
+            b.HasKey(cr => cr.Id);
+
+            // Relationships
+            b.HasOne(cr => cr.Campaign)
+                .WithMany(c => c.Recipients)
+                .HasForeignKey(cr => cr.CampaignId)
+                .OnDelete(DeleteBehavior.Cascade); // Delete recipients when campaign is deleted
+
+            b.HasOne(cr => cr.User)
+                .WithMany()
+                .HasForeignKey(cr => cr.UserId)
+                .OnDelete(DeleteBehavior.Restrict); // Don't delete recipients if user is deleted
+
+            // Indexes for common queries
+            b.HasIndex(cr => cr.Status)
+                .HasDatabaseName("IX_CampaignRecipients_Status");
+            b.HasIndex(cr => cr.Email)
+                .HasDatabaseName("IX_CampaignRecipients_Email");
+            b.HasIndex(cr => new { cr.CampaignId, cr.Status })
+                .HasDatabaseName("IX_CampaignRecipients_CampaignId_Status");
+            b.HasIndex(cr => new { cr.UserId, cr.CampaignId })
+                .HasDatabaseName("IX_CampaignRecipients_UserId_CampaignId");
+
+            // Set reasonable max lengths for string fields
+            b.Property(cr => cr.Email)
+                .HasMaxLength(255);
+            b.Property(cr => cr.Status)
+                .HasMaxLength(50);
         });
     }
 } 
