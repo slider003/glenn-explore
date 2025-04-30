@@ -336,11 +336,11 @@ export class IntroUI {
       if (response) {
         this.state.loginState.isVerified = true;
 
-        if (!response.hasPaid) {
-          this.state.currentStep = 'payment';
-        } else {
-          this.state.currentStep = 'instructions';
-        }
+        // if (!response.hasPaid) {
+        //   this.state.currentStep = 'payment';
+        // } else {
+        this.state.currentStep = 'instructions';
+        //}
       }
     } catch (error) {
       console.error('Failed to verify OTP:', error);

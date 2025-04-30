@@ -22,7 +22,8 @@ export class IntroController {
   public async showIntro(loginResponse: LoginResponse | null, onComplete: (coords: [number, number]) => void): Promise<void> {
     const options: IntroOptions = {
       isAuthenticated: !!loginResponse,
-      hasPaid: loginResponse?.hasPaid ?? false,
+      //hasPaid: loginResponse?.hasPaid ?? false,
+      hasPaid: true,
       email: loginResponse?.email,
       onStartGame: onComplete,
       onVehicleSelect: (vehicleType) => {
@@ -63,9 +64,9 @@ export class IntroController {
           localStorage.setItem(this.playerIdKey, response.username);
           
           // If user hasn't paid, show payment UI
-          if (!response.hasPaid) {
-            return response;
-          }
+          // if (!response.hasPaid) {
+          //   return response;
+          // }
           
           // If user has paid, mark intro as viewed and proceed
           this.markIntroAsViewed();

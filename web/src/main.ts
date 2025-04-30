@@ -84,13 +84,13 @@ async function setupScene() {
     PlayerStore.setIsGuest(authResult.isGuest);
     PlayerStore.setPlayerId(authResult.playerId);
     // If user hasn't paid, show intro with payment step
-    if (!authResult.hasPaid) {
-      const introController = new IntroController(authClient);
-      await introController.showIntro(authResult, (initialPosition: [number, number]) => {
-        initializeGame(player, initialPosition, realtimeController, teleportWrapper);
-      });
-      return;
-    }
+    // if (!authResult.hasPaid) {
+    //   const introController = new IntroController(authClient);
+    //   await introController.showIntro(authResult, (initialPosition: [number, number]) => {
+    //     initializeGame(player, initialPosition, realtimeController, teleportWrapper);
+    //   });
+    //   return;
+    // }
 
     // If user has paid, proceed with the game
     let hasPosition = false;
