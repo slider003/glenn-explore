@@ -8,7 +8,7 @@ import { RealtimeController } from './game/realtime/RealtimeController'
 import { InputUtils } from './game/InputUtils'
 import { PlayerStore } from './game/stores/PlayerStore'
 import { Toast } from './game/toast/ToastController'
-import { IntroController } from './game/intro/IntroController'
+// import { IntroController } from './game/intro/IntroController'
 import { RadioService } from './game/radio/RadioService'
 import { UIController } from './game/UI/UIController'
 import { PlayerController } from './game/player/PlayerController'
@@ -75,48 +75,15 @@ async function setupScene() {
   });
 
   // Check if user is already authenticated
-  const authResult = await authClient.checkAuthentication();
+  // const authResult = await authClient.checkAuthentication();
 
-  if (authResult) {
-
-    // Update player store with user data
-    PlayerStore.setPlayerName(authResult.username);
-    PlayerStore.setIsGuest(authResult.isGuest);
-    PlayerStore.setPlayerId(authResult.playerId);
-    // If user hasn't paid, show intro with payment step
-    // if (!authResult.hasPaid) {
-    //   const introController = new IntroController(authClient);
-    //   await introController.showIntro(authResult, (initialPosition: [number, number]) => {
-    //     initializeGame(player, initialPosition, realtimeController, teleportWrapper);
-    //   });
-    //   return;
-    // }
-
-    // If user has paid, proceed with the game
-    let hasPosition = false;
-    if (authResult.lastPosition) {
-      PlayerStore.setCoordinates([authResult.lastPosition.x, authResult.lastPosition.y, authResult.lastPosition.z]);
-      hasPosition = true;
-    }
-
-    // Initialize the game
-    initializeGame(
-      player,
-      hasPosition ? [PlayerStore.getCoordinates()[0], PlayerStore.getCoordinates()[1]] : [DEFAULT_COORDINATES.lng, DEFAULT_COORDINATES.lat],
-      realtimeController,
-      teleportWrapper
-    );
-  } else {
-    // User is not authenticated, show login screen
-    const introController = new IntroController(authClient, (name: string) => {
-      // Fire and forget name change
-      realtimeController.changePlayerName(name);
-    });
-    await introController.showIntro(authResult, (initialPosition: [number, number]) => {
-      // After authentication is successful, initialize the game
-      initializeGame(player, initialPosition, realtimeController, teleportWrapper);
-    });
-  }
+  // Instantly start the game for all users, skipping intro/login
+  initializeGame(
+    player,
+    [DEFAULT_COORDINATES.lng, DEFAULT_COORDINATES.lat],
+    realtimeController,
+    teleportWrapper
+  );
 }
 
 /**
